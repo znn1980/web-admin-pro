@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head>
+    <meta charset="utf-8">
+    <title th:text="|${config.title} v${config.version}|">WEB-ADMIN-PRO</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}" href="../../static/favicon.ico"/>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" href="../../static/layui/css/layui.css" media="all">
+    <link rel="stylesheet" th:href="@{/admin-ui/css/admin.css}" href="../../static/admin-ui/css/admin.css" media="all">
+</head>
+<body>
+<div style="display: grid;place-items: center;height: 100vh;">
+    <h1 th:text="|${config.title} v${config.version}|">WEB-ADMIN-PRO v1.0.0</h1>
+    <h6 th:text="|${config.copyright}|">© 2025 All Rights Reserved.</h6>
+</div>
+<script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
+<script th:inline="javascript">
+    layui.config({
+        base: /*[[@{/}]]*/ '../../static/'
+        , version: true
+    }).use(['index'], function () {
+
+    });
+</script>
+</body>
+</html>

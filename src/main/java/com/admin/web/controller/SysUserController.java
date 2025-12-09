@@ -70,6 +70,8 @@ public class SysUserController extends BaseController {
         }
         oldSysUser.setMobile(sysUser.getMobile());
         oldSysUser.setEmail(sysUser.getEmail());
+        oldSysUser.setAvatar(sysUser.getAvatar());
+        oldSysUser.setRemark(sysUser.getRemark());
         if (Objects.isNull(this.sysUserService.save(oldSysUser))) {
             return ServerResponseEntity.fail("用户修改失败！");
         }

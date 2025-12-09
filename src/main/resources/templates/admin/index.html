@@ -85,21 +85,11 @@
         <!-- 侧边菜单 -->
         <div class="layui-side layui-side-menu">
             <div class="layui-side-scroll">
-                <div class="layui-logo" lay-href="me.html">
+                <div class="layui-logo" lay-href="welcome.html">
                     <span th:text="${config.title}">ADMIN-UI-PRO</span>
                 </div>
                 <ul class="layui-nav layui-nav-tree" lay-accordion id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
-                    <li data-name="home" class="layui-nav-item layui-nav-itemed">
-                        <a href="javascript:" lay-tips="主页" lay-direction="2">
-                            <i class="layui-icon layui-icon-home"></i>
-                            <cite>主页</cite>
-                        </a>
-                        <dl class="layui-nav-child">
-                            <dd data-name="me" class="layui-this">
-                                <a lay-href="me.html">个人中心</a>
-                            </dd>
-                        </dl>
-                    </li>
+
                 </ul>
             </div>
         </div>
@@ -122,14 +112,14 @@
             </div>
             <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
                 <ul class="layui-tab-title" id="LAY_app_tabsheader">
-                    <li lay-id="me.html" lay-attr="me.html" class="layui-this"><i class="layui-icon layui-icon-home"></i></li>
+                    <li lay-id="welcome.html" lay-attr="welcome.html" class="layui-this"><i class="layui-icon layui-icon-home"></i></li>
                 </ul>
             </div>
         </div>
         <!-- 主体内容 -->
         <div class="layui-body" id="LAY_app_body">
             <div class="layadmin-tabsbody-item layui-show">
-                <iframe src="me.html" frameborder="0" class="layadmin-iframe"></iframe>
+                <iframe src="welcome.html" frameborder="0" class="layadmin-iframe"></iframe>
             </div>
         </div>
         <!-- 辅助元素，一般用于移动设备下遮罩 -->
@@ -147,7 +137,7 @@
     }
 
     layui.config({
-        base: /*[[@{/}]]*/ '../static/'
+        base: /*[[@{/}]]*/ '../../static/'
         , version: true
     }).use(['index'], function () {
 
@@ -186,9 +176,7 @@
         });
 
         function load(data) {
-            if (data.avatar) {
-                layui.$('#sys-avatar').attr('src', data.avatar);
-            }
+            if (data.avatar) layui.$('#sys-avatar').attr('src', data.avatar);
             layui.$('#sys-user').html(data.username);
         }
     });

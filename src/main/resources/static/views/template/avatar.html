@@ -77,6 +77,7 @@
         , version: true
     }).use(['index'], function () {
         layui.$('img').on('click', function () {
+            parent.layui.$('#avatar').val(layui.$(this).attr('src'));
             parent.layui.$('#sys-avatar').attr('src', layui.$(this).attr('src'));
             parent.parent.layui.$('#sys-avatar').attr('src', layui.$(this).attr('src'));
             parent.layui.layer.close('sys-avatar');

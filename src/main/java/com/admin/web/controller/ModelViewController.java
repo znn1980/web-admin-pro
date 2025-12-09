@@ -44,6 +44,12 @@ public class ModelViewController extends BaseController {
     }
 
     @SysPermissions(SysLogin.class)
+    @GetMapping("/admin/welcome.html")
+    public ModelAndView welcome() {
+        return new ModelAndView("admin/welcome");
+    }
+
+    @SysPermissions(SysLogin.class)
     @GetMapping("/admin/me.html")
     public ModelAndView me() {
         return new ModelAndView("admin/me");

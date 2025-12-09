@@ -61,7 +61,7 @@ public class SysLogAspect {
     void doAround(JoinPoint joinPoint, SysLog sysLog, Object result, Exception e) {
         try {
             SysUserLog sysUserLog = new SysUserLog();
-            StringJoiner params = new StringJoiner("|");
+            StringJoiner params = new StringJoiner(System.lineSeparator());
             if (Objects.nonNull(joinPoint.getArgs())) {
                 Arrays.asList(joinPoint.getArgs()).forEach(arg -> {
                     if (Objects.nonNull(arg) && !isFilterObject(arg)) {

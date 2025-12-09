@@ -68,8 +68,12 @@
 </div>
 <script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
 <script th:inline="javascript">
+    const sysCode =/*[[@{/sys/code.jpg}]]*/ '';
 
-    const sysCode =/*[[@{/sys/code.jpg}]]*/ '/sys/code.jpg';
+    layui.$('#sys-code').attr('src', `${sysCode}?t=${Date.now()}`)
+        .on('click', function () {
+            layui.$('#sys-code').attr('src', `${sysCode}?t=${Date.now()}`);
+        });
 
     layui.config({
         base: /*[[@{/}]]*/ '../../static/'
@@ -84,7 +88,7 @@
                     layui.layer.load();
                 }
                 , complete: function () {
-                    layui.$('#login-code').attr('src', sysCode + '?t=' + Date.now());
+                    layui.$('#sys-code').attr('src', `${sysCode}?t=${Date.now()}`);
                     layui.layer.closeAll('loading');
                 }
                 , done: function (res) {
@@ -96,12 +100,6 @@
                 }
             });
         });
-
-        layui.$('#sys-code').on('click', function () {
-            layui.$('#sys-code').attr('src', sysCode + '?t=' + Date.now());
-        });
-
-        layui.$('#sys-code').attr('src', sysCode + '?t=' + Date.now());
     });
 </script>
 </body>
