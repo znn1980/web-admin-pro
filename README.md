@@ -3,8 +3,8 @@
 #### 项目简介
 一个基于 SpringBoot 3.5.8、SpringBoot Jpa、Spring Session、Thymeleaf 的后台管理系统
 
-#### 项目简介
-最新版 [layuiAdmin](https://gitee.com/znn1980/admin-ui-pro)
+#### 前端框架
+最新版 [layuiAdmin](https://gitee.com/znn1980/admin-ui-pro) UI 主题
 
 ####  系统功能
 - 用户管理：提供用户的相关配置
