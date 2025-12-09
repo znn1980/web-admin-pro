@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head>
+    <meta charset="utf-8">
+    <title th:text="|${config.title} v${config.version}|">WEB-ADMIN-PRO</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}" href="../../static/favicon.ico"/>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" href="../../static/layui/css/layui.css" media="all">
+    <link rel="stylesheet" th:href="@{/admin-ui/css/admin.css}" href="../../static/admin-ui/css/admin.css" media="all">
+    <link rel="stylesheet" th:href="@{/admin-ui/css/login.css}" href="../../static/admin-ui/css/login.css" media="all">
+</head>
+<body>
+<div id="LAY-user-login" class="layadmin-user-login layadmin-user-display-show"
+     th:style="|background: url(@{/style/imgs/bg.png}) no-repeat center center;background-size: cover;|"
+     style="background: url('../../static/style/imgs/bg.png') no-repeat center center;background-size: cover;">
+    <div class="layadmin-user-login-main">
+        <div class="layadmin-user-login-box layadmin-user-login-header">
+            <h2><img th:src="@{/style/imgs/logo.png}" src="../../static/style/imgs/logo.png" alt=""></h2>
+            <span style="color: white;" th:text="|${config.title} v${config.version}|">WEB-ADMIN-PRO</span>
+        </div>
+        <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
+            <div class="layui-form-item">
+                <div class="layui-input-wrap">
+                    <div class="layui-input-prefix">
+                        <i class="layui-icon layui-icon-username"></i>
+                    </div>
+                    <label for="username"></label>
+                    <input type="text" id="username" name="username" value="" lay-verify="required" placeholder="用户名/手机号/邮箱" lay-reqtext="请填写用户名" autocomplete="off" class="layui-input" lay-affix="clear">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-wrap">
+                    <div class="layui-input-prefix">
+                        <i class="layui-icon layui-icon-password"></i>
+                    </div>
+                    <label for="password"></label>
+                    <input type="password" id="password" name="password" value="" lay-verify="required" placeholder="密码" lay-reqtext="请填写密码" autocomplete="off" class="layui-input" lay-affix="eye">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-row">
+                    <div class="layui-col-xs7">
+                        <div class="layui-input-wrap">
+                            <div class="layui-input-prefix">
+                                <i class="layui-icon layui-icon-vercode"></i>
+                            </div>
+                            <label for="sysCode"></label>
+                            <input type="text" id="sysCode" name="sysCode" value="" lay-verify="required" placeholder="验证码" lay-reqtext="请填写验证码" autocomplete="off" class="layui-input" lay-affix="clear">
+                        </div>
+                    </div>
+                    <div class="layui-col-xs5">
+                        <div style="margin-left: 10px;">
+                            <img class="layadmin-user-login-codeimg" id="sys-code" alt="" src="" width="120" height="40">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <button id="login-submit" class="layui-btn layui-btn-fluid" lay-submit lay-filter="login-submit">登 录</button>
+            </div>
+        </div>
+    </div>
+    <div class="layui-trans layadmin-user-login-footer">
+        <p style="color: white" th:text="${config.copyright}">© 2025 All Rights Reserved.</p>
+    </div>
+</div>
+<script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
+<script th:inline="javascript">
+
+    const sysCode =/*[[@{/sys/code.jpg}]]*/ '/sys/code.jpg';
+
+    layui.config({
+        base: /*[[@{/}]]*/ '../../static/'
+        , version: true
+    }).use(['index'], function () {
+        layui.form.on('submit(login-submit)', function (data) {
+            layui.admin.req({
+                url: /*[[@{/sys/user/login}]]*/ '/sys/user/login'
+                , type: 'POST', contentType: "application/json;charset=UTF-8"
+                , data: JSON.stringify(data.field)
+                , beforeSend: function () {
+                    layui.layer.load();
+                }
+                , complete: function () {
+                    layui.$('#login-code').attr('src', sysCode + '?t=' + Date.now());
+                    layui.layer.closeAll('loading');
+                }
+                , done: function (res) {
+                    layui.layer.msg(res.msg, {
+                        offset: '15px', icon: 1, time: 1000
+                    }, function () {
+                        location.href = 'index.html';
+                    });
+                }
+            });
+        });
+
+        layui.$('#sys-code').on('click', function () {
+            layui.$('#sys-code').attr('src', sysCode + '?t=' + Date.now());
+        });
+
+        layui.$('#sys-code').attr('src', sysCode + '?t=' + Date.now());
+    });
+</script>
+</body>
+</html>
+
+
