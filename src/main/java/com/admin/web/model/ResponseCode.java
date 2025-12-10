@@ -19,7 +19,7 @@ public enum ResponseCode {
         return code;
     }
 
-    public String getMsg() {
+    public String msg() {
         return msg;
     }
 
@@ -32,7 +32,7 @@ public enum ResponseCode {
     public String toString() {
         return "ResponseCode{"
                 + "code='" + this.value() + '\''
-                + ", msg='" + this.getMsg() + '\''
+                + ", msg='" + this.msg() + '\''
                 + "} "
                 + super.toString();
     }

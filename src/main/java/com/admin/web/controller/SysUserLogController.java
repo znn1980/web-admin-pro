@@ -1,10 +1,7 @@
 package com.admin.web.controller;
 
 import com.admin.web.annotation.SysPermissions;
-import com.admin.web.model.PageQuery;
-import com.admin.web.model.ServerResponseEntity;
-import com.admin.web.model.SysUser;
-import com.admin.web.model.SysUserLog;
+import com.admin.web.model.*;
 import com.admin.web.service.SysUserLogService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,10 +23,11 @@ public class SysUserLogController extends BaseController {
 
     @SysPermissions
     @PostMapping("/user/page")
-    public ServerResponseEntity<List<SysUserLog>> page(@RequestBody PageQuery pageQuery) {
+    public ServerResponseEntity<List<SysUserLog>> page(@RequestBody UserLogQuery userLogQuery) {
         SysUser sysUser = super.getSysUser();
-        Page<SysUserLog> sysUserLogs = this.sysUserLogService.findByUsernameOrderByTimestampDesc(sysUser.getUsername()
-                , PageRequest.of(pageQuery.getPage(), pageQuery.getLimit()));
+        userLogQuery.setUsername(sysUser.getUsername());
+        Page<SysUserLog> sysUserLogs = this.sysUserLogService.findAll(userLogQuery
+                , PageRequest.of(userLogQuery.getPage(), userLogQuery.getLimit()));
         return ServerResponseEntity.ok(sysUserLogs.getTotalElements(), sysUserLogs.getContent());
     }
 

@@ -61,16 +61,16 @@ public class SysLogAspect {
     void doAround(JoinPoint joinPoint, SysLog sysLog, Object result, Exception e) {
         try {
             SysUserLog sysUserLog = new SysUserLog();
-            StringJoiner params = new StringJoiner(System.lineSeparator());
             if (Objects.nonNull(joinPoint.getArgs())) {
+                StringJoiner params = new StringJoiner(System.lineSeparator());
                 Arrays.asList(joinPoint.getArgs()).forEach(arg -> {
-                    if (Objects.nonNull(arg) && !isFilterObject(arg)) {
+                    if (Objects.nonNull(arg) && !this.filterObject(arg)) {
                         log.info("REQUEST:{}", arg);
                         params.add(arg.toString());
                     }
                 });
+                sysUserLog.setParams(params.toString());
             }
-            sysUserLog.setParams(params.toString());
             if (Objects.nonNull(result)) {
                 log.info("RESPONSE:{}", result);
                 sysUserLog.setResult(result.toString());
@@ -80,9 +80,8 @@ public class SysLogAspect {
                     e.printStackTrace(new PrintWriter(this, true));
                 }}.toString());
             }
-            SysUser sysUser = Objects.requireNonNullElse(SecurityUtils.getSysUser(WebUtils.getRequest()), SecurityUtils.getSysUser());
             UserAgent userAgent = UserAgentUtils.getUserAgent(WebUtils.getRequest());
-            sysUserLog.setUsername(sysUser.getUsername());
+            sysUserLog.setUsername(this.getSysUser().getUsername());
             sysUserLog.setIp(WebUtils.getClientIp(WebUtils.getRequest()));
             sysUserLog.setOs(UserAgentUtils.getOs(userAgent));
             sysUserLog.setBrowser(UserAgentUtils.getBrowser(userAgent));
@@ -97,7 +96,11 @@ public class SysLogAspect {
         }
     }
 
-    static boolean isFilterObject(Object o) {
+    SysUser getSysUser() {
+        return Objects.requireNonNullElse(SecurityUtils.getSysUser(WebUtils.getRequest()), SecurityUtils.getSysUser());
+    }
+
+    boolean filterObject(Object o) {
         return o instanceof MultipartFile
                 || o instanceof HttpServletRequest
                 || o instanceof HttpServletResponse;

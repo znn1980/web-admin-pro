@@ -56,15 +56,15 @@ public class ServerResponseEntity<T> implements Serializable {
     }
 
     public static <T> ServerResponseEntity<T> ok() {
-        return new ServerResponseEntity<>(ResponseCode.OK.value(), ResponseCode.OK.getMsg(), null, null);
+        return new ServerResponseEntity<>(ResponseCode.OK.value(), ResponseCode.OK.msg(), null, null);
     }
 
     public static <T> ServerResponseEntity<T> ok(T data) {
-        return new ServerResponseEntity<>(ResponseCode.OK.value(), ResponseCode.OK.getMsg(), null, data);
+        return new ServerResponseEntity<>(ResponseCode.OK.value(), ResponseCode.OK.msg(), null, data);
     }
 
     public static <T> ServerResponseEntity<T> ok(Long count, T data) {
-        return new ServerResponseEntity<>(ResponseCode.OK.value(), ResponseCode.OK.getMsg(), count, data);
+        return new ServerResponseEntity<>(ResponseCode.OK.value(), ResponseCode.OK.msg(), count, data);
     }
 
     public static <T> ServerResponseEntity<T> fail(String msg) {
@@ -72,7 +72,7 @@ public class ServerResponseEntity<T> implements Serializable {
     }
 
     public static <T> ServerResponseEntity<T> fail(ResponseCode responseCode) {
-        return new ServerResponseEntity<>(responseCode.value(), responseCode.getMsg(), null, null);
+        return new ServerResponseEntity<>(responseCode.value(), responseCode.msg(), null, null);
     }
 
     public static <T> ServerResponseEntity<T> fail(String code, String msg) {

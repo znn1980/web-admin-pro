@@ -223,9 +223,9 @@
 
         layui.laydate.render({
             elem: '#timestamp', range: ':'
-            , value: layui.util.toDateString(Date.now() - 86400000, 'yyyy-MM-dd')
-                + ' : ' + layui.util.toDateString(Date.now(), 'yyyy-MM-dd')
+            , value: `${ymd()} : ${ymd(86400000)}`
         });
+
 
         layui.table.render({
             elem: '#sys-log-table'
@@ -233,9 +233,9 @@
             , method: 'POST', contentType: "application/json;charset=UTF-8"
             , where: {
                 startTimestamp: (layui.$('#timestamp').val().split(":")[0]
-                    || layui.util.toDateString(Date.now() - 86400000, 'yyyy-MM-dd')).trim()
+                    || ymd()).trim() + ' 00:00:00'
                 , endTimestamp: (layui.$('#timestamp').val().split(":")[1]
-                    || layui.util.toDateString(Date.now(), 'yyyy-MM-dd')).trim()
+                    || ymd(86400000)).trim() + ' 00:00:00'
             }
             , page: true
             , toolbar: '#sys-log-toolbar'
@@ -307,10 +307,10 @@
         layui.admin.events.search = function () {
             layui.table.reload('sys-log-table', {
                 where: {
-                    startTimestamp: (layui.$('#timestamp').val().split("~")[0]
-                        || layui.util.toDateString(Date.now() - 86400000, 'yyyy-MM-dd')).trim()
-                    , endTimestamp: (layui.$('#timestamp').val().split("~")[1]
-                        || layui.util.toDateString(Date.now(), 'yyyy-MM-dd')).trim()
+                    startTimestamp: (layui.$('#timestamp').val().split(":")[0]
+                        || ymd()).trim() + ' 00:00:00'
+                    , endTimestamp: (layui.$('#timestamp').val().split(":")[1]
+                        || ymd(86400000)).trim() + ' 00:00:00'
                 }
                 , page: {curr: 1}
             });
@@ -319,8 +319,7 @@
         layui.admin.events.refresh = function () {
             layui.laydate.render({
                 elem: '#timestamp', range: ':'
-                , value: layui.util.toDateString(Date.now() - 86400000, 'yyyy-MM-dd')
-                    + ' : ' + layui.util.toDateString(Date.now(), 'yyyy-MM-dd')
+                , value: `${ymd()} : ${ymd(86400000)}`
             });
         }
 
@@ -389,6 +388,10 @@
             layui.$('#sys-ip').html(data.ip);
             layui.$('#sys-timestamp').html(data.createTimestamp);
             layui.form.val('sys-user-form', data);
+        }
+
+        function ymd(ms) {
+            return layui.util.toDateString(Date.now() + ((ms) ? ms : 0), 'yyyy-MM-dd');
         }
     });
 </script>

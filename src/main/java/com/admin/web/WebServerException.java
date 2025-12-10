@@ -22,7 +22,7 @@ public class WebServerException extends RuntimeException {
     }
 
     public WebServerException(ResponseCode responseCode) {
-        this(responseCode.getMsg(), responseCode.value(), null);
+        this(responseCode.msg(), responseCode.value(), null);
     }
 
     public String getCode() {

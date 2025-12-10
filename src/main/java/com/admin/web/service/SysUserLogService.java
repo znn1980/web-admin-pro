@@ -2,6 +2,10 @@ package com.admin.web.service;
 
 import com.admin.web.dao.SysUserLogDao;
 import com.admin.web.model.SysUserLog;
+import com.admin.web.model.UserLogQuery;
+
+import com.admin.web.utils.Specifications;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,9 +23,13 @@ public class SysUserLogService {
         this.sysUserLogDao = sysUserLogDao;
     }
 
-    public Page<SysUserLog> findByUsernameOrderByTimestampDesc(String username, Pageable page) {
-        return this.sysUserLogDao.findByUsernameOrderByTimestampDesc(username, page);
+    public Page<SysUserLog> findAll(UserLogQuery query, Pageable page) {
+        return this.sysUserLogDao.findAll(Specifications.<SysUserLog>where()
+                .equal("username", query.getUsername())
+                .between("timestamp", query.getStartTimestamp(), query.getEndTimestamp())
+                .orderBy("timestamp", false).build(), page);
     }
+
 
     public void deleteAllById(List<Long> id) {
         this.sysUserLogDao.deleteAllById(id);

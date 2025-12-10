@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
-import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author znn
@@ -28,12 +28,15 @@ public class SysPermissionsAspect {
     @Before(value = "@annotation(sysPermissions)")
     public void doBefore(JoinPoint joinPoint, SysPermissions sysPermissions) {
         log.info("ASPECT:{}.{}()", joinPoint.getTarget().getClass().getName(), joinPoint.getSignature().getName());
-        SysUser sysUser = SecurityUtils.getSysUser(WebUtils.getRequest());
-        if (Objects.isNull(sysUser)) {
+        SysUser sysUser = Optional.ofNullable(this.getSysUser()).orElseThrow(() -> {
             throw new WebServerException(ResponseCode.LOGOUT);
-        }
+        });
         if (!Arrays.asList(sysPermissions.value()).contains(SysLogin.class)) {
-            //判断权限
+            System.out.println("判断权限=>" + sysUser);
         }
+    }
+
+    public SysUser getSysUser() {
+        return SecurityUtils.getSysUser(WebUtils.getRequest());
     }
 }
