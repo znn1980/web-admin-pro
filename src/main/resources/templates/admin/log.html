@@ -23,7 +23,7 @@
                 </div>
             </div>
             <!--更多查询条件的例子，没有实际作用，只作为演示使用。-->
-            <div class="layui-inline" name="more" style="display: none;">
+            <div class="layui-inline more" style="display: none;">
                 <label class="layui-form-label">用户账号</label>
                 <div class="layui-input-inline">
                     <label for="username"></label>
@@ -174,7 +174,7 @@
         }
 
         layui.admin.events.more = function () {
-            layui.$("div[name='more']").toggle();
+            layui.$(".layui-inline.more").toggle();
             layui.$('#more').html(layui.$('#more').html() === '\n收起' ? '\n展开' : '\n收起')
                 .toggleClass('layui-icon-down').toggleClass('layui-icon-up');
         }

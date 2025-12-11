@@ -52,7 +52,8 @@
                     </div>
                     <div class="layui-col-xs5">
                         <div style="margin-left: 10px;">
-                            <img class="layadmin-user-login-codeimg" id="sys-code" alt="" th:src="@{/sys/code.jpg}" width="120" height="40" src="">
+                            <img class="layadmin-user-login-codeimg" id="sys-code" alt="" src="" width="120" height="40"
+                                 th:src="@{/sys/code.jpg}" th:onclick="|this.src='@{/sys/code.jpg}?t='+Date.now()|">
                         </div>
                     </div>
                 </div>
@@ -68,17 +69,11 @@
 </div>
 <script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
 <script th:inline="javascript">
-    const sysCode =/*[[@{/sys/code.jpg}]]*/ '';
-
-    layui.$('#sys-code').attr('src', `${sysCode}?t=${Date.now()}`)
-        .on('click', function () {
-            layui.$('#sys-code').attr('src', `${sysCode}?t=${Date.now()}`);
-        });
-
     layui.config({
         base: /*[[@{/}]]*/ '../../static/'
         , version: true
     }).use(['index'], function () {
+
         layui.form.on('submit(login-submit)', function (data) {
             layui.admin.req({
                 url: /*[[@{/sys/user/login}]]*/ '/sys/user/login'
@@ -88,7 +83,7 @@
                     layui.layer.load();
                 }
                 , complete: function () {
-                    layui.$('#sys-code').attr('src', `${sysCode}?t=${Date.now()}`);
+                    layui.$('#sys-code').attr('src', (/*[[@{/sys/code.jpg}]]*/ '') + '?t=' + Date.now());
                     layui.layer.closeAll('loading');
                 }
                 , done: function (res) {
