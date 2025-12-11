@@ -1,12 +1,14 @@
 package com.admin.web.dao;
 
+import com.admin.web.model.SysMenu;
 import com.admin.web.model.SysUser;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 /**
  * @author znn
  */
-public interface SysUserDao extends JpaRepository<SysUser, Long> {
+public interface SysUserDao extends JpaRepository<SysUser, Long>, JpaSpecificationExecutor<SysMenu> {
     /**
      * 通过用户名查询用户
      *

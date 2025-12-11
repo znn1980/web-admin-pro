@@ -143,7 +143,7 @@
                                         <label class="layui-form-label">日期范围</label>
                                         <div class="layui-input-inline">
                                             <label for="timestamp"></label>
-                                            <input type="text" class="layui-input" id="timestamp" readonly placeholder="请选择查询日志的日期范围">
+                                            <input type="text" class="layui-input" id="timestamp" readonly placeholder="日期范围">
                                         </div>
                                     </div>
                                     <!--更多查询条件的例子，没有实际作用，只作为演示使用。-->
@@ -260,23 +260,13 @@
                 if (logs.length <= 0) {
                     layui.layer.msg("请选择一条纪录！");
                 } else {
-                    layui.layer.confirm('是否删除【' + logs.length + '】条日志？', {
+                    layui.layer.confirm(`是否删除【${logs.length}】条日志？`, {
                         title: '删除', closeBtn: 0, skin: 'layui-layer-admin'
                     }, function (index) {
                         layui.layer.close(index);
-                        layui.admin.req({
-                            url: /*[[@{/sys/log}]]*/ '/sys/log'
-                            , type: 'DELETE', contentType: "application/json;charset=UTF-8"
-                            , data: JSON.stringify(logs.map(log => log.id))
-                            , beforeSend: function () {
-                                layui.layer.load();
-                            }
-                            , complete: function () {
-                                layui.layer.closeAll('loading');
-                            }
-                            , done: function () {
-                                layui.table.reload('sys-log-table');
-                            }
+                        req(/*[[@{/sys/log}]]*/ '/sys/log', 'DELETE', logs.map(log => log.id), function (data) {
+                            layui.layer.msg(data.msg);
+                            layui.table.reload('sys-log-table');
                         });
                     });
                 }
@@ -330,28 +320,26 @@
         }
 
         layui.form.on('submit(sys-user-submit)', function (data) {
-            layui.admin.req({
-                url: /*[[@{/sys/user}]]*/ '/sys/user'
-                , type: 'PUT', contentType: "application/json;charset=UTF-8"
-                , data: JSON.stringify(data.field)
-                , beforeSend: function () {
-                    layui.layer.load();
-                }
-                , complete: function () {
-                    layui.layer.closeAll('loading');
-                }
-                , done: function (data) {
-                    layui.layer.msg(data.msg);
-                    load(data.data);
-                }
+            req(/*[[@{/sys/user}]]*/ '/sys/user', 'PUT', data.field, function (data) {
+                layui.layer.msg(data.msg);
+                load(data.data);
             });
         });
 
         layui.form.on('submit(password-submit)', function (data) {
+            req(/*[[@{/sys/user/password}]]*/ '/sys/user/password', 'PUT', data.field, function (data) {
+                layui.layer.msg(data.msg);
+                layui.$('#password-form')[0].reset();
+            });
+        });
+
+        req(/*[[@{/sys/user}]]*/ '/sys/user', 'GET', null, function (data) {
+            load(data.data);
+        });
+
+        function req(url, type, data, done) {
             layui.admin.req({
-                url: /*[[@{/sys/user/password}]]*/ '/sys/user/password'
-                , type: 'PUT', contentType: "application/json;charset=UTF-8"
-                , data: JSON.stringify(data.field)
+                url: url, type: type, data: JSON.stringify(data), contentType: "application/json;charset=UTF-8"
                 , beforeSend: function () {
                     layui.layer.load();
                 }
@@ -359,26 +347,10 @@
                     layui.layer.closeAll('loading');
                 }
                 , done: function (data) {
-                    layui.layer.msg(data.msg);
-                    layui.$('#password-form')[0].reset();
+                    done(data);
                 }
             });
-        });
-
-        layui.admin.req({
-            url: /*[[@{/sys/user}]]*/ '/sys/user'
-            , type: 'GET', contentType: "application/json;charset=UTF-8"
-            , data: {}
-            , beforeSend: function () {
-                layui.layer.load();
-            }
-            , complete: function () {
-                layui.layer.closeAll('loading');
-            }
-            , done: function (data) {
-                load(data.data);
-            }
-        });
+        }
 
         function load(data) {
             if (data.avatar) layui.$('#sys-avatar').attr('src', data.avatar);

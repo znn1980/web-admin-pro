@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head>
+    <meta charset="utf-8">
+    <title th:text="|${config.title} v${config.version}|">WEB-ADMIN-PRO</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}" href="../../static/favicon.ico"/>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" href="../../static/layui/css/layui.css" media="all">
+    <link rel="stylesheet" th:href="@{/admin-ui/css/admin.css}" href="../../static/admin-ui/css/admin.css" media="all">
+</head>
+<body class="layui-fluid">
+<div class="layui-card">
+    <div class="layui-card-header">角色管理</div>
+    <div class="layui-card-body">
+        <table class="layui-hide" id="sys-role-table" lay-filter="sys-role-table"></table>
+    </div>
+</div>
+<script type="text/html" id="disable-tpl">
+    <input type="checkbox" value="{{d.id}}"
+           {{#if(!d.disable){}}checked{{#}}}
+           data-json="{{encodeURIComponent(JSON.stringify(d))}}"
+           title="启用|禁用" lay-skin="switch" lay-filter="sys-disable">
+</script>
+<script type="text/html" id="sys-role-toolbar">
+    <div class="layui-btn-group">
+        <button class="layui-btn layui-btn-sm" lay-event="save-toolbar">
+            <i class="layui-icon layui-icon-add-1"></i>添加
+        </button>
+        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="edit-toolbar">
+            <i class="layui-icon layui-icon-edit"></i>编辑
+        </button>
+        <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="delete-toolbar">
+            <i class="layui-icon layui-icon-delete"></i>删除
+        </button>
+        <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="refresh-toolbar">
+            <i class="layui-icon layui-icon-refresh"></i>刷新
+        </button>
+    </div>
+</script>
+<script type="text/html" id="sys-role-tool">
+    <div class="layui-btn-group">
+        <button class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit-tool">
+            <i class="layui-icon layui-icon-edit"></i>编辑
+        </button>
+        <button class="layui-btn layui-btn-xs layui-bg-red" lay-event="delete-tool">
+            <i class="layui-icon layui-icon-delete"></i>删除
+        </button>
+    </div>
+</script>
+<form class="layui-form" id="sys-role-form" lay-filter="sys-role-form" style="display: none;">
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="name">角色名称</label>
+        <div class="layui-input-block">
+            <input type="hidden" id="id" name="id" class="layui-input">
+            <input type="text" id="name" name="name" lay-verify="required" placeholder="角色名称" lay-reqtext="请输入角色名称" autocomplete="off" class="layui-input" lay-affix="clear">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="remark">角色备注</label>
+        <div class="layui-input-block">
+            <textarea class="layui-textarea" id="remark" name="remark" placeholder="角色备注"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色状态</label>
+        <div class="layui-input-block">
+            <input type="checkbox" checked id="disable" name="disable" title="启用|禁用" lay-skin="switch">
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="sys-role-submit" id="sys-role-submit" value="确认">
+    </div>
+</form>
+<script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
+<script th:inline="javascript">
+    layui.config({
+        base: /*[[@{/}]]*/ '../../static/'
+        , version: true
+    }).use(['index'], function () {
+
+        layui.table.render({
+            elem: '#sys-role-table'
+            , url: /*[[@{/sys/role/page}]]*/ '/sys/role/page'
+            //, method: 'GET', contentType: "application/json;charset=UTF-8"
+            , toolbar: '#sys-role-toolbar'
+            , cols: [
+                [
+                    {type: 'radio'}
+                    , {field: 'name', title: '名称', width: 200}
+                    , {field: 'remark', title: '备注'}
+                    , {field: 'disable', title: '状态', align: 'center', width: 90, templet: '#disable-tpl'}
+                    , {title: '操作', align: 'center', toolbar: '#sys-role-tool', width: 140}
+                ]
+            ]
+        });
+
+        layui.form.on('switch(sys-disable)', function (data) {
+            const role = JSON.parse(decodeURIComponent(layui.$(this).data('json')));
+            role.disable = !data.elem.checked;
+            req(/*[[@{/sys/role}]]*/ '/sys/role', 'PUT', role, function (data) {
+                layui.layer.msg(data.msg);
+                layui.table.reload('sys-role-table');
+            });
+        });
+
+        layui.table.on('toolbar(sys-role-table)', function (e) {
+            if (e.event === 'save-toolbar') {
+                layui.$('#id').val('');
+                layui.$('#sys-role-form')[0].reset();
+                save('添加角色', 'POST');
+            }
+            if (e.event === 'edit-toolbar' || e.event === 'delete-toolbar') {
+                const roles = layui.table.checkStatus('sys-role-table').data;
+                if (roles.length <= 0) {
+                    layui.layer.msg("请选择一条纪录！");
+                } else {
+                    if (e.event === 'edit-toolbar') {
+                        roles[0].disable = !roles[0].disable;
+                        layui.form.val('sys-role-form', roles[0]);
+                        save('修改角色', 'PUT');
+                    }
+                    if (e.event === 'delete-toolbar') {
+                        del(roles[0]);
+                    }
+                }
+            }
+            if (e.event === 'refresh-toolbar') {
+                layui.table.reload('sys-role-table');
+            }
+        });
+
+        layui.table.on('tool(sys-role-table)', function (e) {
+            if (e.event === 'edit-tool') {
+                e.data.disable = !e.data.disable;
+                layui.form.val('sys-role-form', e.data);
+                save('修改角色', 'PUT');
+            }
+            if (e.event === 'delete-tool') {
+                del(e.data);
+            }
+        });
+
+        function save(title, type) {
+            layui.admin.popup({
+                type: 1, title: title, area: 'auto'
+                , content: layui.$('#sys-role-form')
+                , btn: ['确定', '取消']
+                , yes: function (index) {
+                    layui.form.on('submit(sys-role-submit)', function (data) {
+                        data.field.disable = data.field.disable !== 'on';
+                        layui.layer.close(index);
+                        req(/*[[@{/sys/role}]]*/ '/sys/role', type, data.field, function (data) {
+                            layui.layer.msg(data.msg);
+                            layui.table.reload('sys-role-table');
+                        });
+                    });
+                    layui.$('#sys-role-submit').trigger('click');
+                }
+            });
+        }
+
+        function del(role) {
+            layui.layer.confirm(`是否删除名称为【${role.name}】的角色？`, {
+                title: '删除角色', closeBtn: 0, skin: 'layui-layer-admin'
+            }, function (index) {
+                layui.layer.close(index);
+                req(/*[[@{/sys/role}]]*/ '/sys/role', 'DELETE', role.id, function (data) {
+                    layui.layer.msg(data.msg);
+                    layui.table.reload('sys-role-table');
+                });
+            });
+        }
+
+        function req(url, type, data, done) {
+            layui.admin.req({
+                url: url, type: type, data: JSON.stringify(data)
+                , contentType: "application/json;charset=UTF-8"
+                , beforeSend: function () {
+                    layui.layer.load();
+                }
+                , complete: function () {
+                    layui.layer.closeAll('loading');
+                }
+                , done: function (data) {
+                    done(data);
+                }
+            });
+        }
+
+    });
+</script>
+</body>
+</html>

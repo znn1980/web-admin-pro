@@ -9,6 +9,7 @@ import com.admin.web.utils.Specifications;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -24,6 +25,9 @@ public class SysUserLogService {
     }
 
     public Page<SysUserLog> findAll(UserLogQuery query, Pageable page) {
+        if (!StringUtils.hasText(query.getUsername())) {
+            query.setUsername(null);
+        }
         return this.sysUserLogDao.findAll(Specifications.<SysUserLog>where()
                 .equal("username", query.getUsername())
                 .between("timestamp", query.getStartTimestamp(), query.getEndTimestamp())

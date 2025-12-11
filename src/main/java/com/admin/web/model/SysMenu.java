@@ -2,7 +2,6 @@ package com.admin.web.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
@@ -10,11 +9,10 @@ import java.util.List;
 /**
  * @author znn
  */
-//@Entity
-//@Table(name = "SYS_MENU")
+@Entity
+@Table(name = "SYS_MENU")
 public class SysMenu extends BaseEntity {
     @Column(name = "PID")
-    @NotNull(message = "上级菜单不能为空！")
     private Long pid;
     @Column(name = "TITLE")
     @NotBlank(message = "菜单标题不能为空！")
@@ -30,8 +28,6 @@ public class SysMenu extends BaseEntity {
     private boolean sysMenu;
     @ManyToMany(mappedBy = "menus")
     private List<SysRole> roles;
-    @Transient
-    private List<SysMenu> children;
 
     public SysMenu() {
         super();
@@ -42,7 +38,6 @@ public class SysMenu extends BaseEntity {
         this.setSort(null);
         this.setSysMenu(true);
         this.setRoles(null);
-        this.setChildren(null);
     }
 
     public Long getPid() {
@@ -101,14 +96,6 @@ public class SysMenu extends BaseEntity {
         this.roles = roles;
     }
 
-    public List<SysMenu> getChildren() {
-        return children;
-    }
-
-    public void setChildren(List<SysMenu> children) {
-        this.children = children;
-    }
-
     @Override
     public String toString() {
         return "SysMenu{" +
@@ -119,7 +106,6 @@ public class SysMenu extends BaseEntity {
                 ", sort=" + this.getSort() +
                 ", sysMenu=" + this.isSysMenu() +
                 ", roles=" + this.getRoles() +
-                ", children=" + this.getChildren() +
                 '}';
     }
 }

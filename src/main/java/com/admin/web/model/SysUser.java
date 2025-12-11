@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author znn
@@ -38,6 +39,11 @@ public class SysUser extends BaseEntity {
     private LocalDateTime passwordTimestamp;
     @Column(name = "SYS_ADMIN")
     private boolean sysAdmin;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "SYS_USERS_ROLES",
+            joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
+            inverseJoinColumns = {@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")})
+    private List<SysRole> roles;
     @Transient
     private String sessionId;
     @Transient
@@ -68,6 +74,7 @@ public class SysUser extends BaseEntity {
         this.setAvatar(null);
         this.setPasswordTimestamp(null);
         this.setSysAdmin(false);
+        this.setRoles(null);
         this.setSessionId(null);
         this.setIp(null);
         this.setOldPassword(null);
@@ -132,6 +139,14 @@ public class SysUser extends BaseEntity {
         this.sysAdmin = sysAdmin;
     }
 
+    public List<SysRole> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<SysRole> roles) {
+        this.roles = roles;
+    }
+
     public String getSessionId() {
         return sessionId;
     }
@@ -190,6 +205,7 @@ public class SysUser extends BaseEntity {
                 ", avatar='" + this.getAvatar() + '\'' +
                 ", passwordTimestamp=" + this.getPasswordTimestamp() +
                 ", sysAdmin=" + this.isSysAdmin() +
+                //", roles=" + this.getRoles() +
                 ", sessionId='" + this.getSessionId() + '\'' +
                 ", ip='" + this.getIp() + '\'' +
                 ", oldPassword='" + this.getOldPassword() + '\'' +

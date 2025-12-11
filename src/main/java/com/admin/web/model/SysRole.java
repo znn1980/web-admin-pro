@@ -9,14 +9,14 @@ import java.util.List;
 /**
  * @author znn
  */
-//@Entity
-//@Table(name = "SYS_ROLE")
+@Entity
+@Table(name = "SYS_ROLE")
 public class SysRole extends BaseEntity {
     @Column(name = "NAME")
     @NotBlank(message = "角色名称不能为空！")
     @Size(min = 2, max = 32, message = "角色名称长度应在2-32之间！")
     private String name;
-    @ManyToMany()
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "SYS_ROLES_MENUS",
             joinColumns = {@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")},
             inverseJoinColumns = {@JoinColumn(name = "MENU_ID", referencedColumnName = "ID")})
@@ -59,7 +59,7 @@ public class SysRole extends BaseEntity {
     public String toString() {
         return "SysRole{" +
                 "name='" + this.getName() + '\'' +
-               ", menus=" + this.getMenus() +
+                ", menus=" + this.getMenus() +
                 ", users=" + this.getUsers() +
                 '}';
     }

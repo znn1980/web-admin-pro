@@ -55,6 +55,18 @@ public class ModelViewController extends BaseController {
         return new ModelAndView("admin/me");
     }
 
+    @SysPermissions()
+    @GetMapping("/admin/role.html")
+    public ModelAndView role() {
+        return new ModelAndView("admin/role");
+    }
+
+    @SysPermissions()
+    @GetMapping("/admin/log.html")
+    public ModelAndView log() {
+        return new ModelAndView("admin/log");
+    }
+
     @GetMapping("/sys/code.jpg")
     public void code(HttpServletResponse response) throws IOException {
         response.setHeader("Pragma", "no-cache");

@@ -54,7 +54,7 @@ public class SysUserController extends BaseController {
         return ServerResponseEntity.ok();
     }
 
-    @SysLog("修改用户信息")
+    @SysLog("修改用户")
     @SysPermissions()
     @PutMapping()
     public ServerResponseEntity<SysUser> edit(@RequestBody @Validated(SysUpdate.class) SysUser sysUser) {
@@ -72,6 +72,7 @@ public class SysUserController extends BaseController {
         oldSysUser.setEmail(sysUser.getEmail());
         oldSysUser.setAvatar(sysUser.getAvatar());
         oldSysUser.setRemark(sysUser.getRemark());
+        oldSysUser.setDisable(sysUser.isDisable());
         if (Objects.isNull(this.sysUserService.save(oldSysUser))) {
             return ServerResponseEntity.fail("用户修改失败！");
         }
@@ -80,7 +81,7 @@ public class SysUserController extends BaseController {
         return ServerResponseEntity.ok(oldSysUser);
     }
 
-    @SysLog("修改用户密码")
+    @SysLog("修改密码")
     @SysPermissions()
     @PutMapping("/password")
     public ServerResponseEntity<?> password(@RequestBody @Validated(SysPassword.class) SysUser sysUser) {
@@ -116,10 +117,4 @@ public class SysUserController extends BaseController {
         return ServerResponseEntity.ok(oldSysUser);
     }
 
-    @SysPermissions()
-    @GetMapping("/{id}")
-    public ServerResponseEntity<SysUser> query(@PathVariable Long id) {
-        return ServerResponseEntity.ok(this.sysUserService.findById(id).orElseThrow(() ->
-                new WebServerException(ServerResponseEntity.fail("用户不存在！"))));
-    }
 }
