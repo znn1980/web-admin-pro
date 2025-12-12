@@ -1,8 +1,10 @@
 package com.admin.web.controller;
 
 import com.admin.web.WebServerException;
+import com.admin.web.annotation.SysCreate;
 import com.admin.web.annotation.SysLog;
 import com.admin.web.annotation.SysPermissions;
+import com.admin.web.annotation.SysUpdate;
 import com.admin.web.model.ServerResponseEntity;
 import com.admin.web.model.SysRole;
 import com.admin.web.service.SysRoleService;
@@ -33,7 +35,7 @@ public class SysRoleController extends BaseController {
     @SysLog("添加角色")
     @SysPermissions
     @PostMapping()
-    public ServerResponseEntity<?> save(@RequestBody @Validated SysRole sysRole) {
+    public ServerResponseEntity<?> save(@RequestBody @Validated(SysCreate.class) SysRole sysRole) {
         if (Objects.nonNull(this.sysRoleService.findByName(sysRole.getName()))) {
             return ServerResponseEntity.fail("角色名称已存在！");
         }
@@ -46,7 +48,7 @@ public class SysRoleController extends BaseController {
     @SysLog("修改角色")
     @SysPermissions
     @PutMapping()
-    public ServerResponseEntity<?> edit(@RequestBody @Validated SysRole sysRole) {
+    public ServerResponseEntity<?> edit(@RequestBody @Validated(SysUpdate.class) SysRole sysRole) {
         SysRole oldSysRole = this.sysRoleService.findById(sysRole.getId())
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("角色不存在！")));
         if (!Objects.equals(oldSysRole.getName(), sysRole.getName())

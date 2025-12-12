@@ -1,5 +1,7 @@
 package com.admin.web.model;
 
+import com.admin.web.annotation.SysCreate;
+import com.admin.web.annotation.SysUpdate;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -13,7 +15,7 @@ import java.util.List;
 @Table(name = "SYS_ROLE")
 public class SysRole extends BaseEntity {
     @Column(name = "NAME")
-    @NotBlank(message = "角色名称不能为空！")
+    @NotBlank(message = "角色名称不能为空！", groups = {SysCreate.class, SysUpdate.class})
     @Size(min = 2, max = 32, message = "角色名称长度应在2-32之间！")
     private String name;
     @ManyToMany(fetch = FetchType.EAGER)
@@ -57,7 +59,8 @@ public class SysRole extends BaseEntity {
 
     @Override
     public String toString() {
-        return "SysRole{" +
+        return super.toString() + System.lineSeparator() +
+                "SysRole{" +
                 "name='" + this.getName() + '\'' +
                 ", menus=" + this.getMenus() +
                 ", users=" + this.getUsers() +

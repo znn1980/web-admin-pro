@@ -77,11 +77,11 @@
     layui.config({
         base: /*[[@{/}]]*/ '../../static/'
         , version: true
-    }).use(['index'], function () {
+    }).use(['index', 'common'], function () {
 
         layui.laydate.render({
             elem: '#timestamp', range: ':'
-            , value: `${ymd()} : ${ymd(86400000)}`
+            , value: `${layui.common.ymd()} : ${layui.common.ymd(86400000)}`
         });
 
         layui.table.render({
@@ -91,9 +91,9 @@
             , where: {
                 username: layui.$('#username').val()
                 , startTimestamp: (layui.$('#timestamp').val().split(":")[0]
-                    || ymd()).trim() + ' 00:00:00'
+                    || layui.common.ymd()).trim() + ' 00:00:00'
                 , endTimestamp: (layui.$('#timestamp').val().split(":")[1]
-                    || ymd(86400000)).trim() + ' 00:00:00'
+                    || layui.common.ymd(86400000)).trim() + ' 00:00:00'
             }
             , page: true
             , toolbar: '#sys-log-toolbar'
@@ -102,11 +102,11 @@
                     {type: 'checkbox'}
                     , {field: 'username', title: '用户', width: 80}
                     , {field: 'name', title: '描述', templet: '#name-tpl'}
-                    , {field: 'ip', title: 'IP地址', width: 110, templet: '#ip-tpl'}
+                    , {field: 'ip', title: 'IP地址', width: 130, templet: '#ip-tpl'}
                     , {field: 'os', title: '系统', width: 110}
                     , {field: 'browser', title: '浏览器', width: 100}
                     , {field: 'ms', title: '耗时', align: 'right', width: 80, templet: '#ms-tpl'}
-                    , {field: 'timestamp', title: '创建时间', width: 110, templet: '#timestamp-tpl'}
+                    , {field: 'timestamp', title: '创建时间', width: 160, templet: '#timestamp-tpl'}
                     , {title: '操作', align: 'center', toolbar: '#sys-log-tool', width: 80}
                 ]
             ]
@@ -122,9 +122,11 @@
                         title: '删除', closeBtn: 0, skin: 'layui-layer-admin'
                     }, function (index) {
                         layui.layer.close(index);
-                        req(/*[[@{/sys/log}]]*/ '/sys/log', 'DELETE', logs.map(log => log.id), function (data) {
-                            layui.layer.msg(data.msg);
-                            layui.table.reload('sys-log-table');
+                        layui.common.req(/*[[@{/sys/log}]]*/ '/sys/log', 'DELETE', logs.map(log => log.id), {
+                            done: function (data) {
+                                layui.layer.msg(data.msg);
+                                layui.table.reload('sys-log-table');
+                            }
                         });
                     });
                 }
@@ -157,9 +159,9 @@
                 where: {
                     username: layui.$('#username').val()
                     , startTimestamp: (layui.$('#timestamp').val().split(":")[0]
-                        || ymd()).trim() + ' 00:00:00'
+                        || layui.common.ymd()).trim() + ' 00:00:00'
                     , endTimestamp: (layui.$('#timestamp').val().split(":")[1]
-                        || ymd(86400000)).trim() + ' 00:00:00'
+                        || layui.common.ymd(86400000)).trim() + ' 00:00:00'
                 }
                 , page: {curr: 1}
             });
@@ -169,34 +171,10 @@
             layui.$('#username').val('');
             layui.laydate.render({
                 elem: '#timestamp', range: ':'
-                , value: `${ymd()} : ${ymd(86400000)}`
+                , value: `${layui.common.ymd()} : ${layui.common.ymd(86400000)}`
             });
         }
 
-        layui.admin.events.more = function () {
-            layui.$(".layui-inline.more").toggle();
-            layui.$('#more').html(layui.$('#more').html() === '\n收起' ? '\n展开' : '\n收起')
-                .toggleClass('layui-icon-down').toggleClass('layui-icon-up');
-        }
-
-        function req(url, type, data, done) {
-            layui.admin.req({
-                url: url, type: type, data: JSON.stringify(data), contentType: "application/json;charset=UTF-8"
-                , beforeSend: function () {
-                    layui.layer.load();
-                }
-                , complete: function () {
-                    layui.layer.closeAll('loading');
-                }
-                , done: function (data) {
-                    done(data);
-                }
-            });
-        }
-
-        function ymd(ms) {
-            return layui.util.toDateString(Date.now() + ((ms) ? ms : 0), 'yyyy-MM-dd');
-        }
     });
 </script>
 </body>

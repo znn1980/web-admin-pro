@@ -2,9 +2,11 @@ package com.admin.web.controller;
 
 import com.admin.web.annotation.SysPermissions;
 import com.admin.web.model.*;
+import com.admin.web.model.vo.UserLogVo;
 import com.admin.web.service.SysUserLogService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,19 +25,19 @@ public class SysUserLogController extends BaseController {
 
     @SysPermissions
     @PostMapping("/page")
-    public ServerResponseEntity<List<SysUserLog>> page(@RequestBody UserLogQuery userLogQuery) {
-        Page<SysUserLog> sysUserLogs = this.sysUserLogService.findAll(userLogQuery
-                , PageRequest.of(userLogQuery.getPage(), userLogQuery.getLimit()));
+    public ServerResponseEntity<List<SysUserLog>> page(@RequestBody @Validated UserLogVo userLogVo) {
+        Page<SysUserLog> sysUserLogs = this.sysUserLogService.findAll(userLogVo
+                , PageRequest.of(userLogVo.getPage(), userLogVo.getLimit()));
         return ServerResponseEntity.ok(sysUserLogs.getTotalElements(), sysUserLogs.getContent());
     }
 
     @SysPermissions
     @PostMapping("/user/page")
-    public ServerResponseEntity<List<SysUserLog>> uPage(@RequestBody UserLogQuery userLogQuery) {
+    public ServerResponseEntity<List<SysUserLog>> uPage(@RequestBody @Validated UserLogVo userLogVo) {
         SysUser sysUser = super.getSysUser();
-        userLogQuery.setUsername(sysUser.getUsername());
-        Page<SysUserLog> sysUserLogs = this.sysUserLogService.findAll(userLogQuery
-                , PageRequest.of(userLogQuery.getPage(), userLogQuery.getLimit()));
+        userLogVo.setUsername(sysUser.getUsername());
+        Page<SysUserLog> sysUserLogs = this.sysUserLogService.findAll(userLogVo
+                , PageRequest.of(userLogVo.getPage(), userLogVo.getLimit()));
         return ServerResponseEntity.ok(sysUserLogs.getTotalElements(), sysUserLogs.getContent());
     }
 

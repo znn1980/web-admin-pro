@@ -1,7 +1,9 @@
 package com.admin.web.model;
 
+import com.admin.web.annotation.SysUpdate;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -21,6 +23,7 @@ public class BaseEntity implements Serializable {
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull(message = "ID不能为空！", groups = {SysUpdate.class})
     private Long id;
     @CreatedBy
     @Column(name = "CREATE_USERNAME")

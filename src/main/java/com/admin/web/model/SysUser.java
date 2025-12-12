@@ -2,7 +2,6 @@ package com.admin.web.model;
 
 import com.admin.web.annotation.SysCreate;
 import com.admin.web.annotation.SysLogin;
-import com.admin.web.annotation.SysPassword;
 import com.admin.web.annotation.SysUpdate;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
@@ -18,11 +17,10 @@ import java.util.List;
 @Table(name = "SYS_USER")
 public class SysUser extends BaseEntity {
     @Column(name = "USERNAME")
-    @NotBlank(message = "用户名不能为空！", groups = {SysLogin.class, SysCreate.class})
+    @NotBlank(message = "用户名不能为空！", groups = { SysCreate.class})
     @Size(min = 2, max = 32, message = "用户名长度应在2-32之间！", groups = {SysCreate.class})
     private String username;
     @Column(name = "PASSWORD")
-    @NotBlank(message = "密码不能为空！", groups = {SysLogin.class})
     private String password;
     @Column(name = "MOBILE", length = 11)
     @NotBlank(message = "手机号码不能为空！", groups = {SysCreate.class, SysUpdate.class})
@@ -44,22 +42,6 @@ public class SysUser extends BaseEntity {
             joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
             inverseJoinColumns = {@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")})
     private List<SysRole> roles;
-    @Transient
-    private String sessionId;
-    @Transient
-    private String ip;
-    @Transient
-    private String oldPassword;
-    @Size(min = 6, max = 36, message = "密码长度应在6-36之间！", groups = {SysPassword.class})
-    @Pattern(regexp = "^(?![a-zA-Z]+$)(?![A-Z\\d]+$)(?![A-Z\\W_]+$)(?![a-z\\d]+$)(?![a-z\\W_]+$)(?![\\d\\W_]+$)[a-zA-Z\\d\\W_]{6,36}$"
-            , message = "密码需为6-36位数字、大写字母、小写字母、符号等4种类型任选3种的组合，不含空格！", groups = {SysPassword.class})
-    @Transient
-    private String newPassword;
-    @Transient
-    private String confirmPassword;
-    @NotBlank(message = "验证码不能为空！", groups = {SysLogin.class})
-    @Transient
-    private String sysCode;
 
     public SysUser() {
         super();
@@ -75,12 +57,6 @@ public class SysUser extends BaseEntity {
         this.setPasswordTimestamp(null);
         this.setSysAdmin(false);
         this.setRoles(null);
-        this.setSessionId(null);
-        this.setIp(null);
-        this.setOldPassword(null);
-        this.setNewPassword(null);
-        this.setConfirmPassword(null);
-        this.setSysCode(null);
     }
 
     public String getUsername() {
@@ -147,57 +123,11 @@ public class SysUser extends BaseEntity {
         this.roles = roles;
     }
 
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    public String getOldPassword() {
-        return oldPassword;
-    }
-
-    public void setOldPassword(String oldPassword) {
-        this.oldPassword = oldPassword;
-    }
-
-    public String getNewPassword() {
-        return newPassword;
-    }
-
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
-    }
-
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
-    }
-
-    public String getSysCode() {
-        return sysCode;
-    }
-
-    public void setSysCode(String sysCode) {
-        this.sysCode = sysCode;
-    }
 
     @Override
     public String toString() {
-        return "SysUser{" +
+        return super.toString() + System.lineSeparator() +
+                "SysUser{" +
                 "username='" + this.getUsername() + '\'' +
                 ", password='" + this.getPassword() + '\'' +
                 ", mobile='" + this.getMobile() + '\'' +
@@ -205,13 +135,7 @@ public class SysUser extends BaseEntity {
                 ", avatar='" + this.getAvatar() + '\'' +
                 ", passwordTimestamp=" + this.getPasswordTimestamp() +
                 ", sysAdmin=" + this.isSysAdmin() +
-                //", roles=" + this.getRoles() +
-                ", sessionId='" + this.getSessionId() + '\'' +
-                ", ip='" + this.getIp() + '\'' +
-                ", oldPassword='" + this.getOldPassword() + '\'' +
-                ", newPassword='" + this.getNewPassword() + '\'' +
-                ", confirmPassword='" + this.getConfirmPassword() + '\'' +
-                ", sysCode='" + this.getSysCode() + '\'' +
+                ", roles=" + this.getRoles() +
                 '}';
     }
 }

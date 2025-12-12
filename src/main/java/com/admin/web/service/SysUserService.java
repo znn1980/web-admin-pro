@@ -2,6 +2,7 @@ package com.admin.web.service;
 
 import com.admin.web.dao.SysUserDao;
 import com.admin.web.model.SysUser;
+import com.admin.web.model.vo.UserLoginVo;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,10 +18,10 @@ public class SysUserService {
         this.sysUserDao = sysUserDao;
     }
 
-    public SysUser login(SysUser sysUser) {
-        return Optional.ofNullable(this.findByUsername(sysUser.getUsername()))
-                .orElseGet(() -> Optional.ofNullable(this.findByMobile(sysUser.getUsername()))
-                        .orElseGet(() -> this.findByEmail(sysUser.getUsername())));
+    public SysUser login(UserLoginVo userLoginVo) {
+        return Optional.ofNullable(this.findByUsername(userLoginVo.getUsername()))
+                .orElseGet(() -> Optional.ofNullable(this.findByMobile(userLoginVo.getUsername()))
+                        .orElseGet(() -> this.findByEmail(userLoginVo.getUsername())));
     }
 
     public SysUser save(SysUser sysUser) {

@@ -137,34 +137,23 @@
     layui.config({
         base: /*[[@{/}]]*/ '../../static/'
         , version: true
-    }).use(['index'], function () {
+    }).use(['index', 'common'], function () {
 
         layui.admin.events.logout = function () {
-            req(/*[[@{/sys/user/logout}]]*/ '/sys/user/logout', 'GET', null, function () {
-                layui.admin.exit(function () {
-                    location.href = 'login.html';
-                });
+            layui.common.req(/*[[@{/sys/user/logout}]]*/ '/sys/user/logout', 'GET', null, {
+                done: function () {
+                    layui.admin.exit(function () {
+                        location.href = 'login.html';
+                    });
+                }
             });
         };
 
-        req(/*[[@{/sys/user}]]*/ '/sys/user', 'GET', null, function (data) {
-            load(data.data);
+        layui.common.req(/*[[@{/sys/user}]]*/ '/sys/user', 'GET', null, {
+            done: function (data) {
+                load(data.data);
+            }
         });
-
-        function req(url, type, data, done) {
-            layui.admin.req({
-                url: url, type: type, data: JSON.stringify(data), contentType: "application/json;charset=UTF-8"
-                , beforeSend: function () {
-                    layui.layer.load();
-                }
-                , complete: function () {
-                    layui.layer.closeAll('loading');
-                }
-                , done: function (data) {
-                    done(data);
-                }
-            });
-        }
 
         function load(data) {
             if (data.avatar) layui.$('#sys-avatar').attr('src', data.avatar);
@@ -194,16 +183,15 @@
             return menu.join('');
         }
 
-        const d = [
+        const sys = [
             {id: 1, pid: null, title: '系统管理', sysMenu: true, disable: false, icon: 'layui-icon layui-icon-home'}
-            , {id: 6, pid: 1, title: '个人中心', sysMenu: true, disable: false, url: 'me.html'}
             , {id: 3, pid: 1, title: '用户管理', sysMenu: true, disable: false, url: 'user.html'}
             , {id: 4, pid: 1, title: '角色管理', sysMenu: true, disable: false, url: 'role.html'}
             , {id: 5, pid: 1, title: '菜单管理', sysMenu: true, disable: false, url: 'menu.html'}
             , {id: 2, pid: 1, title: '日志管理', sysMenu: true, disable: false, url: 'log.html'}
         ];
 
-        layui.$('#LAY-system-side-menu').html(nav(null, d));
+        layui.$('#LAY-system-side-menu').html(nav(null, sys));
         layui.element.render('nav', 'layadmin-system-side-menu');
     });
 </script>

@@ -98,7 +98,8 @@ public class SysMenu extends BaseEntity {
 
     @Override
     public String toString() {
-        return "SysMenu{" +
+        return super.toString() + System.lineSeparator() +
+                "SysMenu{" +
                 "pid=" + this.getPid() +
                 ", title='" + this.getTitle() + '\'' +
                 ", url='" + this.getUrl() + '\'' +

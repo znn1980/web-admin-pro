@@ -1,20 +1,22 @@
-package com.admin.web.model;
+package com.admin.web.model.vo;
 
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+import java.io.Serializable;
 
 /**
  * @author znn
  */
-public class PageQuery {
-    @NotBlank(message = "页码不能为空！")
+public class PageVo implements Serializable {
+    @NotNull(message = "页码不能为空！")
     @Min(value = 1, message = "页码不得小于零！")
     private Integer page;
-    @NotBlank(message = "每页数据不能为空！")
+    @NotNull(message = "每页数据不能为空！")
     @Min(value = 1, message = "每页数据不得小于壹！")
     private Integer limit;
 
-    public PageQuery() {
+    public PageVo() {
         this.setPage(null);
         this.setLimit(null);
     }
@@ -37,7 +39,7 @@ public class PageQuery {
 
     @Override
     public String toString() {
-        return "PageQuery{" +
+        return "PageVo{" +
                 "page=" + this.getPage() +
                 ", limit=" + this.getLimit() +
                 '}';

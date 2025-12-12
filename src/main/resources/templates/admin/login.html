@@ -72,22 +72,12 @@
     layui.config({
         base: /*[[@{/}]]*/ '../../static/'
         , version: true
-    }).use(['index'], function () {
+    }).use(['index', 'common'], function () {
 
         layui.form.on('submit(login-submit)', function (data) {
-            layui.admin.req({
-                url: /*[[@{/sys/user/login}]]*/ '/sys/user/login'
-                , type: 'POST', contentType: "application/json;charset=UTF-8"
-                , data: JSON.stringify(data.field)
-                , beforeSend: function () {
-                    layui.layer.load();
-                }
-                , complete: function () {
-                    layui.$('#sys-code').attr('src', (/*[[@{/sys/code.jpg}]]*/ '') + '?t=' + Date.now());
-                    layui.layer.closeAll('loading');
-                }
-                , done: function (res) {
-                    layui.layer.msg(res.msg, {
+            layui.common.req(/*[[@{/sys/user/login}]]*/ '/sys/user/login', 'POST', data.field, {
+                done: function (data) {
+                    layui.layer.msg(data.msg, {
                         offset: '15px', icon: 1, time: 1000
                     }, function () {
                         location.href = 'index.html';

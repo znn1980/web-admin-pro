@@ -43,7 +43,7 @@
                             <hr>
                             <li class="list-group-item">
                                 <i class="layui-icon layui-icon-location"></i>登录地址
-                                <span style="float: right;" id="sys-ip"></span>
+                                <span style="float: right;" th:text="${ip}"></span>
                             </li>
                             <hr>
                             <li class="list-group-item">
@@ -122,7 +122,7 @@
                                     <div class="layui-form-item">
                                         <label class="layui-form-label" for="confirmPassword">确认密码</label>
                                         <div class="layui-input-block">
-                                            <input type="password" id="confirmPassword" name="confirmPassword" value="" lay-verify="required" placeholder="确认密码" lay-reqtext="请确认密码" autocomplete="off" class="layui-input" lay-affix="eye">
+                                            <input type="password" id="confirmPassword" name="confirmPassword" value="" lay-verify="required" placeholder="确认密码" lay-reqtext="请输入确认密码" autocomplete="off" class="layui-input" lay-affix="eye">
                                         </div>
                                     </div>
                                     <div class="layui-form-item ">
@@ -156,7 +156,6 @@
                                             <button layadmin-event="refresh" class="layui-btn layui-btn-sm layui-bg-orange">
                                                 <i class="layui-icon layui-icon-refresh"></i>重置
                                             </button>
-                                            <button id="more" layadmin-event="more" class="layui-btn layui-btn-sm layui-bg-blue layui-icon layui-icon-down">展开</button>
                                         </div>
                                     </div>
                                     <table class="layui-hide" id="sys-log-table" lay-filter="sys-log-table"></table>
@@ -201,7 +200,7 @@
     layui.config({
         base: /*[[@{/}]]*/ '../../static/'
         , version: true
-    }).use(['index'], function () {
+    }).use(['index', 'common'], function () {
 
         layui.$('#sys-avatar').on('click', function () {
             const avatar = layui.$('#avatar').val();
@@ -223,9 +222,8 @@
 
         layui.laydate.render({
             elem: '#timestamp', range: ':'
-            , value: `${ymd()} : ${ymd(86400000)}`
+            , value: `${layui.common.ymd()} : ${layui.common.ymd(86400000)}`
         });
-
 
         layui.table.render({
             elem: '#sys-log-table'
@@ -233,9 +231,9 @@
             , method: 'POST', contentType: "application/json;charset=UTF-8"
             , where: {
                 startTimestamp: (layui.$('#timestamp').val().split(":")[0]
-                    || ymd()).trim() + ' 00:00:00'
+                    || layui.common.ymd()).trim() + ' 00:00:00'
                 , endTimestamp: (layui.$('#timestamp').val().split(":")[1]
-                    || ymd(86400000)).trim() + ' 00:00:00'
+                    || layui.common.ymd(86400000)).trim() + ' 00:00:00'
             }
             , page: true
             , toolbar: '#sys-log-toolbar'
@@ -244,7 +242,7 @@
                     {type: 'checkbox'}
                     , {field: 'username', title: '用户', width: 80}
                     , {field: 'name', title: '描述', templet: '#name-tpl'}
-                    , {field: 'ip', title: 'IP地址', width: 110, templet: '#ip-tpl'}
+                    , {field: 'ip', title: 'IP地址', width: 130, templet: '#ip-tpl'}
                     , {field: 'os', title: '系统', width: 110}
                     , {field: 'browser', title: '浏览器', width: 100}
                     , {field: 'ms', title: '耗时', align: 'right', width: 80, templet: '#ms-tpl'}
@@ -264,9 +262,11 @@
                         title: '删除', closeBtn: 0, skin: 'layui-layer-admin'
                     }, function (index) {
                         layui.layer.close(index);
-                        req(/*[[@{/sys/log}]]*/ '/sys/log', 'DELETE', logs.map(log => log.id), function (data) {
-                            layui.layer.msg(data.msg);
-                            layui.table.reload('sys-log-table');
+                        layui.common.req(/*[[@{/sys/log}]]*/ '/sys/log', 'DELETE', logs.map(log => log.id), {
+                            done: function () {
+                                layui.layer.msg(data.msg);
+                                layui.table.reload('sys-log-table');
+                            }
                         });
                     });
                 }
@@ -298,9 +298,9 @@
             layui.table.reload('sys-log-table', {
                 where: {
                     startTimestamp: (layui.$('#timestamp').val().split(":")[0]
-                        || ymd()).trim() + ' 00:00:00'
+                        || layui.common.ymd()).trim() + ' 00:00:00'
                     , endTimestamp: (layui.$('#timestamp').val().split(":")[1]
-                        || ymd(86400000)).trim() + ' 00:00:00'
+                        || layui.common.ymd(86400000)).trim() + ' 00:00:00'
                 }
                 , page: {curr: 1}
             });
@@ -309,61 +309,41 @@
         layui.admin.events.refresh = function () {
             layui.laydate.render({
                 elem: '#timestamp', range: ':'
-                , value: `${ymd()} : ${ymd(86400000)}`
+                , value: `${layui.common.ymd()} : ${layui.common.ymd(86400000)}`
             });
         }
 
-        layui.admin.events.more = function () {
-            layui.$("div[name='more']").toggle();
-            layui.$('#more').html(layui.$('#more').html() === '\n收起' ? '\n展开' : '\n收起')
-                .toggleClass('layui-icon-down').toggleClass('layui-icon-up');
-        }
-
         layui.form.on('submit(sys-user-submit)', function (data) {
-            req(/*[[@{/sys/user}]]*/ '/sys/user', 'PUT', data.field, function (data) {
-                layui.layer.msg(data.msg);
-                load(data.data);
+            layui.common.req(/*[[@{/sys/user/me}]]*/ '/sys/user/me', 'PUT', data.field, {
+                done: function (data) {
+                    layui.layer.msg(data.msg);
+                    load(data.data);
+                }
             });
         });
 
         layui.form.on('submit(password-submit)', function (data) {
-            req(/*[[@{/sys/user/password}]]*/ '/sys/user/password', 'PUT', data.field, function (data) {
-                layui.layer.msg(data.msg);
-                layui.$('#password-form')[0].reset();
+            layui.common.req(/*[[@{/sys/user/password}]]*/ '/sys/user/password', 'PUT', data.field, {
+                done: function (data) {
+                    layui.layer.msg(data.msg);
+                    layui.$('#password-form')[0].reset();
+                }
             });
         });
 
-        req(/*[[@{/sys/user}]]*/ '/sys/user', 'GET', null, function (data) {
-            load(data.data);
+        layui.common.req(/*[[@{/sys/user}]]*/ '/sys/user', 'GET', null, {
+            done: function (data) {
+                load(data.data);
+            }
         });
-
-        function req(url, type, data, done) {
-            layui.admin.req({
-                url: url, type: type, data: JSON.stringify(data), contentType: "application/json;charset=UTF-8"
-                , beforeSend: function () {
-                    layui.layer.load();
-                }
-                , complete: function () {
-                    layui.layer.closeAll('loading');
-                }
-                , done: function (data) {
-                    done(data);
-                }
-            });
-        }
 
         function load(data) {
             if (data.avatar) layui.$('#sys-avatar').attr('src', data.avatar);
             layui.$('#sys-username').html(data.username);
             layui.$('#sys-mobile').html(data.mobile);
             layui.$('#sys-email').html(data.email);
-            layui.$('#sys-ip').html(data.ip);
             layui.$('#sys-timestamp').html(data.createTimestamp);
             layui.form.val('sys-user-form', data);
-        }
-
-        function ymd(ms) {
-            return layui.util.toDateString(Date.now() + ((ms) ? ms : 0), 'yyyy-MM-dd');
         }
     });
 </script>

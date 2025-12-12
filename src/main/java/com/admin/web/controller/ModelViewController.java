@@ -19,17 +19,18 @@ import java.io.IOException;
  */
 @Controller
 public class ModelViewController extends BaseController {
+    private final WebServerConfig config;
     private final Producer producer;
-    private final WebServerConfig webServerConfig;
 
-    public ModelViewController(Producer producer, WebServerConfig webServerConfig) {
+    public ModelViewController(WebServerConfig config, Producer producer) {
+        this.config = config;
         this.producer = producer;
-        this.webServerConfig = webServerConfig;
     }
 
     @ModelAttribute
     public void addAttributes(Model model) {
-        model.addAttribute("config", this.webServerConfig);
+        model.addAttribute("ip", super.getClientIp());
+        model.addAttribute("config", this.config);
     }
 
     @GetMapping("/admin/login.html")

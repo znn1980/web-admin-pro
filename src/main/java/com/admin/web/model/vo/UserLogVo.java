@@ -1,4 +1,4 @@
-package com.admin.web.model;
+package com.admin.web.model.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -7,14 +7,14 @@ import java.time.LocalDateTime;
 /**
  * @author znn
  */
-public class UserLogQuery extends PageQuery {
+public class UserLogVo extends PageVo {
     private String username;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTimestamp;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTimestamp;
 
-    public UserLogQuery() {
+    public UserLogVo() {
         this.setUsername(null);
         this.setStartTimestamp(null);
         this.setEndTimestamp(null);
@@ -46,7 +46,8 @@ public class UserLogQuery extends PageQuery {
 
     @Override
     public String toString() {
-        return "UserLogQuery{" +
+        return super.toString() + System.lineSeparator() +
+                "UserLogVo{" +
                 "username='" + this.getUsername() + '\'' +
                 ", startTimestamp=" + this.getStartTimestamp() +
                 ", endTimestamp=" + this.getEndTimestamp() +

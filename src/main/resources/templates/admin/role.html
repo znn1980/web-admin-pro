@@ -78,7 +78,7 @@
     layui.config({
         base: /*[[@{/}]]*/ '../../static/'
         , version: true
-    }).use(['index'], function () {
+    }).use(['index', 'common'], function () {
 
         layui.table.render({
             elem: '#sys-role-table'
@@ -88,9 +88,13 @@
             , cols: [
                 [
                     {type: 'radio'}
-                    , {field: 'name', title: '名称', width: 200}
+                    , {field: 'name', title: '名称'}
                     , {field: 'remark', title: '备注'}
                     , {field: 'disable', title: '状态', align: 'center', width: 90, templet: '#disable-tpl'}
+                    , {field: 'createUsername', title: '创建用户', width: 90, hide: true}
+                    , {field: 'createTimestamp', title: '创建时间', width: 110, hide: true}
+                    , {field: 'updateUsername', title: '修改用户', width: 90, hide: true}
+                    , {field: 'updateTimestamp', title: '修改时间', width: 110, hide: true}
                     , {title: '操作', align: 'center', toolbar: '#sys-role-tool', width: 140}
                 ]
             ]
@@ -99,9 +103,11 @@
         layui.form.on('switch(sys-disable)', function (data) {
             const role = JSON.parse(decodeURIComponent(layui.$(this).data('json')));
             role.disable = !data.elem.checked;
-            req(/*[[@{/sys/role}]]*/ '/sys/role', 'PUT', role, function (data) {
-                layui.layer.msg(data.msg);
-                layui.table.reload('sys-role-table');
+            layui.common.req(/*[[@{/sys/role}]]*/ '/sys/role', 'PUT', role, {
+                done: function (data) {
+                    layui.layer.msg(data.msg);
+                    layui.table.reload('sys-role-table');
+                }
             });
         });
 
@@ -151,9 +157,11 @@
                     layui.form.on('submit(sys-role-submit)', function (data) {
                         data.field.disable = data.field.disable !== 'on';
                         layui.layer.close(index);
-                        req(/*[[@{/sys/role}]]*/ '/sys/role', type, data.field, function (data) {
-                            layui.layer.msg(data.msg);
-                            layui.table.reload('sys-role-table');
+                        layui.common.req(/*[[@{/sys/role}]]*/ '/sys/role', type, data.field, {
+                            done: function (data) {
+                                layui.layer.msg(data.msg);
+                                layui.table.reload('sys-role-table');
+                            }
                         });
                     });
                     layui.$('#sys-role-submit').trigger('click');
@@ -166,26 +174,12 @@
                 title: '删除角色', closeBtn: 0, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);
-                req(/*[[@{/sys/role}]]*/ '/sys/role', 'DELETE', role.id, function (data) {
-                    layui.layer.msg(data.msg);
-                    layui.table.reload('sys-role-table');
+                layui.common.req(/*[[@{/sys/role}]]*/ '/sys/role', 'DELETE', role.id, {
+                    done: function (data) {
+                        layui.layer.msg(data.msg);
+                        layui.table.reload('sys-role-table');
+                    }
                 });
-            });
-        }
-
-        function req(url, type, data, done) {
-            layui.admin.req({
-                url: url, type: type, data: JSON.stringify(data)
-                , contentType: "application/json;charset=UTF-8"
-                , beforeSend: function () {
-                    layui.layer.load();
-                }
-                , complete: function () {
-                    layui.layer.closeAll('loading');
-                }
-                , done: function (data) {
-                    done(data);
-                }
             });
         }
 
