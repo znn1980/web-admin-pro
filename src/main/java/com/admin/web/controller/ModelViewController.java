@@ -45,9 +45,9 @@ public class ModelViewController extends BaseController {
     }
 
     @SysPermissions(SysLogin.class)
-    @GetMapping("/admin/welcome.html")
-    public ModelAndView welcome() {
-        return new ModelAndView("admin/welcome");
+    @GetMapping("/admin/home.html")
+    public ModelAndView home() {
+        return new ModelAndView("admin/home");
     }
 
     @SysPermissions(SysLogin.class)
@@ -57,9 +57,21 @@ public class ModelViewController extends BaseController {
     }
 
     @SysPermissions()
+    @GetMapping("/admin/user.html")
+    public ModelAndView user() {
+        return new ModelAndView("admin/user");
+    }
+
+    @SysPermissions()
     @GetMapping("/admin/role.html")
     public ModelAndView role() {
         return new ModelAndView("admin/role");
+    }
+
+    @SysPermissions()
+    @GetMapping("/admin/menu.html")
+    public ModelAndView menu() {
+        return new ModelAndView("admin/menu");
     }
 
     @SysPermissions()

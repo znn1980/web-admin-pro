@@ -34,8 +34,7 @@ public class SysUserLogController extends BaseController {
     @SysPermissions
     @PostMapping("/user/page")
     public ServerResponseEntity<List<SysUserLog>> uPage(@RequestBody @Validated UserLogVo userLogVo) {
-        SysUser sysUser = super.getSysUser();
-        userLogVo.setUsername(sysUser.getUsername());
+        userLogVo.setUsername(super.getSysUser().getUsername());
         Page<SysUserLog> sysUserLogs = this.sysUserLogService.findAll(userLogVo
                 , PageRequest.of(userLogVo.getPage(), userLogVo.getLimit()));
         return ServerResponseEntity.ok(sysUserLogs.getTotalElements(), sysUserLogs.getContent());

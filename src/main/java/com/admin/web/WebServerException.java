@@ -18,11 +18,11 @@ public class WebServerException extends RuntimeException {
     }
 
     public WebServerException(ServerResponseEntity<?> serverResponseEntity) {
-        this(serverResponseEntity.getMsg(), serverResponseEntity.getMsg(), serverResponseEntity);
+        this(serverResponseEntity.getCode(), serverResponseEntity.getMsg(), serverResponseEntity);
     }
 
     public WebServerException(ResponseCode responseCode) {
-        this(responseCode.msg(), responseCode.value(), null);
+        this(responseCode.value(), responseCode.msg(), null);
     }
 
     public String getCode() {

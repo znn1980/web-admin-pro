@@ -18,6 +18,8 @@ public class SysRole extends BaseEntity {
     @NotBlank(message = "角色名称不能为空！", groups = {SysCreate.class, SysUpdate.class})
     @Size(min = 2, max = 32, message = "角色名称长度应在2-32之间！")
     private String name;
+    @Column(name = "SORT")
+    private Long sort;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "SYS_ROLES_MENUS",
             joinColumns = {@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")},
@@ -29,6 +31,7 @@ public class SysRole extends BaseEntity {
     public SysRole() {
         super();
         this.setName(null);
+        this.setSort(null);
         this.setMenus(null);
         this.setUsers(null);
     }
@@ -39,6 +42,14 @@ public class SysRole extends BaseEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Long getSort() {
+        return sort;
+    }
+
+    public void setSort(Long sort) {
+        this.sort = sort;
     }
 
     public List<SysMenu> getMenus() {
@@ -62,6 +73,7 @@ public class SysRole extends BaseEntity {
         return super.toString() + System.lineSeparator() +
                 "SysRole{" +
                 "name='" + this.getName() + '\'' +
+                ", sort=" + this.getSort() +
                 ", menus=" + this.getMenus() +
                 ", users=" + this.getUsers() +
                 '}';

@@ -30,11 +30,11 @@ public class SysUserController extends BaseController {
     @SysLog("用户登录")
     @PostMapping("/login")
     public ServerResponseEntity<?> login(@RequestBody @Validated UserLoginVo userLoginVo) {
+        userLoginVo.setPassword(super.hexPassword(userLoginVo.getPassword()));
         if (!Objects.equals(userLoginVo.getSysCode(), super.getSysCode())) {
             return ServerResponseEntity.fail("验证码输入不正确！");
         }
         SysUser sysUser = this.sysUserService.login(userLoginVo);
-        userLoginVo.setPassword(super.hexPassword(userLoginVo.getPassword()));
         if (Objects.isNull(sysUser) || !Objects.equals(sysUser.getPassword(), userLoginVo.getPassword())) {
             return ServerResponseEntity.fail("登录失败，请检查用户名密码是否正确！");
         }

@@ -5,6 +5,8 @@ import com.admin.web.model.SysRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.List;
+
 /**
  * @author znn
  */
@@ -16,4 +18,11 @@ public interface SysRoleDao extends JpaRepository<SysRole, Long>, JpaSpecificati
      * @return 角色
      */
     SysRole findByName(String name);
+
+    /**
+     * 查询角色列表
+     *
+     * @return 角色列表
+     */
+    List<SysRole> findAllByOrderBySort();
 }

@@ -7,6 +7,7 @@ import com.admin.web.annotation.SysPermissions;
 import com.admin.web.annotation.SysUpdate;
 import com.admin.web.model.ServerResponseEntity;
 import com.admin.web.model.SysRole;
+import com.admin.web.model.vo.MoveVo;
 import com.admin.web.service.SysRoleService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -63,6 +64,17 @@ public class SysRoleController extends BaseController {
         }
         return ServerResponseEntity.ok();
     }
+
+    @SysLog("移动角色")
+    @SysPermissions
+    @PutMapping("/move")
+    public ServerResponseEntity<?> move(@RequestBody MoveVo moveVo) {
+        SysRole sysRole = this.sysRoleService.findById(moveVo.getId())
+                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("角色不存在！")));
+        this.sysRoleService.move(sysRole, moveVo.getMove());
+        return ServerResponseEntity.ok();
+    }
+
 
     @SysLog("删除角色")
     @SysPermissions

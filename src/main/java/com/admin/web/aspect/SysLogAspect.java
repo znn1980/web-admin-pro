@@ -60,7 +60,15 @@ public class SysLogAspect {
 
     void doAround(JoinPoint joinPoint, SysLog sysLog, Object result, Exception e) {
         try {
+            UserAgent userAgent = UserAgentUtils.getUserAgent(WebUtils.getRequest());
             SysUserLog sysUserLog = new SysUserLog();
+            sysUserLog.setUsername(this.getSysUser().getUsername());
+            sysUserLog.setIp(WebUtils.getClientIp(WebUtils.getRequest()));
+            sysUserLog.setOs(UserAgentUtils.getOs(userAgent));
+            sysUserLog.setBrowser(UserAgentUtils.getBrowser(userAgent));
+            sysUserLog.setMethod(WebUtils.getRequest().getMethod());
+            sysUserLog.setUrl(WebUtils.getRequest().getRequestURI());
+            sysUserLog.setName(sysLog.value());
             if (Objects.nonNull(joinPoint.getArgs())) {
                 StringJoiner params = new StringJoiner(System.lineSeparator());
                 Arrays.asList(joinPoint.getArgs()).forEach(arg -> {
@@ -80,14 +88,6 @@ public class SysLogAspect {
                     e.printStackTrace(new PrintWriter(this, true));
                 }}.toString());
             }
-            UserAgent userAgent = UserAgentUtils.getUserAgent(WebUtils.getRequest());
-            sysUserLog.setUsername(this.getSysUser().getUsername());
-            sysUserLog.setIp(WebUtils.getClientIp(WebUtils.getRequest()));
-            sysUserLog.setOs(UserAgentUtils.getOs(userAgent));
-            sysUserLog.setBrowser(UserAgentUtils.getBrowser(userAgent));
-            sysUserLog.setMethod(WebUtils.getRequest().getMethod());
-            sysUserLog.setUrl(WebUtils.getRequest().getRequestURI());
-            sysUserLog.setName(sysLog.value());
             sysUserLog.setMs(System.currentTimeMillis() - THREAD_LOCAL.get());
             sysUserLog.setTimestamp(LocalDateTime.now());
             this.sysUserLogService.save(sysUserLog);

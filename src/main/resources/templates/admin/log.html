@@ -13,7 +13,7 @@
 <body class="layui-fluid">
 <div class="layui-card">
     <div class="layui-card-header">日志管理</div>
-    <div class="layui-card-body layui-form">
+    <div class="layui-card-body">
         <div class="layui-form-item layui-form-pane">
             <div class="layui-inline">
                 <label class="layui-form-label">日期范围</label>
@@ -23,7 +23,7 @@
                 </div>
             </div>
             <!--更多查询条件的例子，没有实际作用，只作为演示使用。-->
-            <div class="layui-inline more" style="display: none;">
+            <div class="layui-inline sys-more" style="display: none;">
                 <label class="layui-form-label">用户账号</label>
                 <div class="layui-input-inline">
                     <label for="username"></label>
@@ -38,11 +38,11 @@
                     <button layadmin-event="refresh" class="layui-btn layui-btn-sm layui-bg-orange">
                         <i class="layui-icon layui-icon-refresh"></i>重置
                     </button>
-                    <button id="more" layadmin-event="more" class="layui-btn layui-btn-sm layui-bg-blue layui-icon layui-icon-down">展开</button>
+                    <button id="sys-more" layadmin-event="more" class="layui-btn layui-btn-sm layui-bg-blue layui-icon layui-icon-down">展开</button>
                 </div>
             </div>
-            <table class="layui-hide" id="sys-log-table" lay-filter="sys-log-table"></table>
         </div>
+        <table class="layui-hide" id="sys-log-table" lay-filter="sys-log-table"></table>
     </div>
 </div>
 <script type="text/html" id="name-tpl">

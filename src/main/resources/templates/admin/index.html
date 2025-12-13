@@ -85,7 +85,7 @@
         <!-- 侧边菜单 -->
         <div class="layui-side layui-side-menu">
             <div class="layui-side-scroll">
-                <div class="layui-logo" lay-href="welcome.html">
+                <div class="layui-logo" lay-href="home.html">
                     <span th:text="${config.title}">ADMIN-UI-PRO</span>
                 </div>
                 <ul class="layui-nav layui-nav-tree" lay-accordion id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
@@ -111,14 +111,14 @@
             </div>
             <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
                 <ul class="layui-tab-title" id="LAY_app_tabsheader">
-                    <li lay-id="welcome.html" lay-attr="welcome.html" class="layui-this"><i class="layui-icon layui-icon-home"></i></li>
+                    <li lay-id="home.html" lay-attr="home.html" class="layui-this"><i class="layui-icon layui-icon-home"></i></li>
                 </ul>
             </div>
         </div>
         <!-- 主体内容 -->
         <div class="layui-body" id="LAY_app_body">
             <div class="layadmin-tabsbody-item layui-show">
-                <iframe src="welcome.html" frameborder="0" class="layadmin-iframe"></iframe>
+                <iframe src="home.html" frameborder="0" class="layadmin-iframe"></iframe>
             </div>
         </div>
         <!-- 辅助元素，一般用于移动设备下遮罩 -->
@@ -185,10 +185,10 @@
 
         const sys = [
             {id: 1, pid: null, title: '系统管理', sysMenu: true, disable: false, icon: 'layui-icon layui-icon-home'}
-            , {id: 3, pid: 1, title: '用户管理', sysMenu: true, disable: false, url: 'user.html'}
-            , {id: 4, pid: 1, title: '角色管理', sysMenu: true, disable: false, url: 'role.html'}
-            , {id: 5, pid: 1, title: '菜单管理', sysMenu: true, disable: false, url: 'menu.html'}
-            , {id: 2, pid: 1, title: '日志管理', sysMenu: true, disable: false, url: 'log.html'}
+            , {id: 2, pid: 1, title: '用户管理', sysMenu: true, disable: false, url: 'user.html'}
+            , {id: 3, pid: 1, title: '角色管理', sysMenu: true, disable: false, url: 'role.html'}
+            , {id: 4, pid: 1, title: '菜单管理', sysMenu: true, disable: false, url: 'menu.html'}
+            , {id: 5, pid: 1, title: '日志管理', sysMenu: true, disable: false, url: 'log.html'}
         ];
 
         layui.$('#LAY-system-side-menu').html(nav(null, sys));

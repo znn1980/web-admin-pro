@@ -11,156 +11,152 @@
     <link rel="stylesheet" th:href="@{/admin-ui/css/admin.css}" href="../../static/admin-ui/css/admin.css" media="all">
     <link rel="stylesheet" th:href="@{/style/template.css}" href="../../static/style/template.css" media="all">
 </head>
-<body>
-<div class="layui-fluid ">
-    <div class="layui-row layui-col-space8">
-        <div class="layui-col-md3">
-            <div class="layadmin-homepage-panel layadmin-homepage-shadow">
-                <div class="layui-card">
-                    <div class="layui-card-header">个人资料</div>
-                    <div class="layui-card-body">
-                        <div class="layadmin-homepage-pad-ver text-center">
-                            <img id="sys-avatar" class="layadmin-homepage-pad-img" width="120" height="120" alt="" lay-tips="点击修改头像"
-                                 th:src="@{/style/imgs/avatar/default_beauty.jpg}"
-                                 src="../../static/style/imgs/avatar/default_beauty.jpg"
-                                 th:onerror="|this.onerror=null;this.src='@{/style/imgs/avatar/default_beauty.jpg}';|">
-                        </div>
-                        <ul class="layadmin-homepage-list-group">
-                            <li class="list-group-item">
-                                <i class="layui-icon layui-icon-username"></i>登录账号
-                                <span style="float: right;" id="sys-username"></span>
-                            </li>
-                            <hr>
-                            <li class="list-group-item">
-                                <i class="layui-icon layui-icon-cellphone"></i>手机号码
-                                <span style="float: right;" id="sys-mobile"></span>
-                            </li>
-                            <hr>
-                            <li class="list-group-item">
-                                <i class="layui-icon layui-icon-email"></i>邮箱地址
-                                <span style="float: right;" id="sys-email"></span>
-                            </li>
-                            <hr>
-                            <li class="list-group-item">
-                                <i class="layui-icon layui-icon-location"></i>登录地址
-                                <span style="float: right;" th:text="${ip}"></span>
-                            </li>
-                            <hr>
-                            <li class="list-group-item">
-                                <i class="layui-icon layui-icon-date"></i>创建时间
-                                <span style="float: right;" id="sys-timestamp"></span>
-                            </li>
-                            <hr>
-                            <li class="list-group-item">
-                                <i class="layui-icon layui-icon-auz"></i>安全设置
-                                <button style="float: right;" type="button" id="sys-password" class="layui-btn layui-btn-xs layui-bg-red">修改密码</button>
-                            </li>
-                            <hr>
-                        </ul>
+<body class="layui-fluid">
+<div class="layui-row layui-col-space8">
+    <div class="layui-col-md3">
+        <div class="layadmin-homepage-panel layadmin-homepage-shadow">
+            <div class="layui-card">
+                <div class="layui-card-header">个人资料</div>
+                <div class="layui-card-body">
+                    <div class="layadmin-homepage-pad-ver text-center">
+                        <img id="sys-avatar" class="layadmin-homepage-pad-img" width="120" height="120" alt="" lay-tips="点击修改头像"
+                             th:src="@{/style/imgs/avatar/default_beauty.jpg}"
+                             src="../../static/style/imgs/avatar/default_beauty.jpg"
+                             th:onerror="|this.onerror=null;this.src='@{/style/imgs/avatar/default_beauty.jpg}';|">
                     </div>
+                    <ul class="layadmin-homepage-list-group">
+                        <li class="list-group-item">
+                            <i class="layui-icon layui-icon-username"></i>登录账号
+                            <span style="float: right;" id="sys-username"></span>
+                        </li>
+                        <hr>
+                        <li class="list-group-item">
+                            <i class="layui-icon layui-icon-cellphone"></i>手机号码
+                            <span style="float: right;" id="sys-mobile"></span>
+                        </li>
+                        <hr>
+                        <li class="list-group-item">
+                            <i class="layui-icon layui-icon-email"></i>邮箱地址
+                            <span style="float: right;" id="sys-email"></span>
+                        </li>
+                        <hr>
+                        <li class="list-group-item">
+                            <i class="layui-icon layui-icon-location"></i>登录地址
+                            <span style="float: right;" th:text="${ip}"></span>
+                        </li>
+                        <hr>
+                        <li class="list-group-item">
+                            <i class="layui-icon layui-icon-date"></i>创建时间
+                            <span style="float: right;" id="sys-timestamp"></span>
+                        </li>
+                        <hr>
+                        <li class="list-group-item">
+                            <i class="layui-icon layui-icon-auz"></i>安全设置
+                            <button style="float: right;" type="button" id="sys-password" class="layui-btn layui-btn-xs layui-bg-red">修改密码</button>
+                        </li>
+                        <hr>
+                    </ul>
                 </div>
             </div>
         </div>
-        <div class="layui-col-md9">
-            <div class="layui-card">
-                <div class="layui-card-header">基本资料</div>
-                <div class="layui-card-body">
-                    <div class="layui-tabs" id="sys-tabs" lay-filter="sys-tabs">
-                        <ul class="layui-tabs-header">
-                            <li>用户资料</li>
-                            <li>修改密码</li>
-                            <li>操作日志</li>
-                        </ul>
-                        <div class="layui-tabs-body">
-                            <div class="layui-tabs-item">
-                                <form class="layui-form" id="sys-user-form" lay-filter="sys-user-form">
-                                    <div class="layui-form-item">
-                                        <label class="layui-form-label" for="mobile">手机号码</label>
-                                        <div class="layui-input-block">
-                                            <input type="hidden" id="avatar" name="avatar">
-                                            <input type="text" id="mobile" name="mobile" value="" lay-verify="required|phone" placeholder="手机号码" lay-reqtext="请输入手机号码" autocomplete="off" class="layui-input" lay-affix="clear">
-                                        </div>
+    </div>
+    <div class="layui-col-md9">
+        <div class="layui-card">
+            <div class="layui-card-header">基本资料</div>
+            <div class="layui-card-body">
+                <div class="layui-tabs" id="sys-tabs" lay-filter="sys-tabs">
+                    <ul class="layui-tabs-header">
+                        <li>用户资料</li>
+                        <li>修改密码</li>
+                        <li>操作日志</li>
+                    </ul>
+                    <div class="layui-tabs-body">
+                        <div class="layui-tabs-item">
+                            <form class="layui-form" id="sys-user-form" lay-filter="sys-user-form">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" for="mobile">手机号码</label>
+                                    <div class="layui-input-block">
+                                        <input type="hidden" id="avatar" name="avatar">
+                                        <input type="text" id="mobile" name="mobile" value="" lay-verify="required|phone" placeholder="手机号码" lay-reqtext="请输入手机号码" autocomplete="off" class="layui-input" lay-affix="clear">
                                     </div>
-                                    <div class="layui-form-item">
-                                        <label class="layui-form-label" for="email">邮箱地址</label>
-                                        <div class="layui-input-block">
-                                            <input type="text" id="email" name="email" value="" lay-verify="required|email" placeholder="邮箱地址" lay-reqtext="请输入邮箱地址" autocomplete="off" class="layui-input" lay-affix="clear">
-                                        </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" for="email">邮箱地址</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" id="email" name="email" value="" lay-verify="required|email" placeholder="邮箱地址" lay-reqtext="请输入邮箱地址" autocomplete="off" class="layui-input" lay-affix="clear">
                                     </div>
-                                    <div class="layui-form-item">
-                                        <label class="layui-form-label" for="remark">用户备注</label>
-                                        <div class="layui-input-block">
-                                            <input type="text" id="remark" name="remark" value="" placeholder="用户备注" autocomplete="off" class="layui-input" lay-affix="clear">
-                                        </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" for="remark">用户备注</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" id="remark" name="remark" value="" placeholder="用户备注" autocomplete="off" class="layui-input" lay-affix="clear">
                                     </div>
-                                    <div class="layui-form-item ">
-                                        <div class="layui-input-block">
-                                            <button type="button" lay-submit class="layui-btn layui-btn-radius" lay-filter="sys-user-submit" id="sys-user-submit">
-                                                <i class="layui-icon layui-icon-ok"></i>保存
-                                            </button>
-                                            <button type="button" class="layui-btn layui-btn-radius layui-bg-red">
-                                                <i class="layui-icon layui-icon-close"></i>关闭
-                                            </button>
-                                        </div>
+                                </div>
+                                <div class="layui-form-item ">
+                                    <div class="layui-input-block">
+                                        <button type="button" lay-submit class="layui-btn layui-btn-radius" lay-filter="sys-user-submit" id="sys-user-submit">
+                                            <i class="layui-icon layui-icon-ok"></i>保存
+                                        </button>
+                                        <button type="button" class="layui-btn layui-btn-radius layui-bg-red">
+                                            <i class="layui-icon layui-icon-close"></i>关闭
+                                        </button>
                                     </div>
-                                </form>
-                            </div>
-                            <div class="layui-tabs-item">
-                                <form class="layui-form" id="password-form" lay-filter="password-form">
-                                    <div class="layui-form-item">
-                                        <label class="layui-form-label" for="oldPassword">旧密码</label>
-                                        <div class="layui-input-block">
-                                            <input type="password" id="oldPassword" name="oldPassword" value="" lay-verify="required" placeholder="旧密码" lay-reqtext="请输入旧密码" autocomplete="off" class="layui-input" lay-affix="eye">
-                                        </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="layui-tabs-item">
+                            <form class="layui-form" id="password-form" lay-filter="password-form">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" for="oldPassword">旧密码</label>
+                                    <div class="layui-input-block">
+                                        <input type="password" id="oldPassword" name="oldPassword" value="" lay-verify="required" placeholder="旧密码" lay-reqtext="请输入旧密码" autocomplete="off" class="layui-input" lay-affix="eye">
                                     </div>
-                                    <div class="layui-form-item">
-                                        <label class="layui-form-label" for="newPassword">新密码</label>
-                                        <div class="layui-input-block">
-                                            <input type="password" id="newPassword" name="newPassword" value="" lay-verify="required" placeholder="新密码" lay-reqtext="请输入新密码" autocomplete="off" class="layui-input" lay-affix="eye">
-                                        </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" for="newPassword">新密码</label>
+                                    <div class="layui-input-block">
+                                        <input type="password" id="newPassword" name="newPassword" value="" lay-verify="required" placeholder="新密码" lay-reqtext="请输入新密码" autocomplete="off" class="layui-input" lay-affix="eye">
                                     </div>
-                                    <div class="layui-form-item">
-                                        <label class="layui-form-label" for="confirmPassword">确认密码</label>
-                                        <div class="layui-input-block">
-                                            <input type="password" id="confirmPassword" name="confirmPassword" value="" lay-verify="required" placeholder="确认密码" lay-reqtext="请输入确认密码" autocomplete="off" class="layui-input" lay-affix="eye">
-                                        </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" for="confirmPassword">确认密码</label>
+                                    <div class="layui-input-block">
+                                        <input type="password" id="confirmPassword" name="confirmPassword" value="" lay-verify="required" placeholder="确认密码" lay-reqtext="请输入确认密码" autocomplete="off" class="layui-input" lay-affix="eye">
                                     </div>
-                                    <div class="layui-form-item ">
-                                        <div class="layui-input-block">
-                                            <button type="button" lay-submit class="layui-btn layui-btn-radius" lay-filter="password-submit" id="password-submit">
-                                                <i class="layui-icon layui-icon-ok"></i>保存
-                                            </button>
-                                            <button type="button" class="layui-btn layui-btn-radius layui-bg-red">
-                                                <i class="layui-icon layui-icon-close"></i>关闭
-                                            </button>
-                                        </div>
+                                </div>
+                                <div class="layui-form-item ">
+                                    <div class="layui-input-block">
+                                        <button type="button" lay-submit class="layui-btn layui-btn-radius" lay-filter="password-submit" id="password-submit">
+                                            <i class="layui-icon layui-icon-ok"></i>保存
+                                        </button>
+                                        <button type="button" class="layui-btn layui-btn-radius layui-bg-red">
+                                            <i class="layui-icon layui-icon-close"></i>关闭
+                                        </button>
                                     </div>
-                                </form>
-                            </div>
-                            <div class="layui-tabs-item layui-form">
-                                <div class="layui-form-item layui-form-pane">
-                                    <div class="layui-inline">
-                                        <label class="layui-form-label">日期范围</label>
-                                        <div class="layui-input-inline">
-                                            <label for="timestamp"></label>
-                                            <input type="text" class="layui-input" id="timestamp" readonly placeholder="日期范围">
-                                        </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="layui-tabs-item">
+                            <div class="layui-form-item layui-form-pane">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">日期范围</label>
+                                    <div class="layui-input-inline">
+                                        <label for="timestamp"></label>
+                                        <input type="text" class="layui-input" id="timestamp" readonly placeholder="日期范围">
                                     </div>
-                                    <!--更多查询条件的例子，没有实际作用，只作为演示使用。-->
-                                    <!--div class="layui-inline more" style="display: none;"></div-->
-                                    <div class="layui-inline">
-                                        <div class="layui-btn-group">
-                                            <button layadmin-event="search" class="layui-btn layui-btn-sm">
-                                                <i class="layui-icon layui-icon-search"></i>查询
-                                            </button>
-                                            <button layadmin-event="refresh" class="layui-btn layui-btn-sm layui-bg-orange">
-                                                <i class="layui-icon layui-icon-refresh"></i>重置
-                                            </button>
-                                        </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <div class="layui-btn-group">
+                                        <button layadmin-event="search" class="layui-btn layui-btn-sm">
+                                            <i class="layui-icon layui-icon-search"></i>查询
+                                        </button>
+                                        <button layadmin-event="refresh" class="layui-btn layui-btn-sm layui-bg-orange">
+                                            <i class="layui-icon layui-icon-refresh"></i>重置
+                                        </button>
                                     </div>
-                                    <table class="layui-hide" id="sys-log-table" lay-filter="sys-log-table"></table>
                                 </div>
                             </div>
+                            <table class="layui-hide" id="sys-log-table" lay-filter="sys-log-table"></table>
                         </div>
                     </div>
                 </div>
