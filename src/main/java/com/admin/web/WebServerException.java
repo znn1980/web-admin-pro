@@ -1,6 +1,6 @@
 package com.admin.web;
 
-import com.admin.web.model.ResponseCode;
+import com.admin.web.model.enums.ResponseCode;
 import com.admin.web.model.ServerResponseEntity;
 
 /**

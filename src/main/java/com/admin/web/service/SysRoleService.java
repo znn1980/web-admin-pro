@@ -3,8 +3,8 @@ package com.admin.web.service;
 import com.admin.web.dao.SysRoleDao;
 import com.admin.web.model.SysRole;
 import com.admin.web.model.enums.Move;
-import jakarta.persistence.Transient;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -33,7 +33,7 @@ public class SysRoleService {
         return this.sysRoleDao.findAllByOrderBySort();
     }
 
-    @Transient
+    @Transactional(rollbackFor = Exception.class)
     public SysRole save(SysRole sysRole) {
         if (Objects.nonNull(sysRole.getId())) {
             return this.sysRoleDao.save(sysRole);
@@ -43,7 +43,7 @@ public class SysRoleService {
         return this.sysRoleDao.save(sysRole);
     }
 
-    @Transient
+    @Transactional(rollbackFor = Exception.class)
     public void move(SysRole sysRole, Move move) {
         List<SysRole> sysRoles = this.sysRoleDao.findAllByOrderBySort();
         int index = -1;

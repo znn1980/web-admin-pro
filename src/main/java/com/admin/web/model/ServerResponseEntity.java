@@ -1,5 +1,7 @@
 package com.admin.web.model;
 
+import com.admin.web.model.enums.ResponseCode;
+
 import java.io.Serializable;
 import java.util.Objects;
 

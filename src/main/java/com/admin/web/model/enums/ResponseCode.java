@@ -1,4 +1,4 @@
-package com.admin.web.model;
+package com.admin.web.model.enums;
 
 /**
  * @author znn

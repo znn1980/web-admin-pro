@@ -3,7 +3,7 @@ package com.admin.web.aspect;
 import com.admin.web.WebServerException;
 import com.admin.web.annotation.SysLogin;
 import com.admin.web.annotation.SysPermissions;
-import com.admin.web.model.ResponseCode;
+import com.admin.web.model.enums.ResponseCode;
 import com.admin.web.model.SysUser;
 import com.admin.web.utils.SecurityUtils;
 import com.admin.web.utils.WebUtils;

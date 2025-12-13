@@ -61,7 +61,7 @@ public class SysUserController extends BaseController {
     public ServerResponseEntity<SysUser> edit(@RequestBody @Validated(SysUpdate.class) SysUser sysUser) {
         SysUser oldSysUser = this.sysUserService.findById(sysUser.getId())
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！")));
-        return this.edit(oldSysUser, sysUser);
+        return ServerResponseEntity.ok(this.save(oldSysUser, sysUser));
     }
 
     @SysLog("修改用户")
@@ -72,7 +72,7 @@ public class SysUserController extends BaseController {
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！")));
         sysUser.setDisable(oldSysUser.isDisable());
         sysUser.setSysAdmin(oldSysUser.isSysAdmin());
-        return this.edit(oldSysUser, sysUser);
+        return ServerResponseEntity.ok(this.save(oldSysUser, sysUser));
     }
 
     @SysLog("修改密码")
@@ -95,9 +95,7 @@ public class SysUserController extends BaseController {
         }
         oldSysUser.setPasswordTimestamp(LocalDateTime.now());
         oldSysUser.setPassword(userPassVo.getNewPassword());
-        if (Objects.isNull(this.sysUserService.save(oldSysUser))) {
-            return ServerResponseEntity.fail("密码修改失败！");
-        }
+        this.sysUserService.save(oldSysUser);
         return ServerResponseEntity.ok();
     }
 
@@ -108,14 +106,14 @@ public class SysUserController extends BaseController {
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！"))));
     }
 
-    public ServerResponseEntity<SysUser> edit(SysUser oldSysUser, SysUser sysUser) {
+    public SysUser save(SysUser oldSysUser, SysUser sysUser) {
         if (!Objects.equals(oldSysUser.getMobile(), sysUser.getMobile())
                 && Objects.nonNull(this.sysUserService.findByMobile(sysUser.getMobile()))) {
-            return ServerResponseEntity.fail("手机号码已存在！");
+            throw new WebServerException(ServerResponseEntity.fail("手机号码已存在！"));
         }
         if (!Objects.equals(oldSysUser.getEmail(), sysUser.getEmail())
                 && Objects.nonNull(this.sysUserService.findByEmail(sysUser.getEmail()))) {
-            return ServerResponseEntity.fail("邮箱地址已存在！");
+            throw new WebServerException(ServerResponseEntity.fail("邮箱地址已存在！"));
         }
         oldSysUser.setMobile(sysUser.getMobile());
         oldSysUser.setEmail(sysUser.getEmail());
@@ -123,10 +121,7 @@ public class SysUserController extends BaseController {
         oldSysUser.setRemark(sysUser.getRemark());
         oldSysUser.setDisable(sysUser.isDisable());
         oldSysUser.setSysAdmin(sysUser.isSysAdmin());
-        if (Objects.isNull(this.sysUserService.save(oldSysUser))) {
-            return ServerResponseEntity.fail("用户修改失败！");
-        }
-        return ServerResponseEntity.ok(oldSysUser);
+        return this.sysUserService.save(oldSysUser);
     }
 
 }
