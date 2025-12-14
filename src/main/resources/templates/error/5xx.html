@@ -15,8 +15,8 @@
 <div class="error-page">
     <img class="error-page-img" th:src="@{/style/imgs/error/500.png}" src="../../static/style/imgs/error/500.png" alt="500">
     <div class="error-page-info">
-        <h1 th:text="${statusCode}?:'5xx'">5xx</h1>
-        <p>抱歉，服务器出错了！</p>
+        <h1 th:text="${status}?:'5xx'">5xx</h1>
+        <p th:text="${error}?:'抱歉，服务器出错了！'">抱歉，服务器出错了！</p>
         <div>
             <a th:href="@{/admin/login.html}" target="_top" class="layui-btn">返回登陆页</a>
         </div>

@@ -62,7 +62,7 @@ public class SysLogAspect {
         try {
             UserAgent userAgent = UserAgentUtils.getUserAgent(WebUtils.getRequest());
             SysUserLog sysUserLog = new SysUserLog();
-            sysUserLog.setUsername(this.getSysUser().getUsername());
+            sysUserLog.setUsername(getSysUser().getUsername());
             sysUserLog.setIp(WebUtils.getClientIp(WebUtils.getRequest()));
             sysUserLog.setOs(UserAgentUtils.getOs(userAgent));
             sysUserLog.setBrowser(UserAgentUtils.getBrowser(userAgent));
@@ -72,7 +72,7 @@ public class SysLogAspect {
             if (Objects.nonNull(joinPoint.getArgs())) {
                 StringJoiner params = new StringJoiner(System.lineSeparator());
                 Arrays.asList(joinPoint.getArgs()).forEach(arg -> {
-                    if (Objects.nonNull(arg) && !this.filterObject(arg)) {
+                    if (Objects.nonNull(arg) && !filterObject(arg)) {
                         log.info("REQUEST:{}", arg);
                         params.add(arg.toString());
                     }
@@ -84,9 +84,7 @@ public class SysLogAspect {
                 sysUserLog.setResult(result.toString());
             }
             if (Objects.nonNull(e)) {
-                sysUserLog.setErrors(new StringWriter() {{
-                    e.printStackTrace(new PrintWriter(this, true));
-                }}.toString());
+                sysUserLog.setErrors(getStackTrace(e));
             }
             sysUserLog.setMs(System.currentTimeMillis() - THREAD_LOCAL.get());
             sysUserLog.setTimestamp(LocalDateTime.now());
@@ -96,13 +94,19 @@ public class SysLogAspect {
         }
     }
 
-    SysUser getSysUser() {
+    static SysUser getSysUser() {
         return Objects.requireNonNullElse(SecurityUtils.getSysUser(WebUtils.getRequest()), SecurityUtils.getSysUser());
     }
 
-    boolean filterObject(Object o) {
+    static boolean filterObject(Object o) {
         return o instanceof MultipartFile
                 || o instanceof HttpServletRequest
                 || o instanceof HttpServletResponse;
+    }
+
+    static String getStackTrace(Exception e) {
+        return new StringWriter() {{
+            e.printStackTrace(new PrintWriter(this, true));
+        }}.toString();
     }
 }

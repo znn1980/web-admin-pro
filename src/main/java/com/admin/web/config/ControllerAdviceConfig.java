@@ -7,8 +7,6 @@ import com.admin.web.utils.WebUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -18,7 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author znn
@@ -29,7 +27,7 @@ public class ControllerAdviceConfig {
 
     @ExceptionHandler(Exception.class)
     public Object exceptionHandler(HttpServletRequest request, Exception e) {
-        log.error("ERROR:[{}] URL:{} UA:{}", request.getMethod(), request.getRequestURI(), request.getHeader(HttpHeaders.USER_AGENT), e);
+        log.error("ERROR:[{}] URL:{} {}", request.getMethod(), request.getRequestURI(), getHeaders(request), e);
         if (WebUtils.isRequestRest(request)) {
             if (e instanceof WebServerException ex) {
                 return ResponseEntity.ok(Objects.requireNonNullElse(ex.getServerResponseEntity()
@@ -54,10 +52,14 @@ public class ControllerAdviceConfig {
         if (e instanceof NoResourceFoundException) {
             return new ModelAndView("error/404");
         }
-        return new ModelAndView("error/5xx") {{
-            this.addObject("statusCode", HttpStatus.INTERNAL_SERVER_ERROR.value());
-        }};
+        return new ModelAndView("error/500");
     }
 
-
+    static Map<String, List<String>> getHeaders(HttpServletRequest request) {
+        return new HashMap<>() {{
+            request.getHeaderNames().asIterator().forEachRemaining(name -> this.put(name, new ArrayList<>() {{
+                request.getHeaders(name).asIterator().forEachRemaining(this::add);
+            }}));
+        }};
+    }
 }
