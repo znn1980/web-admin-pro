@@ -13,8 +13,58 @@
 <body class="layui-fluid">
 <div class="layui-card">
     <div class="layui-card-header">用户管理</div>
-    <div class="layui-card-body"></div>
+    <div class="layui-card-body">
+        <table class="layui-hide" id="sys-user-table" lay-filter="sys-user-table"></table>
+    </div>
 </div>
+<script type="text/html" id="username-tpl">
+    {{#if(d.avatar){}}
+    <img class="layui-nav-img" src={{d.avatar}} alt="{{d.username}}">
+    {{#}else{}}
+    <img class="layui-nav-img" th:src="@{/style/imgs/avatar/default_beauty.jpg}" src="../../static/style/imgs/avatar/default_beauty.jpg" alt="{{d.username}}">
+    {{#}}}{{d.username}}
+</script>
+<script type="text/html" id="sys-admin-tpl">
+    <input type="checkbox" value="{{d.id}}"
+           {{#if(d.sysAdmin){}}checked{{#}}}
+           data-json="{{encodeURIComponent(JSON.stringify(d))}}"
+           title="是|否" lay-skin="switch" lay-filter="sys-admin">
+</script>
+<script type="text/html" id="disable-tpl">
+    <input type="checkbox" value="{{d.id}}"
+           {{#if(!d.disable){}}checked{{#}}}
+           data-json="{{encodeURIComponent(JSON.stringify(d))}}"
+           title="启用|禁用" lay-skin="switch" lay-filter="sys-disable">
+</script>
+<script type="text/html" id="sys-user-toolbar">
+    <div class="layui-btn-group">
+        <button class="layui-btn layui-btn-sm" lay-event="save-toolbar">
+            <i class="layui-icon layui-icon-add-1"></i>添加
+        </button>
+        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="edit-toolbar">
+            <i class="layui-icon layui-icon-edit"></i>编辑
+        </button>
+        <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="delete-toolbar">
+            <i class="layui-icon layui-icon-delete"></i>删除
+        </button>
+        <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="refresh-toolbar">
+            <i class="layui-icon layui-icon-refresh"></i>刷新
+        </button>
+    </div>
+    <button class="layui-btn layui-btn-sm layui-bg-black" lay-event="release-toolbar">
+        <i class="layui-icon layui-icon-password"></i>重置密码
+    </button>
+</script>
+<script type="text/html" id="sys-user-tool">
+    <div class="layui-btn-group">
+        <button class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit-tool">
+            <i class="layui-icon layui-icon-edit"></i>
+        </button>
+        <button class="layui-btn layui-btn-xs layui-bg-red" lay-event="delete-tool">
+            <i class="layui-icon layui-icon-delete"></i>
+        </button>
+    </div>
+</script>
 <script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
 <script th:inline="javascript">
     layui.config({
@@ -22,6 +72,29 @@
         , version: true
     }).use(['index', 'common'], function () {
 
+        layui.table.render({
+            elem: '#sys-user-table'
+            , url: /*[[@{/sys/user/page}]]*/ '/sys/user/page'
+            , method: 'POST', contentType: "application/json;charset=UTF-8"
+            , page: true
+            , toolbar: '#sys-user-toolbar'
+            , cols: [
+                [
+                    {type: 'checkbox'}
+                    , {field: 'username', title: '用户', width: 150, templet: '#username-tpl'}
+                    , {field: 'mobile', title: '手机', width: 120}
+                    , {field: 'email', title: '邮箱', width: 180}
+                    , {field: 'remark', title: '备注'}
+                    , {field: 'sysAdmin', title: '管理员', align: 'center', width: 90, templet: '#sys-admin-tpl'}
+                    , {field: 'disable', title: '状态', align: 'center', width: 90, templet: '#disable-tpl'}
+                    , {field: 'createUsername', title: '创建用户', width: 90, hide: true}
+                    , {field: 'createTimestamp', title: '创建时间', width: 110, hide: true}
+                    , {field: 'updateUsername', title: '修改用户', width: 90, hide: true}
+                    , {field: 'updateTimestamp', title: '修改时间', width: 110, hide: true}
+                    , {title: '操作', align: 'center', toolbar: '#sys-user-tool', width: 90}
+                ]
+            ]
+        });
     });
 </script>
 </body>

@@ -54,10 +54,7 @@ public class SysRoleController extends BaseController {
                 && Objects.nonNull(this.sysRoleService.findByName(sysRole.getName()))) {
             return ServerResponseEntity.fail("角色名称已存在！");
         }
-        oldSysRole.setName(sysRole.getName());
-        oldSysRole.setRemark(sysRole.getRemark());
-        oldSysRole.setDisable(sysRole.isDisable());
-        this.sysRoleService.save(oldSysRole);
+        this.sysRoleService.save(sysRole);
         return ServerResponseEntity.ok();
     }
 

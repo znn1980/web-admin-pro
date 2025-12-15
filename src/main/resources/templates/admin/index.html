@@ -155,6 +155,13 @@
             }
         });
 
+        layui.common.req(/*[[@{/sys/menu/page}]]*/ '/sys/menu/page', 'GET', null, {
+            done: function (data) {
+                layui.$('#LAY-system-side-menu').html(nav(null, data.data));
+                layui.element.render('nav', 'layadmin-system-side-menu');
+            }
+        });
+
         function load(data) {
             if (data.avatar) layui.$('#sys-avatar').attr('src', data.avatar);
             layui.$('#sys-user').html(data.username);
@@ -182,17 +189,6 @@
             menu.push(`${child.length === 0 || id === null ? '' : '</dl>'}`)
             return menu.join('');
         }
-
-        const sys = [
-            {id: 1, pid: null, title: '系统管理', sysMenu: true, disable: false, icon: 'layui-icon layui-icon-home'}
-            , {id: 2, pid: 1, title: '用户管理', sysMenu: true, disable: false, url: 'user.html'}
-            , {id: 3, pid: 1, title: '角色管理', sysMenu: true, disable: false, url: 'role.html'}
-            , {id: 4, pid: 1, title: '菜单管理', sysMenu: true, disable: false, url: 'menu.html'}
-            , {id: 5, pid: 1, title: '日志管理', sysMenu: true, disable: false, url: 'log.html'}
-        ];
-
-        layui.$('#LAY-system-side-menu').html(nav(null, sys));
-        layui.element.render('nav', 'layadmin-system-side-menu');
     });
 </script>
 </body>

@@ -29,7 +29,7 @@ public class BaseEntity implements Serializable {
     @Column(name = "CREATE_USERNAME")
     private String createUsername;
     @CreatedDate
-    @Column(name = "CREATE_TIMESTAMP", columnDefinition = "DATETIME", updatable = false)
+    @Column(name = "CREATE_TIMESTAMP", columnDefinition = "DATETIME")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTimestamp;

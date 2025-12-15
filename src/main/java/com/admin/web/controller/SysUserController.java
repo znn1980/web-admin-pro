@@ -4,15 +4,16 @@ import com.admin.web.WebServerException;
 import com.admin.web.annotation.*;
 import com.admin.web.model.ServerResponseEntity;
 import com.admin.web.model.SysUser;
-import com.admin.web.model.vo.SessionVo;
-import com.admin.web.model.vo.UserLoginVo;
-import com.admin.web.model.vo.UserPassVo;
+import com.admin.web.model.vo.*;
 import com.admin.web.service.SysUserService;
 import com.admin.web.utils.SecurityUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -55,13 +56,28 @@ public class SysUserController extends BaseController {
         return ServerResponseEntity.ok();
     }
 
+    @SysPermissions
+    @PostMapping("/page")
+    public ServerResponseEntity<List<SysUser>> page(@RequestBody @Validated PageVo pageVo) {
+        Page<SysUser> sysUserLogs = this.sysUserService.findAll(PageRequest.of(pageVo.getPage(), pageVo.getLimit()));
+        return ServerResponseEntity.ok(sysUserLogs.getTotalElements(), sysUserLogs.getContent());
+    }
+
     @SysLog("修改用户")
     @SysPermissions()
     @PutMapping()
     public ServerResponseEntity<SysUser> edit(@RequestBody @Validated(SysUpdate.class) SysUser sysUser) {
         SysUser oldSysUser = this.sysUserService.findById(sysUser.getId())
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！")));
-        return ServerResponseEntity.ok(this.save(oldSysUser, sysUser));
+        if (!Objects.equals(oldSysUser.getMobile(), sysUser.getMobile())
+                && Objects.nonNull(this.sysUserService.findByMobile(sysUser.getMobile()))) {
+            return ServerResponseEntity.fail("手机号码已存在！");
+        }
+        if (!Objects.equals(oldSysUser.getEmail(), sysUser.getEmail())
+                && Objects.nonNull(this.sysUserService.findByEmail(sysUser.getEmail()))) {
+            return ServerResponseEntity.fail("邮箱地址已存在！");
+        }
+        return ServerResponseEntity.ok(this.sysUserService.save(sysUser));
     }
 
     @SysLog("修改用户")
@@ -70,15 +86,25 @@ public class SysUserController extends BaseController {
     public ServerResponseEntity<SysUser> me(@RequestBody @Validated SysUser sysUser) {
         SysUser oldSysUser = this.sysUserService.findById(super.getSysUser().getId())
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！")));
-        sysUser.setDisable(oldSysUser.isDisable());
-        sysUser.setSysAdmin(oldSysUser.isSysAdmin());
-        return ServerResponseEntity.ok(this.save(oldSysUser, sysUser));
+        oldSysUser.setAvatar(sysUser.getAvatar());
+        oldSysUser.setRemark(sysUser.getRemark());
+        if (!Objects.equals(oldSysUser.getMobile(), sysUser.getMobile())
+                && Objects.nonNull(this.sysUserService.findByMobile(sysUser.getMobile()))) {
+            return ServerResponseEntity.fail("手机号码已存在！");
+        }
+        oldSysUser.setMobile(sysUser.getMobile());
+        if (!Objects.equals(oldSysUser.getEmail(), sysUser.getEmail())
+                && Objects.nonNull(this.sysUserService.findByEmail(sysUser.getEmail()))) {
+            return ServerResponseEntity.fail("邮箱地址已存在！");
+        }
+        oldSysUser.setEmail(sysUser.getEmail());
+        return ServerResponseEntity.ok(this.sysUserService.save(oldSysUser));
     }
 
     @SysLog("修改密码")
     @SysPermissions()
-    @PutMapping("/password")
-    public ServerResponseEntity<?> password(@RequestBody @Validated UserPassVo userPassVo) {
+    @PutMapping("/pass")
+    public ServerResponseEntity<?> pass(@RequestBody @Validated UserPassVo userPassVo) {
         userPassVo.setOldPassword(super.hexPassword(userPassVo.getOldPassword()));
         userPassVo.setNewPassword(super.hexPassword(userPassVo.getNewPassword()));
         userPassVo.setConfirmPassword(super.hexPassword(userPassVo.getConfirmPassword()));
@@ -106,22 +132,5 @@ public class SysUserController extends BaseController {
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！"))));
     }
 
-    public SysUser save(SysUser oldSysUser, SysUser sysUser) {
-        if (!Objects.equals(oldSysUser.getMobile(), sysUser.getMobile())
-                && Objects.nonNull(this.sysUserService.findByMobile(sysUser.getMobile()))) {
-            throw new WebServerException(ServerResponseEntity.fail("手机号码已存在！"));
-        }
-        if (!Objects.equals(oldSysUser.getEmail(), sysUser.getEmail())
-                && Objects.nonNull(this.sysUserService.findByEmail(sysUser.getEmail()))) {
-            throw new WebServerException(ServerResponseEntity.fail("邮箱地址已存在！"));
-        }
-        oldSysUser.setMobile(sysUser.getMobile());
-        oldSysUser.setEmail(sysUser.getEmail());
-        oldSysUser.setAvatar(sysUser.getAvatar());
-        oldSysUser.setRemark(sysUser.getRemark());
-        oldSysUser.setDisable(sysUser.isDisable());
-        oldSysUser.setSysAdmin(sysUser.isSysAdmin());
-        return this.sysUserService.save(oldSysUser);
-    }
 
 }

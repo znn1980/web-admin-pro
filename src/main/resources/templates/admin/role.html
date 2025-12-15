@@ -42,13 +42,13 @@
 <script type="text/html" id="sys-role-tool">
     <div class="layui-btn-group">
         <button class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit-tool">
-            <i class="layui-icon layui-icon-edit"></i>编辑
+            <i class="layui-icon layui-icon-edit"></i>
         </button>
         <button class="layui-btn layui-btn-xs layui-bg-red" lay-event="delete-tool">
-            <i class="layui-icon layui-icon-delete"></i>删除
+            <i class="layui-icon layui-icon-delete"></i>
         </button>
         <button class="layui-btn layui-btn-xs" lay-event="more-tool">
-            <i class="layui-icon layui-icon-more-vertical"></i>更多
+            <i class="layui-icon layui-icon-more-vertical"></i>
         </button>
     </div>
 </script>
@@ -91,26 +91,33 @@
             , cols: [
                 [
                     {type: 'radio'}
-                    , {field: 'name', title: '名称'}
+                    , {field: 'name', title: '名称', width: 200}
                     , {field: 'remark', title: '备注'}
                     , {field: 'disable', title: '状态', align: 'center', width: 90, templet: '#disable-tpl'}
                     , {field: 'createUsername', title: '创建用户', width: 90, hide: true}
                     , {field: 'createTimestamp', title: '创建时间', width: 110, hide: true}
                     , {field: 'updateUsername', title: '修改用户', width: 90, hide: true}
                     , {field: 'updateTimestamp', title: '修改时间', width: 110, hide: true}
-                    , {title: '操作', align: 'center', toolbar: '#sys-role-tool', width: 185}
+                    , {title: '操作', align: 'center', toolbar: '#sys-role-tool', width: 120}
                 ]
             ]
         });
 
         layui.form.on('switch(sys-disable)', function (data) {
             const role = JSON.parse(decodeURIComponent(layui.$(this).data('json')));
-            role.disable = !data.elem.checked;
-            layui.common.req(/*[[@{/sys/role}]]*/ '/sys/role', 'PUT', role, {
-                done: function (data) {
-                    layui.layer.msg(data.msg);
-                    layui.table.reload('sys-role-table');
-                }
+            layui.layer.confirm(`是否改变角色名称为【${role.name}】的状态？`, {
+                title: '修改角色', closeBtn: 0, skin: 'layui-layer-admin'
+            }, function (index) {
+                layui.layer.close(index);
+                role.disable = !data.elem.checked;
+                layui.common.req(/*[[@{/sys/role}]]*/ '/sys/role', 'PUT', role, {
+                    done: function (data) {
+                        layui.layer.msg(data.msg);
+                        layui.table.reload('sys-role-table');
+                    }
+                });
+            }, function () {
+                data.elem.checked = !data.elem.checked;
             });
         });
 

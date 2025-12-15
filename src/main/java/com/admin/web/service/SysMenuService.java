@@ -18,6 +18,10 @@ public class SysMenuService {
         this.sysMenuDao = sysMenuDao;
     }
 
+    public List<SysMenu> findAll() {
+        return this.sysMenuDao.findAll();
+    }
+
     public SysMenu findByTitle(String title) {
         return this.sysMenuDao.findByTitle(title);
     }

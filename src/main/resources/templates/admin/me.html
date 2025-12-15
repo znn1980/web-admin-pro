@@ -52,7 +52,7 @@
                         <hr>
                         <li class="list-group-item">
                             <i class="layui-icon layui-icon-auz"></i>安全设置
-                            <button style="float: right;" type="button" id="sys-password" class="layui-btn layui-btn-xs layui-bg-red">修改密码</button>
+                            <button style="float: right;" type="button" id="sys-pass" class="layui-btn layui-btn-xs layui-bg-red">修改密码</button>
                         </li>
                         <hr>
                     </ul>
@@ -105,7 +105,7 @@
                             </form>
                         </div>
                         <div class="layui-tabs-item">
-                            <form class="layui-form" id="password-form" lay-filter="password-form">
+                            <form class="layui-form" id="sys-pass-form" lay-filter="sys-pass-form">
                                 <div class="layui-form-item">
                                     <label class="layui-form-label" for="oldPassword">旧密码</label>
                                     <div class="layui-input-block">
@@ -126,7 +126,7 @@
                                 </div>
                                 <div class="layui-form-item ">
                                     <div class="layui-input-block">
-                                        <button type="button" lay-submit class="layui-btn layui-btn-radius" lay-filter="password-submit" id="password-submit">
+                                        <button type="button" lay-submit class="layui-btn layui-btn-radius" lay-filter="sys-pass-submit" id="sys-pass-submit">
                                             <i class="layui-icon layui-icon-ok"></i>保存
                                         </button>
                                         <button type="button" class="layui-btn layui-btn-radius layui-bg-red">
@@ -166,6 +166,7 @@
 </div>
 <script type="text/html" id="name-tpl">
     <span lay-tips="{{d.name}}">{{d.name}}</span>
+    {{#if(d.errors){}}<span class="layui-badge">异常</span>{{#}}}
 </script>
 <script type="text/html" id="ip-tpl">
     <span lay-tips="{{d.method}}:{{d.url}}">{{d.ip}}</span>
@@ -188,8 +189,16 @@
 </script>
 <script type="text/html" id="sys-log-tool">
     <button class="layui-btn layui-btn-xs layui-bg-blue" lay-event="logs-tool">
-        <i class="layui-icon layui-icon-search"></i>详细
+        <i class="layui-icon layui-icon-search"></i>
     </button>
+</script>
+<script type="text/html" id="sys-code-tpl">
+    {{#if(d.params){}}
+    <pre class="layui-code" lay-options="{text:{code:'请求参数'}}">{{d.params}}</pre>{{#}}}
+    {{#if(d.result){}}<br>
+    <pre class="layui-code" lay-options="{text:{code:'返回参数'}}">{{d.result}}</pre>{{#}}}
+    {{#if(d.errors){}}<br>
+    <pre class="layui-code" lay-options="{text:{code:'异常信息'},wordWrap:false}">{{d.errors}}</pre>{{#}}}
 </script>
 <script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
 <script th:inline="javascript">
@@ -212,7 +221,7 @@
             });
         });
 
-        layui.$('#sys-password').on('click', function () {
+        layui.$('#sys-pass').on('click', function () {
             layui.tabs.change('sys-tabs', 1);
         });
 
@@ -243,7 +252,7 @@
                     , {field: 'browser', title: '浏览器', width: 100}
                     , {field: 'ms', title: '耗时', align: 'right', width: 80, templet: '#ms-tpl'}
                     , {field: 'timestamp', title: '创建时间', width: 110, templet: '#timestamp-tpl'}
-                    , {title: '操作', align: 'center', toolbar: '#sys-log-tool', width: 80}
+                    , {title: '操作', align: 'center', toolbar: '#sys-log-tool', width: 60}
                 ]
             ]
         });
@@ -274,18 +283,14 @@
 
         layui.table.on('tool(sys-log-table)', function (e) {
             if (e.event === 'logs-tool') {
-                const logs = [];
-                if (e.data.params) logs.push(`<pre id="sys-params" class="layui-code">${e.data.params}</pre>`);
-                if (e.data.result) logs.push(`<br><pre id="sys-result" class="layui-code">${e.data.result}</pre>`);
-                if (e.data.errors) logs.push(`<br><pre id="sys-errors" class="layui-code">${e.data.errors}</pre>`);
-                layui.admin.popup({
-                    type: 1, title: '详细信息', area: 'auto'
-                    , content: logs.join('')
-                    , success: function () {
-                        if (e.data.params) layui.code({elem: '#sys-params', theme: 'dark', wordWrap: true, header: true, text: {code: '请求参数'}});
-                        if (e.data.result) layui.code({elem: '#sys-result', theme: 'dark', wordWrap: true, header: true, text: {code: '返回参数'}});
-                        if (e.data.errors) layui.code({elem: '#sys-errors', theme: 'dark', wordWrap: false, header: true, text: {code: '异常信息'},});
-                    }
+                layui.laytpl(layui.$('#sys-code-tpl').html()).render(e.data, function (html) {
+                    layui.admin.popup({
+                        type: 1, title: '详细信息', area: 'auto'
+                        , content: html
+                        , success: function () {
+                            layui.code({elem: '.layui-code', theme: 'dark', header: true});
+                        }
+                    });
                 });
             }
         });
@@ -318,11 +323,11 @@
             });
         });
 
-        layui.form.on('submit(password-submit)', function (data) {
-            layui.common.req(/*[[@{/sys/user/password}]]*/ '/sys/user/password', 'PUT', data.field, {
+        layui.form.on('submit(sys-pass-submit)', function (data) {
+            layui.common.req(/*[[@{/sys/user/pass}]]*/ '/sys/user/pass', 'PUT', data.field, {
                 done: function (data) {
                     layui.layer.msg(data.msg);
-                    layui.$('#password-form')[0].reset();
+                    layui.$('#sys-pass-form')[0].reset();
                 }
             });
         });

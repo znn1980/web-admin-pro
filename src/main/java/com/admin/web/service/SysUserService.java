@@ -3,8 +3,11 @@ package com.admin.web.service;
 import com.admin.web.dao.SysUserDao;
 import com.admin.web.model.SysUser;
 import com.admin.web.model.vo.UserLoginVo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -22,6 +25,10 @@ public class SysUserService {
         return Optional.ofNullable(this.findByUsername(userLoginVo.getUsername()))
                 .orElseGet(() -> Optional.ofNullable(this.findByMobile(userLoginVo.getUsername()))
                         .orElseGet(() -> this.findByEmail(userLoginVo.getUsername())));
+    }
+
+    public Page<SysUser> findAll(Pageable page) {
+        return this.sysUserDao.findAll(page);
     }
 
     public SysUser save(SysUser sysUser) {
