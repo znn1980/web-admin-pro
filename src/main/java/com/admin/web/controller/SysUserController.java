@@ -6,6 +6,7 @@ import com.admin.web.model.ServerResponseEntity;
 import com.admin.web.model.SysUser;
 import com.admin.web.model.vo.*;
 import com.admin.web.service.SysUserService;
+import com.admin.web.utils.BeanUtils;
 import com.admin.web.utils.SecurityUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -77,27 +78,7 @@ public class SysUserController extends BaseController {
                 && Objects.nonNull(this.sysUserService.findByEmail(sysUser.getEmail()))) {
             return ServerResponseEntity.fail("邮箱地址已存在！");
         }
-        return ServerResponseEntity.ok(this.sysUserService.save(sysUser));
-    }
-
-    @SysLog("修改用户")
-    @SysPermissions()
-    @PutMapping("/me")
-    public ServerResponseEntity<SysUser> me(@RequestBody @Validated SysUser sysUser) {
-        SysUser oldSysUser = this.sysUserService.findById(super.getSysUser().getId())
-                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！")));
-        oldSysUser.setAvatar(sysUser.getAvatar());
-        oldSysUser.setRemark(sysUser.getRemark());
-        if (!Objects.equals(oldSysUser.getMobile(), sysUser.getMobile())
-                && Objects.nonNull(this.sysUserService.findByMobile(sysUser.getMobile()))) {
-            return ServerResponseEntity.fail("手机号码已存在！");
-        }
-        oldSysUser.setMobile(sysUser.getMobile());
-        if (!Objects.equals(oldSysUser.getEmail(), sysUser.getEmail())
-                && Objects.nonNull(this.sysUserService.findByEmail(sysUser.getEmail()))) {
-            return ServerResponseEntity.fail("邮箱地址已存在！");
-        }
-        oldSysUser.setEmail(sysUser.getEmail());
+        BeanUtils.copyNonNullProperties(sysUser, oldSysUser);
         return ServerResponseEntity.ok(this.sysUserService.save(oldSysUser));
     }
 

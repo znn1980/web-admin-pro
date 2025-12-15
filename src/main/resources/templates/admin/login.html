@@ -59,7 +59,7 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <button id="login-submit" class="layui-btn layui-btn-fluid" lay-submit lay-filter="login-submit">登 录</button>
+                <button id="sys-login-submit" class="layui-btn layui-btn-fluid" lay-submit lay-filter="sys-login-submit">登 录</button>
             </div>
         </div>
     </div>
@@ -74,7 +74,7 @@
         , version: true
     }).use(['index', 'common'], function () {
 
-        layui.form.on('submit(login-submit)', function (data) {
+        layui.form.on('submit(sys-login-submit)', function (data) {
             layui.common.req(/*[[@{/sys/user/login}]]*/ '/sys/user/login', 'POST', data.field, {
                 done: function (data) {
                     layui.layer.msg(data.msg, {

@@ -9,6 +9,7 @@ import com.admin.web.model.ServerResponseEntity;
 import com.admin.web.model.SysRole;
 import com.admin.web.model.vo.MoveVo;
 import com.admin.web.service.SysRoleService;
+import com.admin.web.utils.BeanUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +31,7 @@ public class SysRoleController extends BaseController {
     @SysPermissions
     @GetMapping("/page")
     public ServerResponseEntity<List<SysRole>> page() {
-        return ServerResponseEntity.ok(this.sysRoleService.findByAll());
+        return ServerResponseEntity.ok(this.sysRoleService.findAll());
     }
 
     @SysLog("添加角色")
@@ -54,7 +55,8 @@ public class SysRoleController extends BaseController {
                 && Objects.nonNull(this.sysRoleService.findByName(sysRole.getName()))) {
             return ServerResponseEntity.fail("角色名称已存在！");
         }
-        this.sysRoleService.save(sysRole);
+        BeanUtils.copyNonNullProperties(sysRole, oldSysRole);
+        this.sysRoleService.save(oldSysRole);
         return ServerResponseEntity.ok();
     }
 

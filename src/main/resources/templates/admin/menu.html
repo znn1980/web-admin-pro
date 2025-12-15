@@ -18,42 +18,44 @@
     </div>
 </div>
 <script type="text/html" id="sys-menu-tpl">
-    <input type="checkbox" value="{{d.id}}"
-           {{#if(d.sysMenu){}}checked{{#}}}
-           data-json="{{encodeURIComponent(JSON.stringify(d))}}"
-           title="是|否" lay-skin="switch" lay-filter="sys-menu">
+    {{# if(d.sysMenu){ }}
+    <input type="checkbox" checked value="{{d.id}}" data-json="{{encodeURIComponent(JSON.stringify(d))}}" title="是|否" lay-skin="switch" lay-filter="sys-menu-switch">
+    {{# }else{ }}
+    <input type="checkbox" value="{{d.id}}" data-json="{{encodeURIComponent(JSON.stringify(d))}}" title="是|否" lay-skin="switch" lay-filter="sys-menu-switch">
+    {{# } }}
 </script>
-<script type="text/html" id="disable-tpl">
-    <input type="checkbox" value="{{d.id}}"
-           {{#if(!d.disable){}}checked{{#}}}
-           data-json="{{encodeURIComponent(JSON.stringify(d))}}"
-           title="启用|禁用" lay-skin="switch" lay-filter="sys-disable">
+<script type="text/html" id="sys-disable-tpl">
+    {{# if(d.disable){ }}
+    <input type="checkbox" value="{{d.id}}" data-json="{{encodeURIComponent(JSON.stringify(d))}}" title="启用|禁用" lay-skin="switch" lay-filter="sys-disable-switch">
+    {{# }else{ }}
+    <input type="checkbox" checked value="{{d.id}}" data-json="{{encodeURIComponent(JSON.stringify(d))}}" title="启用|禁用" lay-skin="switch" lay-filter="sys-disable-switch">
+    {{# } }}
 </script>
 <script type="text/html" id="sys-menu-toolbar">
     <div class="layui-btn-group">
-        <button class="layui-btn layui-btn-sm" lay-event="save-toolbar">
+        <button class="layui-btn layui-btn-sm" lay-event="sys-save-toolbar">
             <i class="layui-icon layui-icon-add-1"></i>添加
         </button>
-        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="edit-toolbar">
+        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="sys-edit-toolbar">
             <i class="layui-icon layui-icon-edit"></i>编辑
         </button>
-        <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="delete-toolbar">
+        <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="sys-delete-toolbar">
             <i class="layui-icon layui-icon-delete"></i>删除
         </button>
-        <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="refresh-toolbar">
+        <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="sys-refresh-toolbar">
             <i class="layui-icon layui-icon-refresh"></i>刷新
         </button>
     </div>
 </script>
 <script type="text/html" id="sys-menu-tool">
     <div class="layui-btn-group">
-        <button class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit-tool">
+        <button class="layui-btn layui-btn-xs layui-bg-blue" lay-event="sys-edit-tool">
             <i class="layui-icon layui-icon-edit"></i>
         </button>
-        <button class="layui-btn layui-btn-xs layui-bg-red" lay-event="delete-tool">
+        <button class="layui-btn layui-btn-xs layui-bg-red" lay-event="sys-delete-tool">
             <i class="layui-icon layui-icon-delete"></i>
         </button>
-        <button class="layui-btn layui-btn-xs" lay-event="more-tool">
+        <button class="layui-btn layui-btn-xs" lay-event="sys-more-tool">
             <i class="layui-icon layui-icon-more-vertical"></i>
         </button>
     </div>
@@ -81,7 +83,7 @@
                     , {field: 'url', title: '地址'}
                     , {field: 'remark', title: '备注', hide: true}
                     , {field: 'sysMenu', title: '菜单', align: 'center', width: 90, templet: '#sys-menu-tpl'}
-                    , {field: 'disable', title: '状态', align: 'center', width: 90, templet: '#disable-tpl'}
+                    , {field: 'disable', title: '状态', align: 'center', width: 90, templet: '#sys-disable-tpl'}
                     , {field: 'createUsername', title: '创建用户', width: 90, hide: true}
                     , {field: 'createTimestamp', title: '创建时间', width: 110, hide: true}
                     , {field: 'updateUsername', title: '修改用户', width: 90, hide: true}

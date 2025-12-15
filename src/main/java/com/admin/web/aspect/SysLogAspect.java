@@ -70,18 +70,12 @@ public class SysLogAspect {
             sysUserLog.setUrl(WebUtils.getRequest().getRequestURI());
             sysUserLog.setName(sysLog.value());
             if (Objects.nonNull(joinPoint.getArgs())) {
-                StringJoiner params = new StringJoiner(System.lineSeparator());
-                Arrays.asList(joinPoint.getArgs()).forEach(arg -> {
-                    if (Objects.nonNull(arg) && !filterObject(arg)) {
-                        log.info("REQUEST:{}", arg);
-                        params.add(arg.toString());
-                    }
-                });
-                sysUserLog.setParams(params.toString());
+                sysUserLog.setParams(getParams(joinPoint.getArgs()));
+                log.info("REQUEST:{}", sysUserLog.getParams());
             }
             if (Objects.nonNull(result)) {
-                log.info("RESPONSE:{}", result);
                 sysUserLog.setResult(result.toString());
+                log.info("RESPONSE:{}", sysUserLog.getResult());
             }
             if (Objects.nonNull(e)) {
                 sysUserLog.setErrors(getStackTrace(e));
@@ -95,13 +89,24 @@ public class SysLogAspect {
     }
 
     static SysUser getSysUser() {
-        return Objects.requireNonNullElse(SecurityUtils.getSysUser(WebUtils.getRequest()), SecurityUtils.getSysUser());
+        SysUser sysUser = SecurityUtils.getSysUser(WebUtils.getRequest());
+        return Objects.requireNonNullElse(sysUser, SecurityUtils.getSysUser());
     }
 
     static boolean filterObject(Object o) {
         return o instanceof MultipartFile
                 || o instanceof HttpServletRequest
                 || o instanceof HttpServletResponse;
+    }
+
+    static String getParams(Object[] args) {
+        StringJoiner params = new StringJoiner(System.lineSeparator());
+        Arrays.asList(args).forEach(arg -> {
+            if (Objects.nonNull(arg) && !filterObject(arg)) {
+                params.add(arg.toString());
+            }
+        });
+        return params.toString();
     }
 
     static String getStackTrace(Exception e) {

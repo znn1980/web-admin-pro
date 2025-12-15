@@ -17,37 +17,38 @@
         <table class="layui-hide" id="sys-role-table" lay-filter="sys-role-table"></table>
     </div>
 </div>
-<script type="text/html" id="disable-tpl">
-    <input type="checkbox" value="{{d.id}}"
-           {{#if(!d.disable){}}checked{{#}}}
-           data-json="{{encodeURIComponent(JSON.stringify(d))}}"
-           title="启用|禁用" lay-skin="switch" lay-filter="sys-disable">
+<script type="text/html" id="sys-disable-tpl">
+    {{# if(d.disable){ }}
+    <input type="checkbox" value="{{d.id}}" data-json="{{encodeURIComponent(JSON.stringify(d))}}" title="启用|禁用" lay-skin="switch" lay-filter="sys-disable-switch">
+    {{# }else{ }}
+    <input type="checkbox" checked value="{{d.id}}" data-json="{{encodeURIComponent(JSON.stringify(d))}}" title="启用|禁用" lay-skin="switch" lay-filter="sys-disable-switch">
+    {{# } }}
 </script>
 <script type="text/html" id="sys-role-toolbar">
     <div class="layui-btn-group">
-        <button class="layui-btn layui-btn-sm" lay-event="save-toolbar">
+        <button class="layui-btn layui-btn-sm" lay-event="sys-save-toolbar">
             <i class="layui-icon layui-icon-add-1"></i>添加
         </button>
-        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="edit-toolbar">
+        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="sys-edit-toolbar">
             <i class="layui-icon layui-icon-edit"></i>编辑
         </button>
-        <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="delete-toolbar">
+        <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="sys-delete-toolbar">
             <i class="layui-icon layui-icon-delete"></i>删除
         </button>
-        <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="refresh-toolbar">
+        <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="sys-refresh-toolbar">
             <i class="layui-icon layui-icon-refresh"></i>刷新
         </button>
     </div>
 </script>
 <script type="text/html" id="sys-role-tool">
     <div class="layui-btn-group">
-        <button class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit-tool">
+        <button class="layui-btn layui-btn-xs layui-bg-blue" lay-event="sys-edit-tool">
             <i class="layui-icon layui-icon-edit"></i>
         </button>
-        <button class="layui-btn layui-btn-xs layui-bg-red" lay-event="delete-tool">
+        <button class="layui-btn layui-btn-xs layui-bg-red" lay-event="sys-delete-tool">
             <i class="layui-icon layui-icon-delete"></i>
         </button>
-        <button class="layui-btn layui-btn-xs" lay-event="more-tool">
+        <button class="layui-btn layui-btn-xs" lay-event="sys-more-tool">
             <i class="layui-icon layui-icon-more-vertical"></i>
         </button>
     </div>
@@ -93,7 +94,7 @@
                     {type: 'radio'}
                     , {field: 'name', title: '名称', width: 200}
                     , {field: 'remark', title: '备注'}
-                    , {field: 'disable', title: '状态', align: 'center', width: 90, templet: '#disable-tpl'}
+                    , {field: 'disable', title: '状态', align: 'center', width: 90, templet: '#sys-disable-tpl'}
                     , {field: 'createUsername', title: '创建用户', width: 90, hide: true}
                     , {field: 'createTimestamp', title: '创建时间', width: 110, hide: true}
                     , {field: 'updateUsername', title: '修改用户', width: 90, hide: true}
@@ -103,10 +104,10 @@
             ]
         });
 
-        layui.form.on('switch(sys-disable)', function (data) {
+        layui.form.on('switch(sys-disable-switch)', function (data) {
             const role = JSON.parse(decodeURIComponent(layui.$(this).data('json')));
-            layui.layer.confirm(`是否改变角色名称为【${role.name}】的状态？`, {
-                title: '修改角色', closeBtn: 0, skin: 'layui-layer-admin'
+            layui.layer.confirm(`是否改变名称为【${role.name}】的角色状态？`, {
+                title: '修改角色状态', closeBtn: 0, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);
                 role.disable = !data.elem.checked;
@@ -122,41 +123,41 @@
         });
 
         layui.table.on('toolbar(sys-role-table)', function (e) {
-            if (e.event === 'save-toolbar') {
+            if (e.event === 'sys-save-toolbar') {
                 layui.$('#id').val('');
                 layui.$('#sys-role-form')[0].reset();
                 save('添加角色', 'POST');
             }
-            if (e.event === 'edit-toolbar' || e.event === 'delete-toolbar') {
+            if (e.event === 'sys-edit-toolbar' || e.event === 'sys-delete-toolbar') {
                 const roles = layui.table.checkStatus('sys-role-table').data;
                 if (roles.length <= 0) {
                     layui.layer.msg("请选择一条纪录！");
                 } else {
-                    if (e.event === 'edit-toolbar') {
+                    if (e.event === 'sys-edit-toolbar') {
                         roles[0].disable = !roles[0].disable;
                         layui.form.val('sys-role-form', roles[0]);
                         save('修改角色', 'PUT');
                     }
-                    if (e.event === 'delete-toolbar') {
+                    if (e.event === 'sys-delete-toolbar') {
                         del(roles[0]);
                     }
                 }
             }
-            if (e.event === 'refresh-toolbar') {
+            if (e.event === 'sys-refresh-toolbar') {
                 layui.table.reload('sys-role-table');
             }
         });
 
         layui.table.on('tool(sys-role-table)', function (e) {
-            if (e.event === 'edit-tool') {
+            if (e.event === 'sys-edit-tool') {
                 e.data.disable = !e.data.disable;
                 layui.form.val('sys-role-form', e.data);
                 save('修改角色', 'PUT');
             }
-            if (e.event === 'delete-tool') {
+            if (e.event === 'sys-delete-tool') {
                 del(e.data);
             }
-            if (e.event === 'more-tool') {
+            if (e.event === 'sys-more-tool') {
                 layui.dropdown.render({
                     elem: this, show: true
                     , data: [{id: 'UP', title: '上移'}, {id: 'DOWN', title: '下移'}]

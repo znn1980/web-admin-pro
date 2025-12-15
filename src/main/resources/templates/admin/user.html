@@ -17,50 +17,52 @@
         <table class="layui-hide" id="sys-user-table" lay-filter="sys-user-table"></table>
     </div>
 </div>
-<script type="text/html" id="username-tpl">
-    {{#if(d.avatar){}}
-    <img class="layui-nav-img" src={{d.avatar}} alt="{{d.username}}">
-    {{#}else{}}
-    <img class="layui-nav-img" th:src="@{/style/imgs/avatar/default_beauty.jpg}" src="../../static/style/imgs/avatar/default_beauty.jpg" alt="{{d.username}}">
-    {{#}}}{{d.username}}
+<script type="text/html" id="sys-username-tpl">
+    {{# if(d.avatar){ }}
+    <img class="layui-nav-img" src="{{d.avatar}}" lay-tips="{{d.username}}" alt="">
+    {{# }else{ }}
+    <img class="layui-nav-img" th:src="@{/style/imgs/logo.jpg}" src="../../static/style/imgs/logo.jpg" lay-tips="{{d.username}}" alt="">
+    {{# } }}{{d.username}}
 </script>
 <script type="text/html" id="sys-admin-tpl">
-    <input type="checkbox" value="{{d.id}}"
-           {{#if(d.sysAdmin){}}checked{{#}}}
-           data-json="{{encodeURIComponent(JSON.stringify(d))}}"
-           title="是|否" lay-skin="switch" lay-filter="sys-admin">
+    {{# if(d.sysAdmin){ }}
+    <input type="checkbox" checked value="{{d.id}}" data-json="{{encodeURIComponent(JSON.stringify(d))}}" title="是|否" lay-skin="switch" lay-filter="sys-admin-switch">
+    {{# }else{ }}
+    <input type="checkbox" value="{{d.id}}" data-json="{{encodeURIComponent(JSON.stringify(d))}}" title="是|否" lay-skin="switch" lay-filter="sys-admin-switch">
+    {{# } }}
 </script>
-<script type="text/html" id="disable-tpl">
-    <input type="checkbox" value="{{d.id}}"
-           {{#if(!d.disable){}}checked{{#}}}
-           data-json="{{encodeURIComponent(JSON.stringify(d))}}"
-           title="启用|禁用" lay-skin="switch" lay-filter="sys-disable">
+<script type="text/html" id="sys-disable-tpl">
+    {{# if(d.disable){ }}
+    <input type="checkbox" value="{{d.id}}" data-json="{{encodeURIComponent(JSON.stringify(d))}}" title="启用|禁用" lay-skin="switch" lay-filter="sys-disable-switch">
+    {{# }else{ }}
+    <input type="checkbox" checked value="{{d.id}}" data-json="{{encodeURIComponent(JSON.stringify(d))}}" title="启用|禁用" lay-skin="switch" lay-filter="sys-disable-switch">
+    {{# } }}
 </script>
 <script type="text/html" id="sys-user-toolbar">
     <div class="layui-btn-group">
-        <button class="layui-btn layui-btn-sm" lay-event="save-toolbar">
+        <button class="layui-btn layui-btn-sm" lay-event="sys-save-toolbar">
             <i class="layui-icon layui-icon-add-1"></i>添加
         </button>
-        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="edit-toolbar">
+        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="sys-edit-toolbar">
             <i class="layui-icon layui-icon-edit"></i>编辑
         </button>
-        <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="delete-toolbar">
+        <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="sys-delete-toolbar">
             <i class="layui-icon layui-icon-delete"></i>删除
         </button>
-        <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="refresh-toolbar">
+        <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="sys-refresh-toolbar">
             <i class="layui-icon layui-icon-refresh"></i>刷新
         </button>
     </div>
-    <button class="layui-btn layui-btn-sm layui-bg-black" lay-event="release-toolbar">
+    <button class="layui-btn layui-btn-sm layui-bg-black" lay-event="sys-release-toolbar">
         <i class="layui-icon layui-icon-password"></i>重置密码
     </button>
 </script>
 <script type="text/html" id="sys-user-tool">
     <div class="layui-btn-group">
-        <button class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit-tool">
+        <button class="layui-btn layui-btn-xs layui-bg-blue" lay-event="sys-edit-tool">
             <i class="layui-icon layui-icon-edit"></i>
         </button>
-        <button class="layui-btn layui-btn-xs layui-bg-red" lay-event="delete-tool">
+        <button class="layui-btn layui-btn-xs layui-bg-red" lay-event="sys-delete-tool">
             <i class="layui-icon layui-icon-delete"></i>
         </button>
     </div>
@@ -80,13 +82,13 @@
             , toolbar: '#sys-user-toolbar'
             , cols: [
                 [
-                    {type: 'checkbox'}
-                    , {field: 'username', title: '用户', width: 150, templet: '#username-tpl'}
+                    {type: 'radio'}
+                    , {field: 'username', title: '用户', width: 150, templet: '#sys-username-tpl'}
                     , {field: 'mobile', title: '手机', width: 120}
                     , {field: 'email', title: '邮箱', width: 180}
                     , {field: 'remark', title: '备注'}
                     , {field: 'sysAdmin', title: '管理员', align: 'center', width: 90, templet: '#sys-admin-tpl'}
-                    , {field: 'disable', title: '状态', align: 'center', width: 90, templet: '#disable-tpl'}
+                    , {field: 'disable', title: '状态', align: 'center', width: 90, templet: '#sys-disable-tpl'}
                     , {field: 'createUsername', title: '创建用户', width: 90, hide: true}
                     , {field: 'createTimestamp', title: '创建时间', width: 110, hide: true}
                     , {field: 'updateUsername', title: '修改用户', width: 90, hide: true}

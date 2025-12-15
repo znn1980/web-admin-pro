@@ -19,7 +19,7 @@ public class SysMenuService {
     }
 
     public List<SysMenu> findAll() {
-        return this.sysMenuDao.findAll();
+        return this.sysMenuDao.findAllByOrderBySort();
     }
 
     public SysMenu findByTitle(String title) {

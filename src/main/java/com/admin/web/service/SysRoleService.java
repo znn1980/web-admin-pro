@@ -29,7 +29,7 @@ public class SysRoleService {
         return this.sysRoleDao.findById(id);
     }
 
-    public List<SysRole> findByAll() {
+    public List<SysRole> findAll() {
         return this.sysRoleDao.findAllByOrderBySort();
     }
 
