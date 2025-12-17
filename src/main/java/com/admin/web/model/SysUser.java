@@ -1,7 +1,6 @@
 package com.admin.web.model;
 
 import com.admin.web.annotation.SysCreate;
-import com.admin.web.annotation.SysLogin;
 import com.admin.web.annotation.SysUpdate;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
@@ -17,7 +16,7 @@ import java.util.List;
 @Table(name = "SYS_USER")
 public class SysUser extends BaseEntity {
     @Column(name = "USERNAME")
-    @NotBlank(message = "用户名不能为空！", groups = { SysCreate.class})
+    @NotBlank(message = "用户名不能为空！", groups = {SysCreate.class})
     @Size(min = 2, max = 32, message = "用户名长度应在2-32之间！", groups = {SysCreate.class})
     private String username;
     @Column(name = "PASSWORD")
@@ -32,9 +31,9 @@ public class SysUser extends BaseEntity {
     private String email;
     @Column(name = "AVATAR")
     private String avatar;
-    @Column(name = "PASSWORD_TIMESTAMP", columnDefinition = "DATETIME")
+    @Column(name = "PASS_TIMESTAMP", columnDefinition = "DATETIME")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime passwordTimestamp;
+    private LocalDateTime passTimestamp;
     @Column(name = "SYS_ADMIN")
     private boolean sysAdmin;
     @ManyToMany(fetch = FetchType.EAGER)
@@ -54,7 +53,7 @@ public class SysUser extends BaseEntity {
         this.setMobile(null);
         this.setEmail(null);
         this.setAvatar(null);
-        this.setPasswordTimestamp(null);
+        this.setPassTimestamp(null);
         this.setSysAdmin(false);
         this.setRoles(null);
     }
@@ -99,12 +98,12 @@ public class SysUser extends BaseEntity {
         this.avatar = avatar;
     }
 
-    public LocalDateTime getPasswordTimestamp() {
-        return passwordTimestamp;
+    public LocalDateTime getPassTimestamp() {
+        return passTimestamp;
     }
 
-    public void setPasswordTimestamp(LocalDateTime passwordTimestamp) {
-        this.passwordTimestamp = passwordTimestamp;
+    public void setPassTimestamp(LocalDateTime passTimestamp) {
+        this.passTimestamp = passTimestamp;
     }
 
     public boolean isSysAdmin() {
@@ -133,7 +132,7 @@ public class SysUser extends BaseEntity {
                 ", mobile='" + this.getMobile() + '\'' +
                 ", email='" + this.getEmail() + '\'' +
                 ", avatar='" + this.getAvatar() + '\'' +
-                ", passwordTimestamp=" + this.getPasswordTimestamp() +
+                ", passTimestamp=" + this.getPassTimestamp() +
                 ", sysAdmin=" + this.isSysAdmin() +
                 ", roles=" + this.getRoles() +
                 '}';

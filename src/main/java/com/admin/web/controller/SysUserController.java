@@ -1,6 +1,6 @@
 package com.admin.web.controller;
 
-import com.admin.web.WebServerException;
+import com.admin.web.model.WebServerException;
 import com.admin.web.annotation.*;
 import com.admin.web.model.ServerResponseEntity;
 import com.admin.web.model.SysUser;
@@ -100,7 +100,7 @@ public class SysUserController extends BaseController {
         if (!Objects.equals(oldSysUser.getPassword(), userPassVo.getOldPassword())) {
             return ServerResponseEntity.fail("原密码输入不正确！");
         }
-        oldSysUser.setPasswordTimestamp(LocalDateTime.now());
+        oldSysUser.setPassTimestamp(LocalDateTime.now());
         oldSysUser.setPassword(userPassVo.getNewPassword());
         this.sysUserService.save(oldSysUser);
         return ServerResponseEntity.ok();

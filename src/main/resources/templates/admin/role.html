@@ -17,6 +17,9 @@
         <table class="layui-hide" id="sys-role-table" lay-filter="sys-role-table"></table>
     </div>
 </div>
+<script type="text/html" id="sys-remark-tpl">
+    <span lay-tips="{{d.remark?d.remark:d.name}}">{{d.name}}</span>
+</script>
 <script type="text/html" id="sys-disable-tpl">
     {{# if(d.disable){ }}
     <input type="checkbox" value="{{d.id}}" data-json="{{encodeURIComponent(JSON.stringify(d))}}" title="启用|禁用" lay-skin="switch" lay-filter="sys-disable-switch">
@@ -79,21 +82,25 @@
 </form>
 <script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
 <script th:inline="javascript">
+    const config = {
+        base:/*[[@{/}]]*/ '../../static/'
+    }
+
     layui.config({
-        base: /*[[@{/}]]*/ '../../static/'
+        base: config.base
         , version: true
     }).use(['index', 'common'], function () {
 
         layui.table.render({
             elem: '#sys-role-table'
-            , url: /*[[@{/sys/role/page}]]*/ '/sys/role/page'
+            , url: `${config.base}sys/role/page`
             //, method: 'GET', contentType: "application/json;charset=UTF-8"
             , toolbar: '#sys-role-toolbar'
             , cols: [
                 [
                     {type: 'radio'}
-                    , {field: 'name', title: '名称', width: 200}
-                    , {field: 'remark', title: '备注'}
+                    , {field: 'name', title: '名称', templet: '#sys-remark-tpl'}
+                    //, {field: 'remark', title: '备注'}
                     , {field: 'disable', title: '状态', align: 'center', width: 90, templet: '#sys-disable-tpl'}
                     , {field: 'createUsername', title: '创建用户', width: 90, hide: true}
                     , {field: 'createTimestamp', title: '创建时间', width: 110, hide: true}
@@ -111,7 +118,7 @@
             }, function (index) {
                 layui.layer.close(index);
                 role.disable = !data.elem.checked;
-                layui.common.req(/*[[@{/sys/role}]]*/ '/sys/role', 'PUT', role, {
+                layui.common.req(`${config.base}sys/role`, 'PUT', role, {
                     done: function (data) {
                         layui.layer.msg(data.msg);
                         layui.table.reload('sys-role-table');
@@ -163,7 +170,7 @@
                     , data: [{id: 'UP', title: '上移'}, {id: 'DOWN', title: '下移'}]
                     , click: function (data) {
                         if (data.id === 'UP' || data.id === 'DOWN') {
-                            layui.common.req(/*[[@{/sys/role/move}]]*/ '/sys/role/move', 'PUT', {
+                            layui.common.req(`${config.base}sys/role/move`, 'PUT', {
                                 id: e.data.id
                                 , move: data.id
                             }, {
@@ -187,7 +194,7 @@
                     layui.form.on('submit(sys-role-submit)', function (data) {
                         data.field.disable = data.field.disable !== 'on';
                         layui.layer.close(index);
-                        layui.common.req(/*[[@{/sys/role}]]*/ '/sys/role', type, data.field, {
+                        layui.common.req(`${config.base}sys/role`, type, data.field, {
                             done: function (data) {
                                 layui.layer.msg(data.msg);
                                 layui.table.reload('sys-role-table');
@@ -204,7 +211,7 @@
                 title: '删除角色', closeBtn: 0, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);
-                layui.common.req(/*[[@{/sys/role}]]*/ '/sys/role', 'DELETE', role.id, {
+                layui.common.req(`${config.base}sys/role`, 'DELETE', role.id, {
                     done: function (data) {
                         layui.layer.msg(data.msg);
                         layui.table.reload('sys-role-table');

@@ -18,6 +18,8 @@ public class SysMenu extends BaseEntity {
     @NotBlank(message = "菜单标题不能为空！")
     @Size(min = 2, max = 64, message = "菜单标题长度应在2-64之间！")
     private String title;
+    @Column(name = "METHOD")
+    private String method;
     @Column(name = "URL")
     private String url;
     @Column(name = "ICON")
@@ -33,6 +35,7 @@ public class SysMenu extends BaseEntity {
         super();
         this.setPid(null);
         this.setTitle(null);
+        this.setMethod(null);
         this.setUrl(null);
         this.setIcon(null);
         this.setSort(null);
@@ -54,6 +57,14 @@ public class SysMenu extends BaseEntity {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
     }
 
     public String getUrl() {
@@ -102,6 +113,7 @@ public class SysMenu extends BaseEntity {
                 "SysMenu{" +
                 "pid=" + this.getPid() +
                 ", title='" + this.getTitle() + '\'' +
+                ", method='" + this.getMethod() + '\'' +
                 ", url='" + this.getUrl() + '\'' +
                 ", icon='" + this.getIcon() + '\'' +
                 ", sort=" + this.getSort() +

@@ -17,6 +17,12 @@
         <table class="layui-hide" id="sys-menu-table" lay-filter="sys-menu-table"></table>
     </div>
 </div>
+<script type="text/html" id="sys-remark-tpl">
+    <span lay-tips="{{d.remark?d.remark:d.title}}">{{d.title}}</span>
+</script>
+<script type="text/html" id="sys-url-tpl">
+    <span lay-tips="{{d.method?d.method+':'+d.url:d.url}}">{{d.method?d.method+':'+d.url:d.url}}</span>
+</script>
 <script type="text/html" id="sys-menu-tpl">
     {{# if(d.sysMenu){ }}
     <input type="checkbox" checked value="{{d.id}}" data-json="{{encodeURIComponent(JSON.stringify(d))}}" title="是|否" lay-skin="switch" lay-filter="sys-menu-switch">
@@ -62,14 +68,17 @@
 </script>
 <script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
 <script th:inline="javascript">
+    const config = {
+        base:/*[[@{/}]]*/ '../../static/'
+    }
 
     layui.config({
-        base: /*[[@{/}]]*/ '../../static/'
+        base: config.base
         , version: true
     }).use(['index', 'common'], function () {
         layui.treeTable.render({
             elem: '#sys-menu-table'
-            , url: /*[[@{/sys/menu/page}]]*/ '/sys/menu/page'
+            , url: `${config.base}sys/menu/page`
             , toolbar: '#sys-menu-toolbar'
             , tree: {
                 customName: {name: 'title', pid: 'pid'}
@@ -79,10 +88,10 @@
             , cols: [
                 [
                     {type: 'radio'}
-                    , {field: 'title', title: '标题', width: 200}
-                    , {field: 'url', title: '地址'}
-                    , {field: 'remark', title: '备注', hide: true}
-                    , {field: 'sysMenu', title: '菜单', align: 'center', width: 90, templet: '#sys-menu-tpl'}
+                    , {field: 'title', title: '标题', templet: '#sys-remark-tpl'}
+                    , {field: 'url', title: '地址', templet: '#sys-url-tpl'}
+                    //, {field: 'remark', title: '备注', hide: true}
+                    , {field: 'sysMenu', title: '菜单', align: 'center', width: 75, templet: '#sys-menu-tpl'}
                     , {field: 'disable', title: '状态', align: 'center', width: 90, templet: '#sys-disable-tpl'}
                     , {field: 'createUsername', title: '创建用户', width: 90, hide: true}
                     , {field: 'createTimestamp', title: '创建时间', width: 110, hide: true}

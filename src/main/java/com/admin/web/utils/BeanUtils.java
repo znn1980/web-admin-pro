@@ -15,7 +15,7 @@ public class BeanUtils extends org.springframework.beans.BeanUtils {
     }
 
     public static String[] getNullProperties(Object source) {
-        List<String> properties = new ArrayList<>();
+        Set<String> properties = new HashSet<>();
         BeanWrapper beanWrapper = new BeanWrapperImpl(source);
         Arrays.asList(beanWrapper.getPropertyDescriptors()).forEach(descriptor -> {
             if (Objects.isNull(beanWrapper.getPropertyValue(descriptor.getName()))) {

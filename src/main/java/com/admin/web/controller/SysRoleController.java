@@ -1,6 +1,6 @@
 package com.admin.web.controller;
 
-import com.admin.web.WebServerException;
+import com.admin.web.model.WebServerException;
 import com.admin.web.annotation.SysCreate;
 import com.admin.web.annotation.SysLog;
 import com.admin.web.annotation.SysPermissions;

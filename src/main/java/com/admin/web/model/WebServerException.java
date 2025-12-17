@@ -1,7 +1,6 @@
-package com.admin.web;
+package com.admin.web.model;
 
 import com.admin.web.model.enums.ResponseCode;
-import com.admin.web.model.ServerResponseEntity;
 
 /**
  * @author znn

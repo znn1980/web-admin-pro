@@ -69,13 +69,17 @@
 </div>
 <script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
 <script th:inline="javascript">
+    const config = {
+        base:/*[[@{/}]]*/ '../../static/'
+    }
+
     layui.config({
-        base: /*[[@{/}]]*/ '../../static/'
+        base: config.base
         , version: true
     }).use(['index', 'common'], function () {
 
         layui.form.on('submit(sys-login-submit)', function (data) {
-            layui.common.req(/*[[@{/sys/user/login}]]*/ '/sys/user/login', 'POST', data.field, {
+            layui.common.req(`${config.base}sys/user/login`, 'POST', data.field, {
                 done: function (data) {
                     layui.layer.msg(data.msg, {
                         offset: '15px', icon: 1, time: 1000

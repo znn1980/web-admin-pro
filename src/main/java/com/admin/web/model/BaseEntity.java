@@ -9,7 +9,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -31,7 +30,6 @@ public class BaseEntity implements Serializable {
     @CreatedDate
     @Column(name = "CREATE_TIMESTAMP", columnDefinition = "DATETIME")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTimestamp;
     @LastModifiedBy
     @Column(name = "UPDATE_USERNAME")
@@ -39,7 +37,6 @@ public class BaseEntity implements Serializable {
     @LastModifiedDate
     @Column(name = "UPDATE_TIMESTAMP", columnDefinition = "DATETIME")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTimestamp;
     @Column(name = "REMARK")
     private String remark;

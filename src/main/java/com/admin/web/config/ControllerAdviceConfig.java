@@ -1,6 +1,6 @@
 package com.admin.web.config;
 
-import com.admin.web.WebServerException;
+import com.admin.web.model.WebServerException;
 import com.admin.web.model.enums.ResponseCode;
 import com.admin.web.model.ServerResponseEntity;
 import com.admin.web.utils.WebUtils;

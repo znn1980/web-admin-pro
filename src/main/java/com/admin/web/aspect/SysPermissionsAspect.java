@@ -1,6 +1,6 @@
 package com.admin.web.aspect;
 
-import com.admin.web.WebServerException;
+import com.admin.web.model.WebServerException;
 import com.admin.web.annotation.SysLogin;
 import com.admin.web.annotation.SysPermissions;
 import com.admin.web.model.enums.ResponseCode;
@@ -31,8 +31,9 @@ public class SysPermissionsAspect {
         SysUser sysUser = Optional.ofNullable(this.getSysUser()).orElseThrow(() -> {
             throw new WebServerException(ResponseCode.LOGOUT);
         });
-        if (!Arrays.asList(sysPermissions.value()).contains(SysLogin.class)) {
-            System.out.println("判断权限=>" + sysUser);
+        if (!SecurityUtils.isSysAdmin(sysUser)
+                && !Arrays.asList(sysPermissions.value()).contains(SysLogin.class)) {
+            log.info("判断权限=>{}:{} {}", WebUtils.getRequest().getMethod(), WebUtils.getRequest().getRequestURI(), sysUser);
         }
     }
 

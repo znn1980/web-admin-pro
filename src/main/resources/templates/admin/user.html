@@ -19,9 +19,9 @@
 </div>
 <script type="text/html" id="sys-username-tpl">
     {{# if(d.avatar){ }}
-    <img class="layui-nav-img" src="{{d.avatar}}" lay-tips="{{d.username}}" alt="">
+    <img class="layui-nav-img" src="{{d.avatar}}" lay-tips="{{d.remark?d.remark:d.username}}" alt="">
     {{# }else{ }}
-    <img class="layui-nav-img" th:src="@{/style/imgs/logo.jpg}" src="../../static/style/imgs/logo.jpg" lay-tips="{{d.username}}" alt="">
+    <img class="layui-nav-img" th:src="@{/style/imgs/logo.jpg}" lay-tips="{{d.remark?d.remark:d.username}}" alt="" src="">
     {{# } }}{{d.username}}
 </script>
 <script type="text/html" id="sys-admin-tpl">
@@ -69,25 +69,29 @@
 </script>
 <script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
 <script th:inline="javascript">
+    const config = {
+        base:/*[[@{/}]]*/ '../../static/'
+    }
+
     layui.config({
-        base: /*[[@{/}]]*/ '../../static/'
+        base: config.base
         , version: true
     }).use(['index', 'common'], function () {
 
         layui.table.render({
             elem: '#sys-user-table'
-            , url: /*[[@{/sys/user/page}]]*/ '/sys/user/page'
+            , url: `${config.base}sys/user/page`
             , method: 'POST', contentType: "application/json;charset=UTF-8"
             , page: true
             , toolbar: '#sys-user-toolbar'
             , cols: [
                 [
                     {type: 'radio'}
-                    , {field: 'username', title: '用户', width: 150, templet: '#sys-username-tpl'}
-                    , {field: 'mobile', title: '手机', width: 120}
-                    , {field: 'email', title: '邮箱', width: 180}
-                    , {field: 'remark', title: '备注'}
-                    , {field: 'sysAdmin', title: '管理员', align: 'center', width: 90, templet: '#sys-admin-tpl'}
+                    , {field: 'username', title: '用户', templet: '#sys-username-tpl'}
+                    , {field: 'mobile', title: '手机'}
+                    , {field: 'email', title: '邮箱'}
+                    //, {field: 'remark', title: '备注'}
+                    , {field: 'sysAdmin', title: '管理员', align: 'center', width: 75, templet: '#sys-admin-tpl'}
                     , {field: 'disable', title: '状态', align: 'center', width: 90, templet: '#sys-disable-tpl'}
                     , {field: 'createUsername', title: '创建用户', width: 90, hide: true}
                     , {field: 'createTimestamp', title: '创建时间', width: 110, hide: true}
