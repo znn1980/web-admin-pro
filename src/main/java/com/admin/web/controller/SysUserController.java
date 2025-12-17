@@ -99,6 +99,9 @@ public class SysUserController extends BaseController {
         if (!super.isSuperAdmin() && super.isSuperAdmin(oldSysUser)) {
             return ServerResponseEntity.fail("您不是超级管理员，不能修改超级管理员的信息！");
         }
+        if (!super.isSysAdmin() && super.isSysAdmin(oldSysUser)) {
+            return ServerResponseEntity.fail("您不是管理员，不能修改管理员的信息！");
+        }
         if (!super.isSysAdmin() && !Objects.equals(oldSysUser.isSysAdmin(), sysUser.isSysAdmin())) {
             return ServerResponseEntity.fail("您不是管理员，不能修改管理员状态！");
         }

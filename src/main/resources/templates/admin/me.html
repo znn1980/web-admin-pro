@@ -73,11 +73,14 @@
                     <div class="layui-tabs-body">
                         <div class="layui-tabs-item">
                             <form class="layui-form" id="sys-user-form" lay-filter="sys-user-form">
+                                <input type="hidden" id="id" name="id">
+                                <input type="hidden" id="avatar" name="avatar">
+                                <input type="hidden" id="disable" name="disable">
+                                <input type="hidden" id="sysAdmin" name="sysAdmin">
+                                <input type="hidden" id="username" name="username">
                                 <div class="layui-form-item">
                                     <label class="layui-form-label" for="mobile">手机号码</label>
                                     <div class="layui-input-block">
-                                        <input type="hidden" id="id" name="id">
-                                        <input type="hidden" id="avatar" name="avatar">
                                         <input type="text" id="mobile" name="mobile" value="" lay-verify="required|phone" placeholder="手机号码" lay-reqtext="请输入手机号码" autocomplete="off" class="layui-input" lay-affix="clear">
                                     </div>
                                 </div>
@@ -93,7 +96,7 @@
                                         <textarea class="layui-textarea" id="remark" name="remark" placeholder="用户备注"></textarea>
                                     </div>
                                 </div>
-                                <div class="layui-form-item ">
+                                <div class="layui-form-item">
                                     <div class="layui-input-block">
                                         <button type="button" lay-submit class="layui-btn layui-btn-radius" lay-filter="sys-user-submit" id="sys-user-submit">
                                             <i class="layui-icon layui-icon-ok"></i>保存
@@ -125,7 +128,7 @@
                                         <input type="password" id="confirmPassword" name="confirmPassword" value="" lay-verify="required" placeholder="确认密码" lay-reqtext="请输入确认密码" autocomplete="off" class="layui-input" lay-affix="eye">
                                     </div>
                                 </div>
-                                <div class="layui-form-item ">
+                                <div class="layui-form-item">
                                     <div class="layui-input-block">
                                         <button type="button" lay-submit class="layui-btn layui-btn-radius" lay-filter="sys-pass-submit" id="sys-pass-submit">
                                             <i class="layui-icon layui-icon-ok"></i>保存
