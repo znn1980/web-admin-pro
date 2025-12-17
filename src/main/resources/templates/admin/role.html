@@ -121,6 +121,8 @@
                 layui.common.req(`${config.base}sys/role`, 'PUT', role, {
                     done: function (data) {
                         layui.layer.msg(data.msg);
+                    }
+                    , complete: function () {
                         layui.table.reload('sys-role-table');
                     }
                 });
@@ -171,8 +173,7 @@
                     , click: function (data) {
                         if (data.id === 'UP' || data.id === 'DOWN') {
                             layui.common.req(`${config.base}sys/role/move`, 'PUT', {
-                                id: e.data.id
-                                , move: data.id
+                                id: e.data.id, move: data.id
                             }, {
                                 done: function (data) {
                                     layui.layer.msg(data.msg);

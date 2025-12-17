@@ -34,13 +34,14 @@ public class SysRoleService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public SysRole save(SysRole sysRole) {
+    public void save(SysRole sysRole) {
         if (Objects.nonNull(sysRole.getId())) {
-            return this.sysRoleDao.save(sysRole);
+            this.sysRoleDao.save(sysRole);
+        } else {
+            this.sysRoleDao.save(sysRole);
+            sysRole.setSort(sysRole.getId());
+            this.sysRoleDao.save(sysRole);
         }
-        this.sysRoleDao.save(sysRole);
-        sysRole.setSort(sysRole.getId());
-        return this.sysRoleDao.save(sysRole);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -65,5 +66,9 @@ public class SysRoleService {
 
     public void deleteById(Long id) {
         this.sysRoleDao.deleteById(id);
+    }
+
+    public boolean existsByRoleId(Long roleId) {
+        return this.sysRoleDao.existsByRoleId(roleId);
     }
 }

@@ -35,6 +35,10 @@ public class SysUserService {
         return this.sysUserDao.save(sysUser);
     }
 
+    public void deleteById(Long id) {
+        this.sysUserDao.deleteById(id);
+    }
+
     public SysUser findByUsername(String username) {
         return this.sysUserDao.findByUsername(username);
     }

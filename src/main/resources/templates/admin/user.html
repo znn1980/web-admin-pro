@@ -67,7 +67,56 @@
         </button>
     </div>
 </script>
+<form class="layui-form" id="sys-user-form" lay-filter="sys-user-form" style="display: none;">
+    <div class="layui-form-item" id="sys-user">
+        <label class="layui-form-label" for="username">用户名称</label>
+        <div class="layui-input-block">
+            <input type="hidden" id="id" name="id" class="layui-input">
+            <input type="text" id="username" name="username" lay-verify="required" placeholder="用户名称" lay-reqtext="请输入用户名称" autocomplete="off" class="layui-input" lay-affix="clear">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="mobile">手机号码</label>
+        <div class="layui-input-block">
+            <input type="text" id="mobile" name="mobile" value="" lay-verify="required|phone" placeholder="手机号码" lay-reqtext="请输入手机号码" autocomplete="off" class="layui-input" lay-affix="clear">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="email">邮箱地址</label>
+        <div class="layui-input-block">
+            <input type="text" id="email" name="email" value="" lay-verify="required|email" placeholder="邮箱地址" lay-reqtext="请输入邮箱地址" autocomplete="off" class="layui-input" lay-affix="clear">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="remark">用户备注</label>
+        <div class="layui-input-block">
+            <textarea class="layui-textarea" id="remark" name="remark" placeholder="用户备注"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">用户状态</label>
+            <div class="layui-input-block">
+                <input type="checkbox" checked id="disable" name="disable" title="启用|禁用" lay-skin="switch">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">管理员</label>
+            <div class="layui-input-block">
+                <input type="checkbox" id="sysAdmin" name="sysAdmin" title="是|否" lay-skin="switch">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">用户角色</label>
+        <div class="layui-input-block" id="sys-role"></div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="sys-user-submit" id="sys-user-submit" value="确认">
+    </div>
+</form>
 <script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
+<script th:src="@{/modules/xm-select.js}" src="../../static/modules/xm-select.js"></script>
 <script th:inline="javascript">
     const config = {
         base:/*[[@{/}]]*/ '../../static/'
@@ -101,6 +150,143 @@
                 ]
             ]
         });
+
+        layui.table.on('toolbar(sys-user-table)', function (e) {
+            if (e.event === 'sys-save-toolbar') {
+                layui.$('#id').val('');
+                layui.$('#sys-user-form')[0].reset();
+                xmSelect.get('#sys-role', true).setValue([]);
+                layui.$('#sys-user').show();
+                save('添加用户', 'POST');
+            }
+            if (e.event === 'sys-edit-toolbar' || e.event === 'sys-delete-toolbar' || e.event === 'sys-release-toolbar') {
+                const users = layui.table.checkStatus('sys-user-table').data;
+                if (users.length <= 0) {
+                    layui.layer.msg("请选择一条纪录！");
+                } else {
+                    if (e.event === 'sys-edit-toolbar') {
+                        users[0].disable = !users[0].disable;
+                        layui.form.val('sys-user-form', users[0]);
+                        xmSelect.get('#sys-role', true).setValue(users[0].roles ? users[0].roles : []);
+                        layui.$('#sys-user').hide();
+                        save('修改用户', 'PUT');
+                    }
+                    if (e.event === 'sys-delete-toolbar') {
+                        del(users[0]);
+                    }
+                    if (e.event === 'sys-release-toolbar') {
+                        layui.common.req(`${config.base}sys/user/unPass`, 'PUT', users[0].id, {
+                            done: function (data) {
+                                layui.layer.msg(data.msg);
+                            }
+                        });
+                    }
+                }
+            }
+            if (e.event === 'sys-refresh-toolbar') {
+                layui.table.reload('sys-user-table');
+            }
+        });
+
+        layui.table.on('tool(sys-user-table)', function (e) {
+            if (e.event === 'sys-edit-tool') {
+                e.data.disable = !e.data.disable;
+                layui.form.val('sys-user-form', e.data);
+                xmSelect.get('#sys-role', true).setValue(e.data.roles ? e.data.roles : []);
+                layui.$('#sys-user').hide();
+                save('修改用户', 'PUT');
+            }
+            if (e.event === 'sys-delete-tool') {
+                del(e.data);
+            }
+        });
+
+        layui.form.on('switch(sys-admin-switch)', function (data) {
+            const user = JSON.parse(decodeURIComponent(layui.$(this).data('json')));
+            layui.layer.confirm(`是否改变名称为【${user.username}】的用户属性？`, {
+                title: '修改用户属性', closeBtn: 0, skin: 'layui-layer-admin'
+            }, function (index) {
+                layui.layer.close(index);
+                user.sysAdmin = data.elem.checked;
+                layui.common.req(`${config.base}sys/user`, 'PUT', user, {
+                    done: function (data) {
+                        layui.layer.msg(data.msg);
+                    }
+                    , complete: function () {
+                        layui.table.reload('sys-user-table');
+                    }
+                });
+            }, function () {
+                data.elem.checked = !data.elem.checked;
+            });
+        });
+
+        layui.form.on('switch(sys-disable-switch)', function (data) {
+            const user = JSON.parse(decodeURIComponent(layui.$(this).data('json')));
+            layui.layer.confirm(`是否改变名称为【${user.username}】的用户状态？`, {
+                title: '修改用户状态', closeBtn: 0, skin: 'layui-layer-admin'
+            }, function (index) {
+                layui.layer.close(index);
+                user.disable = !data.elem.checked;
+                layui.common.req(`${config.base}sys/user`, 'PUT', user, {
+                    done: function (data) {
+                        layui.layer.msg(data.msg);
+                    }
+                    , complete: function () {
+                        layui.table.reload('sys-user-table');
+                    }
+                });
+            }, function () {
+                data.elem.checked = !data.elem.checked;
+            });
+        });
+
+        layui.common.req(`${config.base}sys/role/page`, 'GET', null, {
+            done: function (data) {
+                xmSelect.render({
+                    el: '#sys-role', autoRow: true
+                    , prop: {name: 'name', value: 'id',}
+                    , theme: {color: '#16b777'}, data: data.data
+                });
+            }
+        });
+
+        function save(title, type) {
+            layui.admin.popup({
+                type: 1, title: title, area: ['500px', '100']
+                , content: layui.$('#sys-user-form')
+                , btn: ['确定', '取消']
+                , yes: function (index) {
+                    layui.form.on('submit(sys-user-submit)', function (data) {
+                        data.field.sysAdmin = data.field.sysAdmin === 'on';
+                        data.field.disable = data.field.disable !== 'on';
+                        data.field.roles = xmSelect.get('#sys-role', true).getValue();
+                        layui.layer.close(index);
+                        layui.common.req(`${config.base}sys/user`, type, data.field, {
+                            done: function (data) {
+                                layui.layer.msg(data.msg);
+                                layui.table.reload('sys-user-table');
+                            }
+                        });
+                    });
+                    layui.$('#sys-user-submit').trigger('click');
+                }
+            });
+        }
+
+        function del(user) {
+            layui.layer.confirm(`是否删除名称为【${user.username}】的用户？`, {
+                title: '删除用户', closeBtn: 0, skin: 'layui-layer-admin'
+            }, function (index) {
+                layui.layer.close(index);
+                layui.common.req(`${config.base}sys/user`, 'DELETE', user.id, {
+                    done: function (data) {
+                        layui.layer.msg(data.msg);
+                        layui.table.reload('sys-user-table');
+                    }
+                });
+            });
+        }
     });
 </script>
 </body>

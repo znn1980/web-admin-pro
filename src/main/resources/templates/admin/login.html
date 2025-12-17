@@ -87,6 +87,9 @@
                         location.href = 'index.html';
                     });
                 }
+                , complete: function () {
+                    layui.$('#sys-code').attr('src', `${config.base}sys/code.jpg?t=` + Date.now());
+                }
             });
         });
     });

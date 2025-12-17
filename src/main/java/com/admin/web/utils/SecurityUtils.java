@@ -30,7 +30,12 @@ public class SecurityUtils {
     }
 
     public static boolean isSysAdmin(SysUser sysUser) {
-        return !Objects.isNull(sysUser) && (Objects.equals(SYS_USER_ID, sysUser.getId()) || sysUser.isSysAdmin());
+        return Objects.nonNull(sysUser) && (isSuperAdmin(sysUser) || sysUser.isSysAdmin());
+    }
+
+    public static boolean isSuperAdmin(SysUser sysUser) {
+        return Objects.nonNull(sysUser)
+                && Objects.equals(SYS_USER_ID, sysUser.getId()) && Objects.equals(SYS_USER_NAME, sysUser.getUsername());
     }
 
     public static String getSysCode(HttpServletRequest request) {

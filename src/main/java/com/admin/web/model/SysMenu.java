@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-import java.util.List;
-
 /**
  * @author znn
  */
@@ -28,8 +26,6 @@ public class SysMenu extends BaseEntity {
     private Long sort;
     @Column(name = "SYS_MENU")
     private boolean sysMenu;
-    @ManyToMany(mappedBy = "menus")
-    private List<SysRole> roles;
 
     public SysMenu() {
         super();
@@ -40,7 +36,6 @@ public class SysMenu extends BaseEntity {
         this.setIcon(null);
         this.setSort(null);
         this.setSysMenu(true);
-        this.setRoles(null);
     }
 
     public Long getPid() {
@@ -99,14 +94,6 @@ public class SysMenu extends BaseEntity {
         this.sysMenu = sysMenu;
     }
 
-    public List<SysRole> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<SysRole> roles) {
-        this.roles = roles;
-    }
-
     @Override
     public String toString() {
         return super.toString() + System.lineSeparator() +
@@ -118,7 +105,6 @@ public class SysMenu extends BaseEntity {
                 ", icon='" + this.getIcon() + '\'' +
                 ", sort=" + this.getSort() +
                 ", sysMenu=" + this.isSysMenu() +
-                ", roles=" + this.getRoles() +
                 '}';
     }
 }

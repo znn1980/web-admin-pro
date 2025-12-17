@@ -36,7 +36,7 @@ public class SysRoleController extends BaseController {
 
     @SysLog("添加角色")
     @SysPermissions
-    @PostMapping()
+    @PostMapping
     public ServerResponseEntity<?> save(@RequestBody @Validated(SysCreate.class) SysRole sysRole) {
         if (Objects.nonNull(this.sysRoleService.findByName(sysRole.getName()))) {
             return ServerResponseEntity.fail("角色名称已存在！");
@@ -47,7 +47,7 @@ public class SysRoleController extends BaseController {
 
     @SysLog("修改角色")
     @SysPermissions
-    @PutMapping()
+    @PutMapping
     public ServerResponseEntity<?> edit(@RequestBody @Validated(SysUpdate.class) SysRole sysRole) {
         SysRole oldSysRole = this.sysRoleService.findById(sysRole.getId())
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("角色不存在！")));
@@ -73,8 +73,11 @@ public class SysRoleController extends BaseController {
 
     @SysLog("删除角色")
     @SysPermissions
-    @DeleteMapping()
+    @DeleteMapping
     public ServerResponseEntity<?> delete(@RequestBody Long id) {
+        if (this.sysRoleService.existsByRoleId(id)) {
+            return ServerResponseEntity.fail("此角色已分配用户，请先删除用户下的角色！");
+        }
         this.sysRoleService.deleteById(id);
         return ServerResponseEntity.ok();
     }

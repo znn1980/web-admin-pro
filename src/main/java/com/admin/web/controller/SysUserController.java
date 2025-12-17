@@ -7,7 +7,6 @@ import com.admin.web.model.SysUser;
 import com.admin.web.model.vo.*;
 import com.admin.web.service.SysUserService;
 import com.admin.web.utils.BeanUtils;
-import com.admin.web.utils.SecurityUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
@@ -40,8 +39,7 @@ public class SysUserController extends BaseController {
         if (Objects.isNull(sysUser) || !Objects.equals(sysUser.getPassword(), userLoginVo.getPassword())) {
             return ServerResponseEntity.fail("登录失败，请检查用户名密码是否正确！");
         }
-        if (!Objects.equals(sysUser.getUsername(), SecurityUtils.getSysUser().getUsername())
-                && sysUser.isDisable()) {
+        if (!super.isSuperAdmin(sysUser) && sysUser.isDisable()) {
             return ServerResponseEntity.fail("账号未启用，请联系管理员！");
         }
         super.setSysUser(sysUser);
@@ -64,12 +62,57 @@ public class SysUserController extends BaseController {
         return ServerResponseEntity.ok(sysUserLogs.getTotalElements(), sysUserLogs.getContent());
     }
 
+    @SysPermissions
+    @GetMapping
+    public ServerResponseEntity<SysUser> query() {
+        return ServerResponseEntity.ok(this.sysUserService.findById(super.getSysUser().getId())
+                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！"))));
+    }
+
+    @SysLog("添加用户")
+    @SysPermissions
+    @PostMapping
+    public ServerResponseEntity<SysUser> save(@RequestBody @Validated(SysCreate.class) SysUser sysUser) {
+        if (Objects.nonNull(this.sysUserService.findByUsername(sysUser.getUsername()))) {
+            return ServerResponseEntity.fail("用户名称已存在！");
+        }
+        if (Objects.nonNull(this.sysUserService.findByMobile(sysUser.getMobile()))) {
+            return ServerResponseEntity.fail("手机号码已存在！");
+        }
+        if (Objects.nonNull(this.sysUserService.findByEmail(sysUser.getEmail()))) {
+            return ServerResponseEntity.fail("邮箱地址已存在！");
+        }
+        if (!super.isSysAdmin() && sysUser.isSysAdmin()) {
+            return ServerResponseEntity.fail("您不是管理员，不能添加管理员用户！");
+        }
+        sysUser.setPassword(super.hexPassword(sysUser));
+        this.sysUserService.save(sysUser);
+        return ServerResponseEntity.ok();
+    }
+
     @SysLog("修改用户")
-    @SysPermissions()
-    @PutMapping()
+    @SysPermissions
+    @PutMapping
     public ServerResponseEntity<SysUser> edit(@RequestBody @Validated(SysUpdate.class) SysUser sysUser) {
         SysUser oldSysUser = this.sysUserService.findById(sysUser.getId())
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！")));
+        if (!super.isSuperAdmin() && super.isSuperAdmin(oldSysUser)) {
+            return ServerResponseEntity.fail("您不是超级管理员，不能修改超级管理员的信息！");
+        }
+        if (!super.isSysAdmin() && !Objects.equals(oldSysUser.isSysAdmin(), sysUser.isSysAdmin())) {
+            return ServerResponseEntity.fail("您不是管理员，不能修改管理员状态！");
+        }
+        if (!Objects.equals(oldSysUser.isSysAdmin(), sysUser.isSysAdmin())
+                && Objects.equals(super.getSysUser().getId(), sysUser.getId())) {
+            return ServerResponseEntity.fail("您不能修改自己的管理员状态！");
+        }
+        if (!Objects.equals(oldSysUser.isDisable(), sysUser.isDisable())
+                && Objects.equals(super.getSysUser().getId(), sysUser.getId())) {
+            return ServerResponseEntity.fail("您不能修改自己的状态！");
+        }
+        if (!Objects.equals(oldSysUser.getUsername(), sysUser.getUsername())) {
+            return ServerResponseEntity.fail("用户名称不能修改！");
+        }
         if (!Objects.equals(oldSysUser.getMobile(), sysUser.getMobile())
                 && Objects.nonNull(this.sysUserService.findByMobile(sysUser.getMobile()))) {
             return ServerResponseEntity.fail("手机号码已存在！");
@@ -83,7 +126,7 @@ public class SysUserController extends BaseController {
     }
 
     @SysLog("修改密码")
-    @SysPermissions()
+    @SysPermissions
     @PutMapping("/pass")
     public ServerResponseEntity<?> pass(@RequestBody @Validated UserPassVo userPassVo) {
         userPassVo.setOldPassword(super.hexPassword(userPassVo.getOldPassword()));
@@ -106,12 +149,37 @@ public class SysUserController extends BaseController {
         return ServerResponseEntity.ok();
     }
 
-    @SysPermissions()
-    @GetMapping()
-    public ServerResponseEntity<SysUser> query() {
-        return ServerResponseEntity.ok(this.sysUserService.findById(super.getSysUser().getId())
-                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！"))));
+    @SysLog("重置密码")
+    @SysPermissions
+    @PutMapping("/unPass")
+    public ServerResponseEntity<?> unPass(@RequestBody Long id) {
+        SysUser sysUser = this.sysUserService.findById(id)
+                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！")));
+        if (Objects.equals(super.getSysUser().getId(), sysUser.getId())) {
+            return ServerResponseEntity.fail("不能重置自己的密码！");
+        }
+        if (super.isSuperAdmin(sysUser)) {
+            return ServerResponseEntity.fail("超级管理员的密码不能重置！");
+        }
+        sysUser.setPassword(super.hexPassword(sysUser));
+        this.sysUserService.save(sysUser);
+        return ServerResponseEntity.ok();
     }
 
+    @SysLog("删除用户")
+    @SysPermissions
+    @DeleteMapping
+    public ServerResponseEntity<?> delete(@RequestBody Long id) {
+        SysUser sysUser = this.sysUserService.findById(id)
+                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！")));
+        if (Objects.equals(super.getSysUser().getId(), sysUser.getId())) {
+            return ServerResponseEntity.fail("不能删除自己！");
+        }
+        if (super.isSuperAdmin(sysUser)) {
+            return ServerResponseEntity.fail("超级管理员不能删除！");
+        }
+        this.sysUserService.deleteById(id);
+        return ServerResponseEntity.ok();
+    }
 
 }

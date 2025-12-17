@@ -56,25 +56,25 @@ public class ModelViewController extends BaseController {
         return new ModelAndView("admin/me");
     }
 
-    @SysPermissions()
+    @SysPermissions
     @GetMapping("/admin/user.html")
     public ModelAndView user() {
         return new ModelAndView("admin/user");
     }
 
-    @SysPermissions()
+    @SysPermissions
     @GetMapping("/admin/role.html")
     public ModelAndView role() {
         return new ModelAndView("admin/role");
     }
 
-    @SysPermissions()
+    @SysPermissions
     @GetMapping("/admin/menu.html")
     public ModelAndView menu() {
         return new ModelAndView("admin/menu");
     }
 
-    @SysPermissions()
+    @SysPermissions
     @GetMapping("/admin/log.html")
     public ModelAndView log() {
         return new ModelAndView("admin/log");

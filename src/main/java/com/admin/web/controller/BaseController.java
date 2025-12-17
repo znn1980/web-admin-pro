@@ -38,8 +38,28 @@ public class BaseController {
         SecurityUtils.setSysCode(this.getRequest(), sysCode);
     }
 
+    public boolean isSysAdmin() {
+        return this.isSysAdmin(this.getSysUser());
+    }
+
+    public boolean isSysAdmin(SysUser sysUser) {
+        return SecurityUtils.isSysAdmin(sysUser);
+    }
+
+    public boolean isSuperAdmin() {
+        return this.isSuperAdmin(this.getSysUser());
+    }
+
+    public boolean isSuperAdmin(SysUser sysUser) {
+        return SecurityUtils.isSuperAdmin(sysUser);
+    }
+
     public String hexPassword(String password) {
         return SecurityUtils.hexPassword(password);
+    }
+
+    public String hexPassword(SysUser sysUser) {
+        return this.hexPassword(sysUser.getMobile().substring(sysUser.getMobile().length() - 6));
     }
 
 }

@@ -20,20 +20,18 @@ public class SysRole extends BaseEntity {
     private String name;
     @Column(name = "SORT")
     private Long sort;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(name = "SYS_ROLES_MENUS",
             joinColumns = {@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")},
             inverseJoinColumns = {@JoinColumn(name = "MENU_ID", referencedColumnName = "ID")})
     private List<SysMenu> menus;
-    @ManyToMany(mappedBy = "roles")
-    private List<SysUser> users;
+
 
     public SysRole() {
         super();
         this.setName(null);
         this.setSort(null);
         this.setMenus(null);
-        this.setUsers(null);
     }
 
     public String getName() {
@@ -60,13 +58,6 @@ public class SysRole extends BaseEntity {
         this.menus = menus;
     }
 
-    public List<SysUser> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<SysUser> users) {
-        this.users = users;
-    }
 
     @Override
     public String toString() {
@@ -75,7 +66,6 @@ public class SysRole extends BaseEntity {
                 "name='" + this.getName() + '\'' +
                 ", sort=" + this.getSort() +
                 ", menus=" + this.getMenus() +
-                ", users=" + this.getUsers() +
                 '}';
     }
 }
