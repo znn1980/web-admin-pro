@@ -31,6 +31,19 @@ layui.define(function (exports) {
         , ymd: function (ms) {
             return layui.util.toDateString(Date.now() + ((ms) ? ms : 0), 'yyyy-MM-dd');
         }
+        , tree: function (id, items) {
+            const trees = [];
+            items.forEach(function (item) {
+                if (item.pid === id) {
+                    const child = common.tree(item.id, items);
+                    if (child.length) {
+                        item.children = child;
+                    }
+                    trees.push(item);
+                }
+            });
+            return trees;
+        }
     }
     exports('common', common);
 });

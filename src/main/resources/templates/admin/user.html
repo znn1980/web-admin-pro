@@ -123,8 +123,7 @@
     }
 
     layui.config({
-        base: config.base
-        , version: true
+        base: config.base, version: true
     }).use(['index', 'common'], function () {
 
         layui.table.render({
@@ -175,10 +174,15 @@
                         del(users[0]);
                     }
                     if (e.event === 'sys-release-toolbar') {
-                        layui.common.req(`${config.base}sys/user/unPass`, 'PUT', users[0].id, {
-                            done: function (data) {
-                                layui.layer.msg(data.msg);
-                            }
+                        layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否重置【${users[0].username}】用户密码？`, {
+                            title: '重置密码', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
+                        }, function (index) {
+                            layui.layer.close(index);
+                            layui.common.req(`${config.base}sys/user/unPass`, 'PUT', users[0].id, {
+                                done: function (data) {
+                                    layui.layer.msg(data.msg);
+                                }
+                            });
                         });
                     }
                 }
@@ -203,8 +207,8 @@
 
         layui.form.on('switch(sys-admin-switch)', function (data) {
             const user = JSON.parse(decodeURIComponent(layui.$(this).data('json')));
-            layui.layer.confirm(`是否改变名称为【${user.username}】的用户属性？`, {
-                title: '修改用户属性', closeBtn: 0, skin: 'layui-layer-admin'
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否${data.elem.checked ? '设置' : '取消'}【${user.username}】用户为管理员？`, {
+                title: '管理员', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);
                 user.sysAdmin = data.elem.checked;
@@ -223,8 +227,8 @@
 
         layui.form.on('switch(sys-disable-switch)', function (data) {
             const user = JSON.parse(decodeURIComponent(layui.$(this).data('json')));
-            layui.layer.confirm(`是否改变名称为【${user.username}】的用户状态？`, {
-                title: '修改用户状态', closeBtn: 0, skin: 'layui-layer-admin'
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否${data.elem.checked ? '启用' : '禁用'}【${user.username}】用户？`, {
+                title: `${data.elem.checked ? '启用' : '禁用'}`, closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);
                 user.disable = !data.elem.checked;
@@ -244,9 +248,11 @@
         layui.common.req(`${config.base}sys/role/page`, 'GET', null, {
             done: function (data) {
                 xmSelect.render({
-                    el: '#sys-role', autoRow: true
+                    el: '#sys-role', direction: 'up', autoRow: true
+                    , data: data.data
                     , prop: {name: 'name', value: 'id',}
-                    , theme: {color: '#16b777'}, data: data.data
+                    , model: {label: {type: 'block', block: {showCount: 10}}}
+                    , theme: {color: '#16b777'}
                 });
             }
         });
@@ -275,8 +281,8 @@
         }
 
         function del(user) {
-            layui.layer.confirm(`是否删除名称为【${user.username}】的用户？`, {
-                title: '删除用户', closeBtn: 0, skin: 'layui-layer-admin'
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否删除【${user.username}】用户？`, {
+                title: '删除用户', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);
                 layui.common.req(`${config.base}sys/user`, 'DELETE', user.id, {

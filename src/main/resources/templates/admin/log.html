@@ -87,8 +87,7 @@
     }
 
     layui.config({
-        base: config.base
-        , version: true
+        base: config.base, version: true
     }).use(['index', 'common'], function () {
 
         layui.laydate.render({
@@ -131,8 +130,8 @@
                 if (logs.length <= 0) {
                     layui.layer.msg("请选择一条纪录！");
                 } else {
-                    layui.layer.confirm(`是否删除【${logs.length}】条日志？`, {
-                        title: '删除', closeBtn: 0, skin: 'layui-layer-admin'
+                    layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否删除【${logs.length}】条日志？`, {
+                        title: '删除', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
                     }, function (index) {
                         layui.layer.close(index);
                         layui.common.req(`${config.base}sys/log`, 'DELETE', logs.map(log => log.id), {
@@ -153,7 +152,7 @@
             if (e.event === 'sys-search-tool') {
                 layui.laytpl(layui.$('#sys-code-tpl').html()).render(e.data, function (html) {
                     layui.admin.popup({
-                        type: 1, title: '详细信息', area: 'auto'
+                        type: 1, title: `${e.data.name}（${e.data.method}:${e.data.url}）`, area: 'auto'
                         , content: html
                         , success: function () {
                             layui.code({elem: '.layui-code', theme: 'dark', header: true});

@@ -76,19 +76,23 @@
             <input type="checkbox" checked id="disable" name="disable" title="启用|禁用" lay-skin="switch">
         </div>
     </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色菜单</label>
+        <div class="layui-input-block" id="sys-menu"></div>
+    </div>
     <div class="layui-form-item layui-hide">
         <input type="button" lay-submit lay-filter="sys-role-submit" id="sys-role-submit" value="确认">
     </div>
 </form>
 <script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
+<script th:src="@{/modules/xm-select.js}" src="../../static/modules/xm-select.js"></script>
 <script th:inline="javascript">
     const config = {
         base:/*[[@{/}]]*/ '../../static/'
     }
 
     layui.config({
-        base: config.base
-        , version: true
+        base: config.base, version: true
     }).use(['index', 'common'], function () {
 
         layui.table.render({
@@ -113,8 +117,8 @@
 
         layui.form.on('switch(sys-disable-switch)', function (data) {
             const role = JSON.parse(decodeURIComponent(layui.$(this).data('json')));
-            layui.layer.confirm(`是否改变名称为【${role.name}】的角色状态？`, {
-                title: '修改角色状态', closeBtn: 0, skin: 'layui-layer-admin'
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否${data.elem.checked ? '启用' : '禁用'}【${role.name}】角色？`, {
+                title: `${data.elem.checked ? '启用' : '禁用'}`, closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);
                 role.disable = !data.elem.checked;
@@ -135,6 +139,7 @@
             if (e.event === 'sys-save-toolbar') {
                 layui.$('#id').val('');
                 layui.$('#sys-role-form')[0].reset();
+                xmSelect.get('#sys-menu', true).setValue([]);
                 save('添加角色', 'POST');
             }
             if (e.event === 'sys-edit-toolbar' || e.event === 'sys-delete-toolbar') {
@@ -145,6 +150,7 @@
                     if (e.event === 'sys-edit-toolbar') {
                         roles[0].disable = !roles[0].disable;
                         layui.form.val('sys-role-form', roles[0]);
+                        xmSelect.get('#sys-menu', true).setValue(roles[0].menus ? roles[0].menus : []);
                         save('修改角色', 'PUT');
                     }
                     if (e.event === 'sys-delete-toolbar') {
@@ -161,6 +167,7 @@
             if (e.event === 'sys-edit-tool') {
                 e.data.disable = !e.data.disable;
                 layui.form.val('sys-role-form', e.data);
+                xmSelect.get('#sys-menu', true).setValue(e.data.menus ? e.data.menus : []);
                 save('修改角色', 'PUT');
             }
             if (e.event === 'sys-delete-tool') {
@@ -186,14 +193,28 @@
             }
         });
 
+        layui.common.req(`${config.base}sys/menu/page`, 'GET', null, {
+            done: function (data) {
+                xmSelect.render({
+                    el: '#sys-menu', direction: 'up', autoRow: true
+                    , data: layui.common.tree(null, data.data)
+                    , tree: {show: true, strict: true}
+                    , prop: {name: 'title', value: 'id',}
+                    , model: {label: {type: 'block', block: {showCount: 10}}}
+                    , theme: {color: '#16b777'}
+                });
+            }
+        });
+
         function save(title, type) {
             layui.admin.popup({
-                type: 1, title: title, area: 'auto'
+                type: 1, title: title, area: ['500px', '100']
                 , content: layui.$('#sys-role-form')
                 , btn: ['确定', '取消']
                 , yes: function (index) {
                     layui.form.on('submit(sys-role-submit)', function (data) {
                         data.field.disable = data.field.disable !== 'on';
+                        data.field.menus = xmSelect.get('#sys-menu', true).getValue();
                         layui.layer.close(index);
                         layui.common.req(`${config.base}sys/role`, type, data.field, {
                             done: function (data) {
@@ -208,8 +229,8 @@
         }
 
         function del(role) {
-            layui.layer.confirm(`是否删除名称为【${role.name}】的角色？`, {
-                title: '删除角色', closeBtn: 0, skin: 'layui-layer-admin'
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否删除【${role.name}】角色？`, {
+                title: '删除角色', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);
                 layui.common.req(`${config.base}sys/role`, 'DELETE', role.id, {

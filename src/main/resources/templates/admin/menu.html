@@ -66,16 +66,101 @@
         </button>
     </div>
 </script>
+<form class="layui-form" id="sys-menu-form" lay-filter="sys-menu-form" style="display: none;">
+    <input type="hidden" id="id" name="id">
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="title">上级菜单</label>
+        <div class="layui-input-block" id="sys-menu"></div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="title">菜单标题</label>
+        <div class="layui-input-block">
+            <input type="text" id="title" name="title" lay-verify="required" placeholder="菜单标题" lay-reqtext="请输入菜单标题" autocomplete="off" class="layui-input" lay-affix="clear">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="url">菜单地址</label>
+        <div class="layui-input-block">
+            <input type="text" id="url" name="url" placeholder="菜单地址" autocomplete="off" class="layui-input" lay-affix="clear"
+                   lay-tips="1、&nbsp;?&nbsp;匹配一个字符<br>2、&nbsp;*&nbsp;匹配0个或多个字符<br>3、**&nbsp;匹配0个或多个目录">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label" for="icon">菜单图标</label>
+            <div class="layui-input-block">
+                <div class="layui-input-wrap">
+                    <input type="text" id="icon" name="icon" readonly placeholder="请选择图标" autocomplete="off" class="layui-input">
+                    <div class="layui-input-affix layui-input-suffix">
+                        <i id="icon-suffix" class="layui-icon layui-icon-search" lay-tips="点击清空图标"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label" for="method">请求</label>
+            <div class="layui-input-block" style="width: 90px;">
+                <select id="method" name="method">
+                    <option value=""></option>
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="DELETE">DELETE</option>
+                    <option value="BATCH">BATCH</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="remark">菜单备注</label>
+        <div class="layui-input-block">
+            <textarea class="layui-textarea" id="remark" name="remark" placeholder="菜单备注"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">菜单状态</label>
+            <div class="layui-input-block">
+                <input type="checkbox" checked id="disable" name="disable" title="启用|禁用" lay-skin="switch">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">菜单</label>
+            <div class="layui-input-block">
+                <input type="checkbox" checked id="sysMenu" name="sysMenu" title="是|否" lay-skin="switch">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="sys-menu-submit" id="sys-menu-submit" value="确认">
+    </div>
+</form>
 <script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
+<script th:src="@{/modules/xm-select.js}" src="../../static/modules/xm-select.js"></script>
 <script th:inline="javascript">
     const config = {
         base:/*[[@{/}]]*/ '../../static/'
     }
 
     layui.config({
-        base: config.base
-        , version: true
+        base: config.base, version: true
     }).use(['index', 'common'], function () {
+
+        layui.$('#icon').on('click', function () {
+            layui.admin.popup({
+                id: 'sys-icon'
+                , type: 2, anim: -1, shadeClose: true
+                , title: '图标', area: ['650px', '450px']
+                , skin: 'layadmin-note layui-anim layui-anim-upbit'
+                , content: `${config.base}views/template/icon.html`
+            });
+        });
+
+        layui.$('#icon-suffix').on('click', function () {
+            layui.$('#icon').val('');
+            layui.$('#icon-suffix').attr('class', 'layui-icon layui-icon-search');
+        });
+
         layui.treeTable.render({
             elem: '#sys-menu-table'
             , url: `${config.base}sys/menu/page`
@@ -101,6 +186,162 @@
                 ]
             ]
         });
+
+        layui.table.on('toolbar(sys-menu-table)', function (e) {
+            if (e.event === 'sys-save-toolbar') {
+                layui.$('#id').val('');
+                layui.$('#sys-menu-form')[0].reset();
+                layui.$('#icon-suffix').attr('class', 'layui-icon layui-icon-search');
+                xmSelect.get('#sys-menu', true).setValue([]);
+                save('添加菜单', 'POST');
+            }
+            if (e.event === 'sys-edit-toolbar' || e.event === 'sys-delete-toolbar') {
+                const menus = layui.treeTable.checkStatus('sys-menu-table').data;
+                if (menus.length <= 0) {
+                    layui.layer.msg("请选择一条纪录！");
+                } else {
+                    if (e.event === 'sys-edit-toolbar') {
+                        menus[0].disable = !menus[0].disable;
+                        layui.form.val('sys-menu-form', menus[0]);
+                        layui.$('#icon-suffix').attr('class', `${menus[0].icon ? menus[0].icon : 'layui-icon layui-icon-search'}`);
+                        xmSelect.get('#sys-menu', true).setValue(menus[0].pid ? [menus[0].pid] : []);
+                        save('修改菜单', 'PUT');
+                    }
+                    if (e.event === 'sys-delete-toolbar') {
+                        del(menus[0]);
+                    }
+                }
+            }
+            if (e.event === 'sys-refresh-toolbar') {
+                layui.table.reload('sys-menu-table');
+            }
+        });
+
+        layui.table.on('tool(sys-menu-table)', function (e) {
+            if (e.event === 'sys-edit-tool') {
+                e.data.disable = !e.data.disable;
+                layui.form.val('sys-menu-form', e.data);
+                layui.$('#icon-suffix').attr('class', `${e.data.icon ? e.data.icon : 'layui-icon layui-icon-search'}`);
+                xmSelect.get('#sys-menu', true).setValue(e.data.pid ? [e.data.pid] : []);
+                save('修改菜单', 'PUT');
+            }
+            if (e.event === 'sys-delete-tool') {
+                del(e.data);
+            }
+            if (e.event === 'sys-more-tool') {
+                layui.dropdown.render({
+                    elem: this, show: true
+                    , data: [{id: 'UP', title: '上移'}, {id: 'DOWN', title: '下移'}]
+                    , click: function (data) {
+                        if (data.id === 'UP' || data.id === 'DOWN') {
+                            layui.common.req(`${config.base}sys/menu/move`, 'PUT', {
+                                id: e.data.id, move: data.id
+                            }, {
+                                done: function (data) {
+                                    layui.layer.msg(data.msg);
+                                    layui.table.reload('sys-menu-table');
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        });
+
+        layui.form.on('switch(sys-menu-switch)', function (data) {
+            const menu = JSON.parse(decodeURIComponent(layui.$(this).data('json')));
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否${data.elem.checked ? '设置' : '取消'}【${menu.title}】菜单？`, {
+                title: '菜单', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
+            }, function (index) {
+                layui.layer.close(index);
+                menu.sysMenu = data.elem.checked;
+                layui.common.req(`${config.base}sys/menu`, 'PUT', menu, {
+                    done: function (data) {
+                        layui.layer.msg(data.msg);
+                    }
+                    , complete: function () {
+                        layui.table.reload('sys-menu-table');
+                    }
+                });
+            }, function () {
+                data.elem.checked = !data.elem.checked;
+            });
+        });
+
+        layui.form.on('switch(sys-disable-switch)', function (data) {
+            const menu = JSON.parse(decodeURIComponent(layui.$(this).data('json')));
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否${data.elem.checked ? '启用' : '禁用'}【${menu.title}】菜单？`, {
+                title: `${data.elem.checked ? '启用' : '禁用'}`, closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
+            }, function (index) {
+                layui.layer.close(index);
+                menu.disable = !data.elem.checked;
+                layui.common.req(`${config.base}sys/menu`, 'PUT', menu, {
+                    done: function (data) {
+                        layui.layer.msg(data.msg);
+                    }
+                    , complete: function () {
+                        layui.table.reload('sys-menu-table');
+                    }
+                });
+            }, function () {
+                data.elem.checked = !data.elem.checked;
+            });
+        });
+
+        layui.common.req(`${config.base}sys/menu/page`, 'GET', null, {
+            done: function (data) {
+                xmSelect.render({
+                    el: '#sys-menu', direction: 'down'
+                    , data: layui.common.tree(null, data.data)
+                    , tree: {show: true, strict: false}
+                    , prop: {name: 'title', value: 'id',}
+                    , model: {label: {type: 'text'}}
+                    , theme: {color: '#16b777'}
+                    , on: function (data) {
+                        if (data.isAdd) return data.change.slice(0, 1);
+                    }
+                });
+            }
+        });
+
+        function save(title, type) {
+            layui.admin.popup({
+                type: 1, title: title, area: 'auto'
+                , content: layui.$('#sys-menu-form')
+                , btn: ['确定', '取消']
+                , yes: function (index) {
+                    layui.form.on('submit(sys-menu-submit)', function (data) {
+                        data.field.sysMenu = data.field.sysMenu === 'on';
+                        data.field.disable = data.field.disable !== 'on';
+                        const pid = xmSelect.get('#sys-menu', true).getValue('valueStr');
+                        data.field.pid = pid ? pid : null;
+                        layui.layer.close(index);
+                        layui.common.req(`${config.base}sys/menu`, type, data.field, {
+                            done: function (data) {
+                                layui.layer.msg(data.msg);
+                                layui.table.reload('sys-menu-table');
+                            }
+                        });
+                    });
+                    layui.$('#sys-menu-submit').trigger('click');
+                }
+            });
+        }
+
+        function del(menu) {
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否删除【${menu.title}】菜单？`, {
+                title: '删除菜单', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
+            }, function (index) {
+                layui.layer.close(index);
+                layui.common.req(`${config.base}sys/menu`, 'DELETE', menu.id, {
+                    done: function (data) {
+                        layui.layer.msg(data.msg);
+                        layui.table.reload('sys-menu-table');
+                    }
+                });
+            });
+        }
+
     });
 </script>
 </body>
