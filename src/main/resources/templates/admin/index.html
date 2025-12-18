@@ -9,6 +9,7 @@
     <link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}" href="../../static/favicon.ico"/>
     <link rel="stylesheet" th:href="@{/layui/css/layui.css}" href="../../static/layui/css/layui.css" media="all">
     <link rel="stylesheet" th:href="@{/admin-ui/css/admin.css}" href="../../static/admin-ui/css/admin.css" media="all">
+    <link rel="stylesheet" th:href="@{/style/lock-screen.css}" href="../../static/style/lock-screen.css" media="all">
 </head>
 <body class="layui-layout-body" id="LAY_home_iframe">
 <div id="LAY_app" style="visibility: hidden">
@@ -70,8 +71,9 @@
                     </a>
                     <dl class="layui-nav-child">
                         <dd style="text-align: center;"><a lay-href="me.html">个人中心</a></dd>
+                        <dd style="text-align: center;" layadmin-event="lock"><a>锁屏</a></dd>
                         <hr>
-                        <dd layadmin-event="logout" style="text-align: center;"><a>退出登录</a></dd>
+                        <dd style="text-align: center;" layadmin-event="logout"><a>退出登录</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item layui-hide-xs" lay-unselect>
@@ -125,6 +127,17 @@
         <div class="layadmin-body-shade" layadmin-event="shade"></div>
     </div>
 </div>
+<!-- 锁屏 -->
+<form class="layui-form" id="lock-form" lay-filter="lock-form" onsubmit="return false;" style="display: none;">
+    <div class="layui-input-wrap">
+        <label for="sys-pin"></label>
+        <input id="sys-pin" type="password" class="lock-screen-pin" lay-affix="eye">
+        <div class="layui-input-suffix">
+            <i class="layui-icon layui-icon-right" id="sys-unlock"></i>
+        </div>
+    </div>
+    <div>请输入登陆密码，即可退出锁屏。</div>
+</form>
 <script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
 <script th:inline="javascript">
     const config = {
@@ -139,14 +152,27 @@
     }).use(['index', 'common'], function () {
 
         layui.admin.events.logout = function () {
-            layui.common.req(`${config.base}sys/user/logout`, 'GET', null, {
-                done: function () {
-                    layui.admin.exit(function () {
-                        location.href = 'login.html';
-                    });
-                }
+            layer.confirm('&ensp;&ensp;&ensp;&ensp;是否退出系统？', {
+                title: '退出系统', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
+            }, function (index) {
+                layer.close(index);
+                layui.common.req(`${config.base}sys/user/logout`, 'GET', null, {
+                    done: function () {
+                        layui.admin.exit(function () {
+                            location.href = 'login.html';
+                        });
+                    }
+                });
             });
         };
+
+        layui.admin.events.lock = function () {
+            lock();
+        };
+
+        if (layui.data('lock-screen').lock) {
+            lock();
+        }
 
         layui.common.req(`${config.base}sys/user`, 'GET', null, {
             done: function (data) {
@@ -187,6 +213,36 @@
             });
             menu.push(`${child.length === 0 || id === null ? '' : '</dl>'}`)
             return menu.join('');
+        }
+
+        function lock() {
+            layui.$('#lock-form')[0].reset();
+            layui.data('lock-screen', {key: 'lock', value: true});
+            layui.layer.open({
+                id: 'sys-lock', skin: 'lock-screen'
+                , type: 1, title: false, closeBtn: false, area: ['100%', '100%']
+                , scrollbar: false, anim: -1, isOutAnim: false, resize: false
+                , content: layui.$('#lock-form')
+                , success: function (layero, index) {
+                    layui.$('#sys-pin')[0].focus();
+                    layui.$('#sys-unlock').on('click', function () {
+                        layui.common.req(`${config.base}sys/user/unlock`, 'POST', {
+                            password: layui.$.trim(layui.$('#sys-pin').val())
+                        }, {
+                            done: function () {
+                                layui.layer.close(index);
+                                layui.data('lock-screen', {key: 'lock', value: false});
+                            }
+                            , complete: function () {
+                                layui.$('#sys-pin')[0].focus();
+                            }
+                        });
+                    });
+                    layui.$('#sys-pin').on('keyup', function (e) {
+                        if (e.keyCode === 13) layui.$('#sys-unlock').trigger('click');
+                    });
+                }
+            });
         }
     });
 </script>

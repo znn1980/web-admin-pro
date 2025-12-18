@@ -55,6 +55,15 @@ public class SysUserController extends BaseController {
         return ServerResponseEntity.ok();
     }
 
+    @SysPermissions(SysLogin.class)
+    @PostMapping("/unlock")
+    public ServerResponseEntity<?> unlock(@RequestBody SysUser sysUser) {
+        if (!Objects.equals(super.getSysUser().getPassword(), super.hexPassword(sysUser.getPassword()))) {
+            return ServerResponseEntity.fail("密码输入不正确！");
+        }
+        return ServerResponseEntity.ok();
+    }
+
     @SysPermissions
     @PostMapping("/page")
     public ServerResponseEntity<List<SysUser>> page(@RequestBody @Validated PageVo pageVo) {

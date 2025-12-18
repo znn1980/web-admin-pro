@@ -76,7 +76,7 @@ public class SysRoleController extends BaseController {
     @DeleteMapping
     public ServerResponseEntity<?> delete(@RequestBody Long id) {
         if (this.sysRoleService.existsByRoleId(id)) {
-            return ServerResponseEntity.fail("此角色已分配用户，请先删除用户下的角色！");
+            return ServerResponseEntity.fail("此角色已绑定用户，请先解绑用户下的角色！");
         }
         this.sysRoleService.deleteById(id);
         return ServerResponseEntity.ok();
