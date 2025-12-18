@@ -4,11 +4,11 @@
 
 layui.define(function (exports) {
 
-    layui.admin.events.more = function () {
-        layui.$(".layui-inline.sys-more").toggle();
-        layui.$('#sys-more').html(layui.$('#sys-more').html() === '收起' ? '展开' : '收起')
+    layui.$('#sys-query-more').on('click', function () {
+        layui.$(".sys-query-more").toggle();
+        layui.$(this).html(layui.$(this).html() === '收起' ? '展开' : '收起')
             .toggleClass('layui-icon-down').toggleClass('layui-icon-up');
-    }
+    });
 
     const common = {
         req: function (url, type, data, options) {
