@@ -1,5 +1,7 @@
 package com.admin.web.aspect;
 
+import com.admin.web.model.SysMenu;
+import com.admin.web.model.SysRole;
 import com.admin.web.model.WebServerException;
 import com.admin.web.annotation.SysLogin;
 import com.admin.web.annotation.SysPermissions;
@@ -13,8 +15,12 @@ import org.aspectj.lang.annotation.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
+import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -31,13 +37,31 @@ public class SysPermissionsAspect {
         SysUser sysUser = Optional.ofNullable(this.getSysUser()).orElseThrow(() -> {
             throw new WebServerException(ResponseCode.LOGOUT);
         });
-        if (!SecurityUtils.isSysAdmin(sysUser)
+        if (!SecurityUtils.isSuperAdmin(sysUser)
                 && !Arrays.asList(sysPermissions.value()).contains(SysLogin.class)) {
-            log.info("判断权限=>{}:{} {}", WebUtils.getRequest().getMethod(), WebUtils.getRequest().getRequestURI(), sysUser);
+            if (!this.hasPermission(sysUser)) {
+                throw new WebServerException(ResponseCode.DENIED);
+            }
         }
     }
 
-    public SysUser getSysUser() {
+    boolean hasPermission(SysUser sysUser) {
+        PathMatcher matcher = new AntPathMatcher();
+        for (SysRole sysRole : sysUser.getRoles()) {
+            for (SysMenu sysMenu : sysRole.getMenus()) {
+                log.info("判断权限 => {}:{} => {}:{}", sysMenu.getMethod(), sysMenu.getUrl()
+                        , WebUtils.getRequest().getMethod(), WebUtils.getRequest().getRequestURI());
+                if (!sysMenu.isDisable() && StringUtils.hasText(sysMenu.getUrl())
+                        && matcher.match(sysMenu.getUrl(), WebUtils.getRequest().getRequestURI())
+                        && Objects.equals(sysMenu.getMethod(), WebUtils.getRequest().getMethod())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    SysUser getSysUser() {
         return SecurityUtils.getSysUser(WebUtils.getRequest());
     }
 }

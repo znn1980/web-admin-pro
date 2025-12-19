@@ -3,6 +3,7 @@ package com.admin.web.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "SYS_USER_LOG")
-public class SysUserLog {
+public class SysUserLog implements Serializable {
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

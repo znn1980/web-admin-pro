@@ -4,10 +4,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+import java.io.Serializable;
+
 /**
  * @author znn
  */
-public class UserPassVo {
+public class UserPassVo implements Serializable {
     @NotBlank(message = "旧密码不能为空！")
     private String oldPassword;
     @NotBlank(message = "新密码不能为空！")

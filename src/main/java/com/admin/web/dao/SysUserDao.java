@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  */
 public interface SysUserDao extends JpaRepository<SysUser, Long>, JpaSpecificationExecutor<SysMenu> {
     /**
-     * 通过用户名查询用户
+     * 查询用户表
      *
      * @param username 用户名
      * @return 用户
@@ -18,7 +18,7 @@ public interface SysUserDao extends JpaRepository<SysUser, Long>, JpaSpecificati
     SysUser findByUsername(String username);
 
     /**
-     * 通过手机号查询用户
+     * 查询用户表
      *
      * @param mobile 手机号
      * @return 用户
@@ -26,7 +26,7 @@ public interface SysUserDao extends JpaRepository<SysUser, Long>, JpaSpecificati
     SysUser findByMobile(String mobile);
 
     /**
-     * 通过邮箱查询用户
+     * 查询用户表
      *
      * @param email 邮箱
      * @return 用户

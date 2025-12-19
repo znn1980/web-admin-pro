@@ -71,7 +71,7 @@ public class SysUserController extends BaseController {
         return ServerResponseEntity.ok(sysUserLogs.getTotalElements(), sysUserLogs.getContent());
     }
 
-    @SysPermissions
+    @SysPermissions(SysLogin.class)
     @GetMapping
     public ServerResponseEntity<SysUser> query() {
         return ServerResponseEntity.ok(this.sysUserService.findById(super.getSysUser().getId())

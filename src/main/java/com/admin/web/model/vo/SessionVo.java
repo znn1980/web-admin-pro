@@ -1,9 +1,11 @@
 package com.admin.web.model.vo;
 
+import java.io.Serializable;
+
 /**
  * @author znn
  */
-public class SessionVo {
+public class SessionVo implements Serializable {
     public String jsessionid;
 
     public SessionVo(String jsessionid) {

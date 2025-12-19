@@ -180,7 +180,7 @@
             }
         });
 
-        layui.common.req(`${config.base}sys/menu/page`, 'GET', null, {
+        layui.common.req(`${config.base}sys/menu`, 'GET', null, {
             done: function (data) {
                 layui.$('#LAY-system-side-menu').html(nav(null, data.data));
                 layui.element.render('nav', 'layadmin-system-side-menu');
@@ -201,15 +201,13 @@
             //生成菜单列表
             menu.push(`${child.length === 0 || id === null ? '' : '<dl class="layui-nav-child">'}`)
             child.forEach(function (item) {
-                if (item.sysMenu && !item.disable) {
-                    menu.push(`${id === null ? '<li' : '<dd'} data-name="nav-item-${item.id}"`);
-                    menu.push(`${id === null ? ' class="layui-nav-item layui-nav-itemed"' : ' '}>`);
-                    menu.push(`${item.url ? `<a lay-href="${item.url}"` : '<a href="javascript:"'}`);
-                    menu.push(`${id === null ? ` lay-tips="${item.title}"` : ''}>`);
-                    menu.push(`${item.icon ? `<i class="${item.icon}"></i>` : ''}<cite>${item.title}</cite></a>`);
-                    menu.push(nav(item.id, menus));
-                    menu.push(`${id === null ? '</li>' : '</dd>'}`);
-                }
+                menu.push(`${id === null ? '<li' : '<dd'} data-name="nav-item-${item.id}"`);
+                menu.push(`${id === null ? ' class="layui-nav-item layui-nav-itemed"' : ' '}>`);
+                menu.push(`${item.url ? `<a lay-href="${item.url}"` : '<a href="javascript:"'}`);
+                menu.push(`${id === null ? ` lay-tips="${item.title}"` : ''}>`);
+                menu.push(`${item.icon ? `<i class="${item.icon}"></i>` : ''}<cite>${item.title}</cite></a>`);
+                menu.push(nav(item.id, menus));
+                menu.push(`${id === null ? '</li>' : '</dd>'}`);
             });
             menu.push(`${child.length === 0 || id === null ? '' : '</dl>'}`)
             return menu.join('');

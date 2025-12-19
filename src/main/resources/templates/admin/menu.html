@@ -192,8 +192,10 @@
                 layui.$('#id').val('');
                 layui.$('#sys-menu-form')[0].reset();
                 layui.$('#icon-suffix').attr('class', 'layui-icon layui-icon-search');
-                xmSelect.get('#sys-menu', true).setValue([]);
-                save('添加菜单', 'POST');
+                load(function () {
+                    xmSelect.get('#sys-menu', true).setValue([]);
+                    save('添加菜单', 'POST');
+                });
             }
             if (e.event === 'sys-edit-toolbar' || e.event === 'sys-delete-toolbar') {
                 const menus = layui.treeTable.checkStatus('sys-menu-table').data;
@@ -204,8 +206,10 @@
                         menus[0].disable = !menus[0].disable;
                         layui.form.val('sys-menu-form', menus[0]);
                         layui.$('#icon-suffix').attr('class', `${menus[0].icon ? menus[0].icon : 'layui-icon layui-icon-search'}`);
-                        xmSelect.get('#sys-menu', true).setValue(menus[0].pid ? [menus[0].pid] : []);
-                        save('修改菜单', 'PUT');
+                        load(function () {
+                            xmSelect.get('#sys-menu', true).setValue(menus[0].pid ? [menus[0].pid] : []);
+                            save('修改菜单', 'PUT');
+                        });
                     }
                     if (e.event === 'sys-delete-toolbar') {
                         del(menus[0]);
@@ -222,8 +226,10 @@
                 e.data.disable = !e.data.disable;
                 layui.form.val('sys-menu-form', e.data);
                 layui.$('#icon-suffix').attr('class', `${e.data.icon ? e.data.icon : 'layui-icon layui-icon-search'}`);
-                xmSelect.get('#sys-menu', true).setValue(e.data.pid ? [e.data.pid] : []);
-                save('修改菜单', 'PUT');
+                load(function () {
+                    xmSelect.get('#sys-menu', true).setValue(e.data.pid ? [e.data.pid] : []);
+                    save('修改菜单', 'PUT');
+                });
             }
             if (e.event === 'sys-delete-tool') {
                 del(e.data);
@@ -288,21 +294,24 @@
             });
         });
 
-        layui.common.req(`${config.base}sys/menu/page`, 'GET', null, {
-            done: function (data) {
-                xmSelect.render({
-                    el: '#sys-menu', direction: 'down'
-                    , data: layui.common.tree(null, data.data)
-                    , tree: {show: true, strict: false}
-                    , prop: {name: 'title', value: 'id',}
-                    , model: {label: {type: 'text'}}
-                    , theme: {color: '#16b777'}
-                    , on: function (data) {
-                        if (data.isAdd) return data.change.slice(0, 1);
-                    }
-                });
-            }
-        });
+        function load(callback) {
+            layui.common.req(`${config.base}sys/menu/page`, 'GET', null, {
+                done: function (data) {
+                    xmSelect.render({
+                        el: '#sys-menu', direction: 'down'
+                        , data: layui.common.tree(null, data.data)
+                        , tree: {show: true, strict: false}
+                        , prop: {name: 'title', value: 'id',}
+                        , model: {label: {type: 'text'}}
+                        , theme: {color: '#16b777'}
+                        , on: function (data) {
+                            if (data.isAdd) return data.change.slice(0, 1);
+                        }
+                    });
+                    typeof callback === 'function' && callback();
+                }
+            });
+        }
 
         function save(title, type) {
             layui.admin.popup({

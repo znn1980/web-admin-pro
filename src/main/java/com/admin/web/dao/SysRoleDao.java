@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface SysRoleDao extends JpaRepository<SysRole, Long>, JpaSpecificationExecutor<SysMenu> {
     /**
-     * 通过角色名称查询角色
+     * 查询角色表
      *
      * @param name 角色名称
      * @return 角色
@@ -21,23 +21,25 @@ public interface SysRoleDao extends JpaRepository<SysRole, Long>, JpaSpecificati
     SysRole findByName(String name);
 
     /**
-     * 查询角色列表
+     * 查询角色表
      *
      * @return 角色列表
      */
     List<SysRole> findAllByOrderBySort();
 
     /**
-     * 查询角色数量
+     * 查询用户角色表
      *
      * @param roleId 角色ID
      * @return 数量
      */
-    @Query(value = "SELECT COUNT(*)  FROM sys_users_roles WHERE role_id = :roleId", nativeQuery = true)
+    @Query(value = """
+            SELECT COUNT(*)  FROM sys_users_roles WHERE role_id = :roleId
+            """, nativeQuery = true)
     Long countByRoleId(Long roleId);
 
     /**
-     * 查询角色是否存在
+     * 查询用户角色表
      *
      * @param roleId 角色ID
      * @return 是否存在

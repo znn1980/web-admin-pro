@@ -2,10 +2,12 @@ package com.admin.web.model.vo;
 
 import com.admin.web.model.enums.Move;
 
+import java.io.Serializable;
+
 /**
  * @author znn
  */
-public class MoveVo {
+public class MoveVo implements Serializable {
     private Long id;
     private Move move;
 

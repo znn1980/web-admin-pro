@@ -154,9 +154,11 @@
             if (e.event === 'sys-save-toolbar') {
                 layui.$('#id').val('');
                 layui.$('#sys-user-form')[0].reset();
-                xmSelect.get('#sys-role', true).setValue([]);
                 layui.$('#sys-user').show();
-                save('添加用户', 'POST');
+                load(function () {
+                    xmSelect.get('#sys-role', true).setValue([]);
+                    save('添加用户', 'POST');
+                });
             }
             if (e.event === 'sys-edit-toolbar' || e.event === 'sys-delete-toolbar' || e.event === 'sys-release-toolbar') {
                 const users = layui.table.checkStatus('sys-user-table').data;
@@ -166,9 +168,11 @@
                     if (e.event === 'sys-edit-toolbar') {
                         users[0].disable = !users[0].disable;
                         layui.form.val('sys-user-form', users[0]);
-                        xmSelect.get('#sys-role', true).setValue(users[0].roles ? users[0].roles : []);
                         layui.$('#sys-user').hide();
-                        save('修改用户', 'PUT');
+                        load(function () {
+                            xmSelect.get('#sys-role', true).setValue(users[0].roles ? users[0].roles : []);
+                            save('修改用户', 'PUT');
+                        });
                     }
                     if (e.event === 'sys-delete-toolbar') {
                         del(users[0]);
@@ -196,9 +200,11 @@
             if (e.event === 'sys-edit-tool') {
                 e.data.disable = !e.data.disable;
                 layui.form.val('sys-user-form', e.data);
-                xmSelect.get('#sys-role', true).setValue(e.data.roles ? e.data.roles : []);
                 layui.$('#sys-user').hide();
-                save('修改用户', 'PUT');
+                load(function () {
+                    xmSelect.get('#sys-role', true).setValue(e.data.roles ? e.data.roles : []);
+                    save('修改用户', 'PUT');
+                });
             }
             if (e.event === 'sys-delete-tool') {
                 del(e.data);
@@ -245,17 +251,20 @@
             });
         });
 
-        layui.common.req(`${config.base}sys/role/page`, 'GET', null, {
-            done: function (data) {
-                xmSelect.render({
-                    el: '#sys-role', direction: 'up', autoRow: true
-                    , data: data.data
-                    , prop: {name: 'name', value: 'id',}
-                    , model: {label: {type: 'block', block: {showCount: 10}}}
-                    , theme: {color: '#16b777'}
-                });
-            }
-        });
+        function load(callback) {
+            layui.common.req(`${config.base}sys/role/page`, 'GET', null, {
+                done: function (data) {
+                    xmSelect.render({
+                        el: '#sys-role', direction: 'up', autoRow: true
+                        , data: data.data
+                        , prop: {name: 'name', value: 'id',}
+                        , model: {label: {type: 'block', block: {showCount: 10}}}
+                        , theme: {color: '#16b777'}
+                    });
+                    typeof callback === 'function' && callback();
+                }
+            });
+        }
 
         function save(title, type) {
             layui.admin.popup({

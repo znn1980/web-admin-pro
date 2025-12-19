@@ -20,7 +20,7 @@ public class SysRole extends BaseEntity {
     private String name;
     @Column(name = "SORT")
     private Long sort;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "SYS_ROLES_MENUS",
             joinColumns = {@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")},
             inverseJoinColumns = {@JoinColumn(name = "MENU_ID", referencedColumnName = "ID")})

@@ -139,8 +139,10 @@
             if (e.event === 'sys-save-toolbar') {
                 layui.$('#id').val('');
                 layui.$('#sys-role-form')[0].reset();
-                xmSelect.get('#sys-menu', true).setValue([]);
-                save('添加角色', 'POST');
+                load(function () {
+                    xmSelect.get('#sys-menu', true).setValue([]);
+                    save('添加角色', 'POST');
+                });
             }
             if (e.event === 'sys-edit-toolbar' || e.event === 'sys-delete-toolbar') {
                 const roles = layui.table.checkStatus('sys-role-table').data;
@@ -150,8 +152,10 @@
                     if (e.event === 'sys-edit-toolbar') {
                         roles[0].disable = !roles[0].disable;
                         layui.form.val('sys-role-form', roles[0]);
-                        xmSelect.get('#sys-menu', true).setValue(roles[0].menus ? roles[0].menus : []);
-                        save('修改角色', 'PUT');
+                        load(function () {
+                            xmSelect.get('#sys-menu', true).setValue(roles[0].menus ? roles[0].menus : []);
+                            save('修改角色', 'PUT');
+                        });
                     }
                     if (e.event === 'sys-delete-toolbar') {
                         del(roles[0]);
@@ -167,8 +171,10 @@
             if (e.event === 'sys-edit-tool') {
                 e.data.disable = !e.data.disable;
                 layui.form.val('sys-role-form', e.data);
-                xmSelect.get('#sys-menu', true).setValue(e.data.menus ? e.data.menus : []);
-                save('修改角色', 'PUT');
+                load(function () {
+                    xmSelect.get('#sys-menu', true).setValue(e.data.menus ? e.data.menus : []);
+                    save('修改角色', 'PUT');
+                });
             }
             if (e.event === 'sys-delete-tool') {
                 del(e.data);
@@ -193,18 +199,21 @@
             }
         });
 
-        layui.common.req(`${config.base}sys/menu/page`, 'GET', null, {
-            done: function (data) {
-                xmSelect.render({
-                    el: '#sys-menu', direction: 'up', autoRow: true
-                    , data: layui.common.tree(null, data.data)
-                    , tree: {show: true, strict: true}
-                    , prop: {name: 'title', value: 'id',}
-                    , model: {label: {type: 'block', block: {showCount: 10}}}
-                    , theme: {color: '#16b777'}
-                });
-            }
-        });
+        function load(callback) {
+            layui.common.req(`${config.base}sys/menu/page`, 'GET', null, {
+                done: function (data) {
+                    xmSelect.render({
+                        el: '#sys-menu', direction: 'up', autoRow: true
+                        , data: layui.common.tree(null, data.data)
+                        , tree: {show: true, strict: false}
+                        , prop: {name: 'title', value: 'id',}
+                        , model: {label: {type: 'block', block: {showCount: 10}}}
+                        , theme: {color: '#16b777'}
+                    });
+                    typeof callback === 'function' && callback();
+                }
+            });
+        }
 
         function save(title, type) {
             layui.admin.popup({
