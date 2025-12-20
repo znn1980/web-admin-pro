@@ -11,7 +11,6 @@ import java.util.Objects;
  */
 public class SecurityUtils {
     static final Long SYS_USER_ID = 1L;
-
     static final String SYS_USER_NAME = "admin";
     static final String SYS_USER_SESSION = "SYS_USER_SESSION";
     static final String SYS_CODE_SESSION = "SYS_CODE_SESSION";

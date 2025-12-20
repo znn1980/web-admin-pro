@@ -4,13 +4,11 @@ import com.admin.web.annotation.*;
 import com.admin.web.model.ServerResponseEntity;
 import com.admin.web.model.SysMenu;
 import com.admin.web.model.WebServerException;
-import com.admin.web.model.vo.MappingVo;
 import com.admin.web.model.vo.MoveVo;
 import com.admin.web.service.SysMenuService;
 import com.admin.web.utils.BeanUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.util.*;
 
@@ -20,34 +18,15 @@ import java.util.*;
 @RestController
 @RequestMapping("/sys/menu")
 public class SysMenuController extends BaseController {
-    private final RequestMappingHandlerMapping mapping;
     private final SysMenuService sysMenuService;
 
-    public SysMenuController(RequestMappingHandlerMapping mapping, SysMenuService sysMenuService) {
-        this.mapping = mapping;
+    public SysMenuController(SysMenuService sysMenuService) {
         this.sysMenuService = sysMenuService;
-    }
-
-    @GetMapping("/mapping")
-    public ServerResponseEntity<List<MappingVo>> mapping() {
-        List<MappingVo> mappings = new ArrayList<>();
-        mapping.getHandlerMethods().forEach((requestMappingInfo, handlerMethod) -> {
-            if (handlerMethod.getBeanType().getName().startsWith(getClass().getPackageName())) {
-                requestMappingInfo.getMethodsCondition().getMethods().iterator().forEachRemaining(requestMethod -> {
-                    SysMenu sysMenu = new SysMenu();
-                    sysMenu.setMethod(requestMethod.name());
-                    sysMenu.setUrl(requestMappingInfo.getPathPatternsCondition().getFirstPattern().getPatternString());
-                    mappings.add(new MappingVo(requestMethod.name()
-                            , requestMappingInfo.getPathPatternsCondition().getFirstPattern().getPatternString()));
-                });
-            }
-        });
-        return ServerResponseEntity.ok(mappings);
     }
 
     @SysPermissions(SysLogin.class)
     @GetMapping
-    public ServerResponseEntity<List<SysMenu>> list() {
+    public ServerResponseEntity<List<SysMenu>> menus() {
         if (super.isSuperAdmin()) {
             //超级管理员可以看到所有菜单
             return ServerResponseEntity.ok(this.sysMenuService.findBySysMenuOrderBySort());
@@ -61,21 +40,31 @@ public class SysMenuController extends BaseController {
     }
 
     @SysPermissions
-    @GetMapping("/page")
-    public ServerResponseEntity<List<SysMenu>> page() {
+    @GetMapping("/all")
+    public ServerResponseEntity<List<SysMenu>> all() {
         return ServerResponseEntity.ok(this.sysMenuService.findAllByOrderBySort());
+    }
+
+    @SysLog("移动菜单")
+    @SysPermissions
+    @PutMapping("/move")
+    public ServerResponseEntity<?> move(@RequestBody MoveVo moveVo) {
+        SysMenu sysMenu = this.sysMenuService.findById(moveVo.getId())
+                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("菜单不存在！")));
+        this.sysMenuService.move(sysMenu, moveVo.getMove());
+        return ServerResponseEntity.ok();
     }
 
     @SysLog("添加菜单")
     @SysPermissions
     @PostMapping
     public ServerResponseEntity<?> save(@RequestBody @Validated(SysCreate.class) SysMenu sysMenu) {
-        if (Objects.nonNull(this.sysMenuService.findByTitle(sysMenu.getTitle()))) {
-            return ServerResponseEntity.fail("菜单标题已存在！");
-        }
         if (Objects.nonNull(sysMenu.getPid())
                 && !this.sysMenuService.existsById(sysMenu.getPid())) {
             return ServerResponseEntity.fail("上级菜单不存在！");
+        }
+        if (Objects.nonNull(this.sysMenuService.findByTitle(sysMenu.getTitle()))) {
+            return ServerResponseEntity.fail("菜单标题已存在！");
         }
         this.sysMenuService.save(sysMenu);
         return ServerResponseEntity.ok();
@@ -88,29 +77,23 @@ public class SysMenuController extends BaseController {
         SysMenu oldSysMenu = this.sysMenuService.findById(sysMenu.getId())
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("菜单不存在！")));
         if (Objects.equals(sysMenu.getId(), sysMenu.getPid())) {
-            return ServerResponseEntity.fail("上级菜单不能选择自己！");
+            return ServerResponseEntity.fail("不能选择自己作为上级菜单！");
         }
-        if (!Objects.equals(oldSysMenu.getTitle(), sysMenu.getTitle())
-                && Objects.nonNull(this.sysMenuService.findByTitle(sysMenu.getTitle()))) {
-            return ServerResponseEntity.fail("菜单标题已存在！");
+        if (Objects.nonNull(sysMenu.getPid())
+                && this.sysMenuService.existsByIdAndPid(sysMenu.getId(), sysMenu.getPid())) {
+            return ServerResponseEntity.fail("不能选择自己的下级菜单作为上级菜单！");
         }
         if (Objects.nonNull(sysMenu.getPid())
                 && !this.sysMenuService.existsById(sysMenu.getPid())) {
             return ServerResponseEntity.fail("上级菜单不存在！");
         }
+        if (!Objects.equals(oldSysMenu.getTitle(), sysMenu.getTitle())
+                && Objects.nonNull(this.sysMenuService.findByTitle(sysMenu.getTitle()))) {
+            return ServerResponseEntity.fail("菜单标题已存在！");
+        }
         oldSysMenu.setPid(sysMenu.getPid());
         BeanUtils.copyNonNullProperties(sysMenu, oldSysMenu);
         this.sysMenuService.save(oldSysMenu);
-        return ServerResponseEntity.ok();
-    }
-
-    @SysLog("移动菜单")
-    @SysPermissions
-    @PutMapping("/move")
-    public ServerResponseEntity<?> move(@RequestBody MoveVo moveVo) {
-        SysMenu sysMenu = this.sysMenuService.findById(moveVo.getId())
-                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("菜单不存在！")));
-        this.sysMenuService.move(sysMenu, moveVo.getMove());
         return ServerResponseEntity.ok();
     }
 

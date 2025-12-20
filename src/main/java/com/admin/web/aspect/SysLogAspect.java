@@ -44,7 +44,7 @@ public class SysLogAspect {
 
     @Before(value = "@annotation(sysLog)")
     public void doBefore(JoinPoint joinPoint, SysLog sysLog) {
-        log.info("ASPECT:{}.{}()", joinPoint.getTarget().getClass().getName(), joinPoint.getSignature().getName());
+        log.info("SYS-ASPECT => {}.{}()", joinPoint.getTarget().getClass().getName(), joinPoint.getSignature().getName());
         THREAD_LOCAL.set(System.currentTimeMillis());
     }
 
@@ -71,11 +71,11 @@ public class SysLogAspect {
             sysUserLog.setName(sysLog.value());
             if (Objects.nonNull(joinPoint.getArgs())) {
                 sysUserLog.setParams(getParams(joinPoint.getArgs()));
-                log.info("REQUEST:{}", sysUserLog.getParams());
+                log.info("SYS-REQUEST => {}", sysUserLog.getParams());
             }
             if (Objects.nonNull(result)) {
                 sysUserLog.setResult(result.toString());
-                log.info("RESPONSE:{}", sysUserLog.getResult());
+                log.info("SYS-RESPONSE => {}", sysUserLog.getResult());
             }
             if (Objects.nonNull(e)) {
                 sysUserLog.setErrors(getStackTrace(e));

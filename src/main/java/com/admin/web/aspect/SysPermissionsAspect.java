@@ -33,7 +33,7 @@ public class SysPermissionsAspect {
 
     @Before(value = "@annotation(sysPermissions)")
     public void doBefore(JoinPoint joinPoint, SysPermissions sysPermissions) {
-        log.info("ASPECT:{}.{}()", joinPoint.getTarget().getClass().getName(), joinPoint.getSignature().getName());
+        log.info("SYS-ASPECT => {}.{}()", joinPoint.getTarget().getClass().getName(), joinPoint.getSignature().getName());
         SysUser sysUser = Optional.ofNullable(this.getSysUser()).orElseThrow(() -> {
             throw new WebServerException(ResponseCode.LOGOUT);
         });
@@ -49,7 +49,7 @@ public class SysPermissionsAspect {
         PathMatcher matcher = new AntPathMatcher();
         for (SysRole sysRole : sysUser.getRoles()) {
             for (SysMenu sysMenu : sysRole.getMenus()) {
-                log.info("判断权限 => {}:{} => {}:{}", sysMenu.getMethod(), sysMenu.getUrl()
+                log.info("SYS-PERMISSIONS => {}:{} => {}:{}", sysMenu.getMethod(), sysMenu.getUrl()
                         , WebUtils.getRequest().getMethod(), WebUtils.getRequest().getRequestURI());
                 if (!sysMenu.isDisable() && StringUtils.hasText(sysMenu.getUrl())
                         && matcher.match(sysMenu.getUrl(), WebUtils.getRequest().getRequestURI())

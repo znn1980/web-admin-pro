@@ -29,9 +29,19 @@ public class SysRoleController extends BaseController {
     }
 
     @SysPermissions
-    @GetMapping("/page")
-    public ServerResponseEntity<List<SysRole>> page() {
+    @GetMapping("/all")
+    public ServerResponseEntity<List<SysRole>> all() {
         return ServerResponseEntity.ok(this.sysRoleService.findAll());
+    }
+
+    @SysLog("移动角色")
+    @SysPermissions
+    @PutMapping("/move")
+    public ServerResponseEntity<?> move(@RequestBody MoveVo moveVo) {
+        SysRole sysRole = this.sysRoleService.findById(moveVo.getId())
+                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("角色不存在！")));
+        this.sysRoleService.move(sysRole, moveVo.getMove());
+        return ServerResponseEntity.ok();
     }
 
     @SysLog("添加角色")
@@ -59,17 +69,6 @@ public class SysRoleController extends BaseController {
         this.sysRoleService.save(oldSysRole);
         return ServerResponseEntity.ok();
     }
-
-    @SysLog("移动角色")
-    @SysPermissions
-    @PutMapping("/move")
-    public ServerResponseEntity<?> move(@RequestBody MoveVo moveVo) {
-        SysRole sysRole = this.sysRoleService.findById(moveVo.getId())
-                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("角色不存在！")));
-        this.sysRoleService.move(sysRole, moveVo.getMove());
-        return ServerResponseEntity.ok();
-    }
-
 
     @SysLog("删除角色")
     @SysPermissions

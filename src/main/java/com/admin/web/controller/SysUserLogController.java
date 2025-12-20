@@ -1,5 +1,6 @@
 package com.admin.web.controller;
 
+import com.admin.web.annotation.SysLogin;
 import com.admin.web.annotation.SysPermissions;
 import com.admin.web.model.*;
 import com.admin.web.model.vo.UserLogVo;
@@ -23,18 +24,18 @@ public class SysUserLogController extends BaseController {
         this.sysUserLogService = sysUserLogService;
     }
 
-    @SysPermissions
-    @PostMapping("/page")
-    public ServerResponseEntity<List<SysUserLog>> page(@RequestBody @Validated UserLogVo userLogVo) {
+    @SysPermissions(SysLogin.class)
+    @PostMapping("/me")
+    public ServerResponseEntity<List<SysUserLog>> me(@RequestBody @Validated UserLogVo userLogVo) {
+        userLogVo.setUsername(super.getSysUser().getUsername());
         Page<SysUserLog> sysUserLogs = this.sysUserLogService.findAll(userLogVo
                 , PageRequest.of(userLogVo.getPage(), userLogVo.getLimit()));
         return ServerResponseEntity.ok(sysUserLogs.getTotalElements(), sysUserLogs.getContent());
     }
 
     @SysPermissions
-    @PostMapping("/user/page")
-    public ServerResponseEntity<List<SysUserLog>> uPage(@RequestBody @Validated UserLogVo userLogVo) {
-        userLogVo.setUsername(super.getSysUser().getUsername());
+    @PostMapping("/all")
+    public ServerResponseEntity<List<SysUserLog>> all(@RequestBody @Validated UserLogVo userLogVo) {
         Page<SysUserLog> sysUserLogs = this.sysUserLogService.findAll(userLogVo
                 , PageRequest.of(userLogVo.getPage(), userLogVo.getLimit()));
         return ServerResponseEntity.ok(sysUserLogs.getTotalElements(), sysUserLogs.getContent());
@@ -46,6 +47,5 @@ public class SysUserLogController extends BaseController {
         this.sysUserLogService.deleteAllById(id);
         return ServerResponseEntity.ok();
     }
-
 
 }

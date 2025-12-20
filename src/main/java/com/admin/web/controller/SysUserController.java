@@ -64,18 +64,18 @@ public class SysUserController extends BaseController {
         return ServerResponseEntity.ok();
     }
 
-    @SysPermissions
-    @PostMapping("/page")
-    public ServerResponseEntity<List<SysUser>> page(@RequestBody @Validated PageVo pageVo) {
-        Page<SysUser> sysUserLogs = this.sysUserService.findAll(PageRequest.of(pageVo.getPage(), pageVo.getLimit()));
-        return ServerResponseEntity.ok(sysUserLogs.getTotalElements(), sysUserLogs.getContent());
-    }
-
     @SysPermissions(SysLogin.class)
-    @GetMapping
-    public ServerResponseEntity<SysUser> query() {
+    @GetMapping("/me")
+    public ServerResponseEntity<SysUser> me() {
         return ServerResponseEntity.ok(this.sysUserService.findById(super.getSysUser().getId())
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！"))));
+    }
+
+    @SysPermissions
+    @PostMapping("/all")
+    public ServerResponseEntity<List<SysUser>> all(@RequestBody @Validated PageVo pageVo) {
+        Page<SysUser> sysUserLogs = this.sysUserService.findAll(PageRequest.of(pageVo.getPage(), pageVo.getLimit()));
+        return ServerResponseEntity.ok(sysUserLogs.getTotalElements(), sysUserLogs.getContent());
     }
 
     @SysLog("添加用户")
@@ -137,6 +137,22 @@ public class SysUserController extends BaseController {
         return ServerResponseEntity.ok(this.sysUserService.save(oldSysUser));
     }
 
+    @SysLog("删除用户")
+    @SysPermissions
+    @DeleteMapping
+    public ServerResponseEntity<?> delete(@RequestBody Long id) {
+        SysUser sysUser = this.sysUserService.findById(id)
+                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！")));
+        if (Objects.equals(super.getSysUser().getId(), sysUser.getId())) {
+            return ServerResponseEntity.fail("不能删除自己！");
+        }
+        if (super.isSuperAdmin(sysUser)) {
+            return ServerResponseEntity.fail("超级管理员不能删除！");
+        }
+        this.sysUserService.deleteById(id);
+        return ServerResponseEntity.ok();
+    }
+
     @SysLog("修改密码")
     @SysPermissions
     @PutMapping("/pass")
@@ -163,8 +179,8 @@ public class SysUserController extends BaseController {
 
     @SysLog("重置密码")
     @SysPermissions
-    @PutMapping("/unPass")
-    public ServerResponseEntity<?> unPass(@RequestBody Long id) {
+    @PutMapping("/reset")
+    public ServerResponseEntity<?> reset(@RequestBody Long id) {
         SysUser sysUser = this.sysUserService.findById(id)
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！")));
         if (Objects.equals(super.getSysUser().getId(), sysUser.getId())) {
@@ -175,22 +191,6 @@ public class SysUserController extends BaseController {
         }
         sysUser.setPassword(super.hexPassword(sysUser));
         this.sysUserService.save(sysUser);
-        return ServerResponseEntity.ok();
-    }
-
-    @SysLog("删除用户")
-    @SysPermissions
-    @DeleteMapping
-    public ServerResponseEntity<?> delete(@RequestBody Long id) {
-        SysUser sysUser = this.sysUserService.findById(id)
-                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！")));
-        if (Objects.equals(super.getSysUser().getId(), sysUser.getId())) {
-            return ServerResponseEntity.fail("不能删除自己！");
-        }
-        if (super.isSuperAdmin(sysUser)) {
-            return ServerResponseEntity.fail("超级管理员不能删除！");
-        }
-        this.sysUserService.deleteById(id);
         return ServerResponseEntity.ok();
     }
 

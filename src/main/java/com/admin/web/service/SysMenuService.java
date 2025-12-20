@@ -6,9 +6,7 @@ import com.admin.web.model.enums.Move;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author znn
@@ -90,5 +88,15 @@ public class SysMenuService {
 
     public boolean existsById(Long id) {
         return this.sysMenuDao.existsById(id);
+    }
+
+    public boolean existsByIdAndPid(Long id, Long pid) {
+        Set<Long> exists = new HashSet<>();
+        SysMenu sysMenu = this.sysMenuDao.findById(pid).orElse(null);
+        while (Objects.nonNull(sysMenu) && Objects.nonNull(sysMenu.getPid())) {
+            exists.add(sysMenu.getPid());
+            sysMenu = this.sysMenuDao.findById(sysMenu.getPid()).orElse(null);
+        }
+        return exists.contains(id);
     }
 }

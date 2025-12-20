@@ -27,7 +27,7 @@ public class ControllerAdviceConfig {
 
     @ExceptionHandler(Exception.class)
     public Object exceptionHandler(HttpServletRequest request, Exception e) {
-        log.error("ERROR:[{}] URL:{} {}", request.getMethod(), request.getRequestURI(), getHeaders(request), e);
+        log.error("SYS-ERROR => {} URL => {} => {}", request.getMethod(), request.getRequestURI(), getHeaders(request), e);
         if (WebUtils.isRequestRest(request)) {
             if (e instanceof WebServerException ex) {
                 return ResponseEntity.ok(Objects.requireNonNullElse(ex.getServerResponseEntity()

@@ -22,9 +22,9 @@
 </script>
 <script type="text/html" id="sys-disable-tpl">
     {{# if(d.disable){ }}
-    <input type="checkbox" value="{{d.id}}" data-json="{{encodeURIComponent(JSON.stringify(d))}}" title="启用|禁用" lay-skin="switch" lay-filter="sys-disable-switch">
+    <input type="checkbox" value="{{ d.id }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" title="启用|禁用" lay-skin="switch" lay-filter="sys-disable-switch">
     {{# }else{ }}
-    <input type="checkbox" checked value="{{d.id}}" data-json="{{encodeURIComponent(JSON.stringify(d))}}" title="启用|禁用" lay-skin="switch" lay-filter="sys-disable-switch">
+    <input type="checkbox" checked value="{{ d.id }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" title="启用|禁用" lay-skin="switch" lay-filter="sys-disable-switch">
     {{# } }}
 </script>
 <script type="text/html" id="sys-role-toolbar">
@@ -97,7 +97,7 @@
 
         layui.table.render({
             elem: '#sys-role-table'
-            , url: `${config.base}sys/role/page`
+            , url: `${config.base}sys/role/all`
             //, method: 'GET', contentType: "application/json;charset=UTF-8"
             , toolbar: '#sys-role-toolbar'
             , cols: [
@@ -200,7 +200,7 @@
         });
 
         function load(callback) {
-            layui.common.req(`${config.base}sys/menu/page`, 'GET', null, {
+            layui.common.req(`${config.base}sys/menu/all`, 'GET', null, {
                 done: function (data) {
                     xmSelect.render({
                         el: '#sys-menu', direction: 'up', autoRow: true

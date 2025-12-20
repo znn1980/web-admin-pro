@@ -17,24 +17,34 @@
         <table class="layui-hide" id="sys-menu-table" lay-filter="sys-menu-table"></table>
     </div>
 </div>
-<script type="text/html" id="sys-remark-tpl">
-    <span lay-tips="{{d.remark?d.remark:d.title}}">{{d.title}}</span>
+<script type="text/html" id="sys-title-tpl">
+    <span lay-tips="{{ d.remark?d.remark:d.title }}">{{ d.title }}</span>
 </script>
-<script type="text/html" id="sys-url-tpl">
-    <span lay-tips="{{d.method?d.method+':'+d.url:d.url}}">{{d.method?d.method+':'+d.url:d.url}}</span>
+<script type="text/html" id="sys-method-tpl">
+    {{# if(d.method === 'GET'){ }}
+    <span class="layui-badge layui-bg-orange">{{ d.method }}</span>
+    {{# }else if(d.method === 'POST'){ }}
+    <span class="layui-badge layui-bg-green">{{ d.method }}</span>
+    {{# }else if(d.method === 'PUT'){ }}
+    <span class="layui-badge layui-bg-blue">{{ d.method }}</span>
+    {{# }else if(d.method === 'DELETE'){ }}
+    <span class="layui-badge layui-bg-red">{{ d.method }}</span>
+    {{# }else{ }}
+    <span class="layui-badge-rim">{{ d.method?d.method:'目录' }}</span>
+    {{# } }}
 </script>
 <script type="text/html" id="sys-menu-tpl">
     {{# if(d.sysMenu){ }}
-    <input type="checkbox" checked value="{{d.id}}" data-json="{{encodeURIComponent(JSON.stringify(d))}}" title="是|否" lay-skin="switch" lay-filter="sys-menu-switch">
+    <input type="checkbox" checked value="{{ d.id }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" title="是|否" lay-skin="switch" lay-filter="sys-menu-switch">
     {{# }else{ }}
-    <input type="checkbox" value="{{d.id}}" data-json="{{encodeURIComponent(JSON.stringify(d))}}" title="是|否" lay-skin="switch" lay-filter="sys-menu-switch">
+    <input type="checkbox" value="{{ d.id }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" title="是|否" lay-skin="switch" lay-filter="sys-menu-switch">
     {{# } }}
 </script>
 <script type="text/html" id="sys-disable-tpl">
     {{# if(d.disable){ }}
-    <input type="checkbox" value="{{d.id}}" data-json="{{encodeURIComponent(JSON.stringify(d))}}" title="启用|禁用" lay-skin="switch" lay-filter="sys-disable-switch">
+    <input type="checkbox" value="{{ d.id }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" title="启用|禁用" lay-skin="switch" lay-filter="sys-disable-switch">
     {{# }else{ }}
-    <input type="checkbox" checked value="{{d.id}}" data-json="{{encodeURIComponent(JSON.stringify(d))}}" title="启用|禁用" lay-skin="switch" lay-filter="sys-disable-switch">
+    <input type="checkbox" checked value="{{ d.id }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" title="启用|禁用" lay-skin="switch" lay-filter="sys-disable-switch">
     {{# } }}
 </script>
 <script type="text/html" id="sys-menu-toolbar">
@@ -81,8 +91,12 @@
     <div class="layui-form-item">
         <label class="layui-form-label" for="url">菜单地址</label>
         <div class="layui-input-block">
-            <input type="text" id="url" name="url" placeholder="菜单地址" autocomplete="off" class="layui-input" lay-affix="clear"
-                   lay-tips="1、&nbsp;?&nbsp;匹配一个字符<br>2、&nbsp;*&nbsp;匹配0个或多个字符<br>3、**&nbsp;匹配0个或多个目录">
+            <div class="layui-input-wrap">
+                <input type="text" id="url" name="url" placeholder="菜单地址" autocomplete="off" class="layui-input">
+                <div class="layui-input-affix layui-input-suffix">
+                    <i id="url-suffix" class="layui-icon layui-icon-tips" lay-tips="1、&nbsp;?&nbsp;匹配一个字符<br>2、&nbsp;*&nbsp;匹配0个或多个字符<br>3、**&nbsp;匹配0个或多个目录"></i>
+                </div>
+            </div>
         </div>
     </div>
     <div class="layui-form-item">
@@ -106,7 +120,6 @@
                     <option value="POST">POST</option>
                     <option value="PUT">PUT</option>
                     <option value="DELETE">DELETE</option>
-                    <option value="BATCH">BATCH</option>
                 </select>
             </div>
         </div>
@@ -158,24 +171,28 @@
 
         layui.$('#icon-suffix').on('click', function () {
             layui.$('#icon').val('');
-            layui.$('#icon-suffix').attr('class', 'layui-icon layui-icon-search');
+            layui.$(this).attr('class', 'layui-icon layui-icon-search');
+        });
+
+        layui.$('#url-suffix').on('click', function () {
+            layui.$('#url').val('');
         });
 
         layui.treeTable.render({
             elem: '#sys-menu-table'
-            , url: `${config.base}sys/menu/page`
+            , url: `${config.base}sys/menu/all`
             , toolbar: '#sys-menu-toolbar'
             , tree: {
                 customName: {name: 'title', pid: 'pid'}
-                , view: {expandAllDefault: true, iconClose: '', iconOpen: '', iconLeaf: ''}
+                , view: {expandAllDefault: false, iconClose: '', iconOpen: '', iconLeaf: ''}
                 , data: {isSimpleData: true, rootPid: null}
             }
             , cols: [
                 [
                     {type: 'radio'}
-                    , {field: 'title', title: '标题', templet: '#sys-remark-tpl'}
-                    , {field: 'url', title: '地址', templet: '#sys-url-tpl'}
-                    //, {field: 'remark', title: '备注', hide: true}
+                    , {field: 'title', title: '标题', templet: '#sys-title-tpl'}
+                    , {field: 'method', title: '请求', width: 85, templet: '#sys-method-tpl'}
+                    , {field: 'url', title: '地址'}
                     , {field: 'sysMenu', title: '菜单', align: 'center', width: 75, templet: '#sys-menu-tpl'}
                     , {field: 'disable', title: '状态', align: 'center', width: 90, templet: '#sys-disable-tpl'}
                     , {field: 'createUsername', title: '创建用户', width: 90, hide: true}
@@ -185,6 +202,9 @@
                     , {title: '操作', align: 'center', toolbar: '#sys-menu-tool', width: 120}
                 ]
             ]
+            , done: function () {
+                layui.treeTable.expandNode('sys-menu-table', {index: 0, expandFlag: true});
+            }
         });
 
         layui.table.on('toolbar(sys-menu-table)', function (e) {
@@ -295,7 +315,7 @@
         });
 
         function load(callback) {
-            layui.common.req(`${config.base}sys/menu/page`, 'GET', null, {
+            layui.common.req(`${config.base}sys/menu/all`, 'GET', null, {
                 done: function (data) {
                     xmSelect.render({
                         el: '#sys-menu', direction: 'down'

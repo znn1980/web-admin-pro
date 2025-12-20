@@ -174,7 +174,7 @@
             lock();
         }
 
-        layui.common.req(`${config.base}sys/user`, 'GET', null, {
+        layui.common.req(`${config.base}sys/user/me`, 'GET', null, {
             done: function (data) {
                 load(data.data);
             }
@@ -214,14 +214,14 @@
         }
 
         function lock() {
-            layui.$('#lock-form')[0].reset();
-            layui.data('lock-screen', {key: 'lock', value: true});
             layui.layer.open({
                 id: 'sys-lock', skin: 'lock-screen'
                 , type: 1, title: false, closeBtn: false, area: ['100%', '100%']
                 , scrollbar: false, anim: -1, isOutAnim: false, resize: false
                 , content: layui.$('#lock-form')
                 , success: function (layero, index) {
+                    layui.data('lock-screen', {key: 'lock', value: true});
+                    layui.$('#lock-form')[0].reset();
                     layui.$('#sys-pin')[0].focus();
                     layui.$('#sys-unlock').on('click', function () {
                         layui.common.req(`${config.base}sys/user/unlock`, 'POST', {
