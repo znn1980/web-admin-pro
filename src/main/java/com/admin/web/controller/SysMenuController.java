@@ -3,7 +3,7 @@ package com.admin.web.controller;
 import com.admin.web.annotation.*;
 import com.admin.web.model.ServerResponseEntity;
 import com.admin.web.model.SysMenu;
-import com.admin.web.model.WebServerException;
+import com.admin.web.exception.WebServerException;
 import com.admin.web.model.vo.MoveVo;
 import com.admin.web.service.SysMenuService;
 import com.admin.web.utils.BeanUtils;

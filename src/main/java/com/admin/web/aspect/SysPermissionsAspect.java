@@ -2,7 +2,7 @@ package com.admin.web.aspect;
 
 import com.admin.web.model.SysMenu;
 import com.admin.web.model.SysRole;
-import com.admin.web.model.WebServerException;
+import com.admin.web.exception.WebServerException;
 import com.admin.web.annotation.SysLogin;
 import com.admin.web.annotation.SysPermissions;
 import com.admin.web.model.enums.ResponseCode;

@@ -3,6 +3,48 @@
     <blockquote class="layui-elem-quote">
         <script type="text/html" template>
             <p>{{ config.title }} v{{ config.version }}</p>
+            <table class="layui-table" lay-size="sm">
+                <thead>
+                <tr>
+                    <th style="width: 85px;">名称</th>
+                    <th>属性</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>系统名称</td>
+                    <td>{{ os.osSys.name }}</td>
+                </tr>
+                <tr>
+                    <td>系统版本</td>
+                    <td>{{ os.osSys.version }}</td>
+                </tr>
+                <tr>
+                    <td>系统架构</td>
+                    <td>{{ os.osSys.arch }}</td>
+                </tr>
+                <tr>
+                    <td>虚拟机名称</td>
+                    <td>{{ os.osJvm.vmName }}</td>
+                </tr>
+                <tr>
+                    <td>虚拟机版本</td>
+                    <td>{{ os.osJvm.vmVersion }}</td>
+                </tr>
+                <tr>
+                    <td>虚拟机厂商</td>
+                    <td>{{ os.osJvm.vmVendor }}</td>
+                </tr>
+                <tr>
+                    <td>虚拟机启动时间</td>
+                    <td>{{ os.osJvm.startTime }}</td>
+                </tr>
+                <tr>
+                    <td>虚拟机运行时间</td>
+                    <td>{{ os.osJvm.uptime }}</td>
+                </tr>
+                </tbody>
+            </table>
         </script>
     </blockquote>
 </div>

@@ -1,5 +1,6 @@
-package com.admin.web.model;
+package com.admin.web.exception;
 
+import com.admin.web.model.ServerResponseEntity;
 import com.admin.web.model.enums.ResponseCode;
 
 /**
