@@ -3,16 +3,11 @@ package com.admin.web.controller;
 import com.admin.web.annotation.SysLogin;
 import com.admin.web.annotation.SysPermissions;
 import com.admin.web.config.WebServerConfig;
-import com.google.code.kaptcha.Producer;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.imageio.ImageIO;
-import java.io.IOException;
 
 /**
  * @author znn
@@ -20,11 +15,9 @@ import java.io.IOException;
 @Controller
 public class ModelViewController extends BaseController {
     private final WebServerConfig config;
-    private final Producer producer;
 
-    public ModelViewController(WebServerConfig config, Producer producer) {
+    public ModelViewController(WebServerConfig config) {
         this.config = config;
-        this.producer = producer;
     }
 
     @ModelAttribute
@@ -86,15 +79,4 @@ public class ModelViewController extends BaseController {
         return new ModelAndView("admin/log");
     }
 
-    @GetMapping("/sys/code.jpg")
-    public void code(HttpServletResponse response) throws IOException {
-        response.setHeader("Pragma", "no-cache");
-        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-        response.addHeader("Cache-Control", "post-check=0, pre-check=0");
-        response.setDateHeader("Expires", 0L);
-        response.setContentType("image/jpeg");
-        String sysCode = this.producer.createText();
-        super.setSysCode(sysCode);
-        ImageIO.write(this.producer.createImage(sysCode), "jpg", response.getOutputStream());
-    }
 }

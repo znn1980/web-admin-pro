@@ -8,15 +8,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}" href="../../static/favicon.ico"/>
     <link rel="stylesheet" th:href="@{/layui/css/layui.css}" href="../../static/layui/css/layui.css" media="all">
+    <link rel="stylesheet" th:href="@{/layui/css/layedit.css}" href="../../static/layui/css/layedit.css" media="all">
     <link rel="stylesheet" th:href="@{/admin-ui/css/admin.css}" href="../../static/admin-ui/css/admin.css" media="all">
 </head>
 <body class="layui-fluid">
-<div class="layui-card">
-    <div class="layui-card-header">通知公告</div>
+<div id="sys-notice-list" class="layui-card">
     <div class="layui-card-body">
-        <table class="layui-hide" id="sys-notice-table" lay-filter="sys-notice-table"></table>
+        <div class="layui-tabs" id="sys-notice-tabs">
+            <ul class="layui-tabs-header">
+                <li class="layui-icon layui-icon-dialogue layui-this">
+                    未读<span id="notice-unread"></span>
+                </li>
+                <li class="layui-icon layui-icon-read">
+                    已读
+                </li>
+                <li class="layui-icon layui-icon-notice" lay-id="all">
+                    全部
+                </li>
+            </ul>
+            <div class="layui-tabs-body layui-form">
+                <table class="layui-hide" id="sys-notice-table" lay-filter="sys-notice-table"></table>
+            </div>
+        </div>
     </div>
 </div>
+<div id="sys-notice-show"></div>
+<script id="sys-notice-tpl" type="text/html">
+    <div class="layui-card layuiAdmin-msg-detail">
+        <div class="layui-card-header">
+            <h1>{{ d.title }}</h1>
+            <p>
+                <span lay-tips="{{ d.createTimestamp }}">发布时间：{{ layui.util.timeAgo(d.createTimestamp) }}</span>
+                &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<span>发布用户：{{ d.createUsername }}</span>
+            </p>
+        </div>
+        <div class="layui-card-body layui-text">
+            <p>
+                <a href="javascript:" id="sys-notice-back" class="layui-btn layui-btn-primary layui-btn-sm">返回上级</a>
+            </p>
+            <div class="layadmin-text">
+                {{- d.content }}
+                <hr>
+                <blockquote class="layui-elem-quote">
+                    <span lay-tips="{{ d.updateTimestamp||d.createTimestamp }}">修改时间：{{ layui.util.timeAgo(d.updateTime||d.createTimestamp) }}</span>
+                    &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<span>修改用户：{{ d.updateUsername||d.createUsername }}</span>
+                    {{# if(d.users.length>0){ }}
+                    <hr>
+                    <span>
+                        {{# layui.each(d.users, function(index, item){ }}
+                        <span class="layui-badge layui-bg-green">{{ item.username }}</span>
+                        {{# }); }}
+                    </span>
+                    {{# } }}
+                </blockquote>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="sys-notice-toolbar">
+    <div class="layui-btn-group">
+        <button class="layui-btn layui-btn-sm" lay-event="sys-save-toolbar">
+            <i class="layui-icon layui-icon-add-1"></i>添加
+        </button>
+        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="sys-edit-toolbar">
+            <i class="layui-icon layui-icon-edit"></i>编辑
+        </button>
+        <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="sys-delete-toolbar">
+            <i class="layui-icon layui-icon-delete"></i>删除
+        </button>
+        <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="sys-refresh-toolbar">
+            <i class="layui-icon layui-icon-refresh"></i>刷新
+        </button>
+    </div>
+</script>
+<script type="text/html" id="sys-notice-tool">
+    <button class="layui-btn layui-btn-xs layui-bg-blue" lay-event="sys-search-tool">
+        <i class="layui-icon layui-icon-search"></i>
+    </button>
+</script>
+<script type="text/html" id="sys-title-tpl">
+    <span lay-tips="{{ d.title }}">{{ d.title }}</span>
+</script>
+<script type="text/html" id="sys-disable-tpl">
+    {{# if(d.disable){ }}
+    <input type="checkbox" value="{{ d.id }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" title="启用|禁用" lay-skin="switch" lay-filter="sys-disable-switch">
+    {{# }else{ }}
+    <input type="checkbox" checked value="{{ d.id }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" title="启用|禁用" lay-skin="switch" lay-filter="sys-disable-switch">
+    {{# } }}
+</script>
+<form class="layui-form" id="sys-notice-form" lay-filter="sys-notice-form" style="display: none;">
+    <input type="hidden" id="id" name="id">
+    <input type="hidden" id="disable" name="disable">
+    <div class="layui-form-item">
+        <label for="title"></label>
+        <input type="text" id="title" name="title" lay-verify="required" placeholder="标题" lay-reqtext="请输入标题" autocomplete="off" class="layui-input" lay-affix="clear">
+    </div>
+    <div class="layui-form-item">
+        <label for="content"></label>
+        <textarea id="content" name="content" style="display: none;"></textarea>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="sys-notice-submit" id="sys-notice-submit" value="确认">
+    </div>
+</form>
 <script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
 <script th:inline="javascript">
     const config = {
@@ -25,7 +119,139 @@
 
     layui.config({
         base: config.base, version: true
-    }).use(['index', 'common'], function () {
+    }).use(['index', 'common', 'layedit'], function () {
+
+        let editor = layui.layedit.build('content', {height: 200, uploadImage: {url: `${config.base}sys/upload`}});
+
+        layui.table.render({
+            elem: '#sys-notice-table'
+            , url: `${config.base}sys/notice/all`
+            , method: 'POST', contentType: "application/json;charset=UTF-8"
+            , toolbar: '#sys-notice-toolbar'
+            , cols: [
+                [
+                    {type: 'radio'}
+                    , {field: 'title', title: '标题', templet: '#sys-title-tpl'}
+                    , {field: 'disable', title: '状态', align: 'center', width: 90, templet: '#sys-disable-tpl'}
+                    , {field: 'createUsername', title: '发布用户', width: 90}
+                    , {field: 'createTimestamp', title: '发布时间', width: 160}
+                    , {field: 'updateUsername', title: '修改用户', width: 90, hide: true}
+                    , {field: 'updateTimestamp', title: '修改时间', width: 160, hide: true}
+                    , {title: '操作', align: 'center', toolbar: '#sys-notice-tool', width: 60}
+                ]
+            ]
+            , page: true
+        });
+
+        layui.table.on('toolbar(sys-notice-table)', function (e) {
+            if (e.event === 'sys-save-toolbar') {
+                layui.$('#id').val('');
+                layui.$('#sys-notice-form')[0].reset();
+                save('添加通知公告', 'POST');
+            }
+            if (e.event === 'sys-edit-toolbar' || e.event === 'sys-delete-toolbar') {
+                const notices = layui.table.checkStatus('sys-notice-table').data;
+                if (notices.length <= 0) {
+                    layui.layer.msg("请选择一条纪录！");
+                } else {
+                    if (e.event === 'sys-edit-toolbar') {
+                        layui.form.val('sys-notice-form', notices[0]);
+                        save('修改通知公告', 'PUT');
+                    }
+                    if (e.event === 'sys-delete-toolbar') {
+                        del(notices[0]);
+                    }
+                }
+            }
+            if (e.event === 'sys-refresh-toolbar') {
+                layui.table.reload('sys-notice-table');
+            }
+        });
+
+        layui.table.on('tool(sys-notice-table)', function (e) {
+            if (e.event === 'sys-search-tool') {
+                layui.common.req(`${config.base}sys/notice/me`, 'POST', e.data.id, {
+                    done: function (data) {
+                        layui.laytpl(layui.$('#sys-notice-tpl').html()).render(data.data, function (html) {
+                            layui.$('#sys-notice-show').html(html).show();
+                            layui.$('#sys-notice-list').hide();
+                            layui.$('#sys-notice-back').on('click', function () {
+                                layui.$('#sys-notice-list').show();
+                                layui.$('#sys-notice-show').hide();
+                            });
+                        });
+                    }
+                });
+            }
+        });
+
+        layui.form.on('switch(sys-disable-switch)', function (data) {
+            const notice = JSON.parse(decodeURIComponent(layui.$(this).data('json')));
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否${data.elem.checked ? '启用' : '禁用'}通知公告？`, {
+                title: `${data.elem.checked ? '启用' : '禁用'}`, closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
+            }, function (index) {
+                layui.layer.close(index);
+                notice.disable = !data.elem.checked;
+                layui.common.req(`${config.base}sys/notice`, 'PUT', notice, {
+                    done: function (data) {
+                        layui.layer.msg(data.msg);
+                    }
+                    , complete: function () {
+                        layui.table.reload('sys-notice-table');
+                    }
+                });
+            }, function () {
+                data.elem.checked = !data.elem.checked;
+            });
+        });
+
+        layui.tabs.on('afterChange(sys-notice-tabs)', function (e) {
+            if (e.index === 0) {
+            }
+            if (e.index === 1) {
+            }
+            if (e.index === 2) {
+            }
+            layui.table.reload('sys-notice-table');
+        });
+
+        function save(title, type) {
+            layui.admin.popup({
+                type: 1, title: title, area: 'auto'
+                , content: layui.$('#sys-notice-form')
+                , btn: ['确定', '取消']
+                , yes: function (index) {
+                    layui.form.on('submit(sys-notice-submit)', function (data) {
+                        data.field.content = layui.layedit.getContent(editor);
+                        layui.layer.close(index);
+                        layui.common.req(`${config.base}sys/notice`, type, data.field, {
+                            done: function (data) {
+                                layui.layer.msg(data.msg);
+                                layui.table.reload('sys-notice-table');
+                            }
+                        });
+                    });
+                    layui.$('#sys-notice-submit').trigger('click');
+                }
+                , success: function () {
+                    editor = layui.layedit.build('content', {height: 200, uploadImage: {url: `${config.base}sys/upload`}});
+                }
+            });
+        }
+
+        function del(notice) {
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否删除通知公告？`, {
+                title: '删除通知公告', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
+            }, function (index) {
+                layui.layer.close(index);
+                layui.common.req(`${config.base}sys/notice`, 'DELETE', notice.id, {
+                    done: function (data) {
+                        layui.layer.msg(data.msg);
+                        layui.table.reload('sys-notice-table');
+                    }
+                });
+            });
+        }
 
     });
 </script>

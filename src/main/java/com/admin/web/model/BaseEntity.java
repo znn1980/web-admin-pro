@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * @author znn
@@ -108,6 +109,17 @@ public class BaseEntity implements Serializable {
 
     public void setDisable(boolean disable) {
         this.disable = disable;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof BaseEntity
+                && Objects.equals(((BaseEntity) o).getId(), this.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getId());
     }
 
     @Override

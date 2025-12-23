@@ -14,28 +14,16 @@ public class OsJvm extends Os {
         vm = ManagementFactory.getRuntimeMXBean();
     }
 
-    public String getVmName() {
+    public String getName() {
         return vm.getVmName();
     }
 
-    public String getVmVersion() {
+    public String getVersion() {
         return vm.getVmVersion();
     }
 
-    public String getVmVendor() {
+    public String getVendor() {
         return vm.getVmVendor();
-    }
-
-    public String getSpecName() {
-        return vm.getSpecName();
-    }
-
-    public String getSpecVersion() {
-        return vm.getSpecVersion();
-    }
-
-    public String getSpecVendor() {
-        return vm.getSpecVendor();
     }
 
     public List<String> getInputArguments() {
@@ -52,12 +40,9 @@ public class OsJvm extends Os {
 
     @Override
     public String toString() {
-        return "Java虚拟机名称：" + this.getVmName()
-                + ",Java虚拟机版本：" + this.getVmVersion()
-                + ",Java虚拟机厂商：" + this.getVmVendor()
-                + ",Java虚拟机规范名称：" + this.getSpecName()
-                + ",Java虚拟机规范版本：" + this.getSpecVersion()
-                + ",Java虚拟机规范厂商：" + this.getSpecVendor()
+        return "Java虚拟机名称：" + this.getName()
+                + ",Java虚拟机版本：" + this.getVersion()
+                + ",Java虚拟机厂商：" + this.getVendor()
                 + ",Java虚拟机启动时间：" + this.getStartTime()
                 + ",Java虚拟机运行时间：" + this.getUptime()
                 + ",Java虚拟机运行参数：" + this.getInputArguments();

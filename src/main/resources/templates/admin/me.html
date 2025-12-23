@@ -246,7 +246,7 @@
 
         layui.laydate.render({
             elem: '#timestamp', range: ':'
-            , value: `${layui.common.ymd()} : ${layui.common.ymd(86400000)}`
+            , value: `${layui.common.asDay()} : ${layui.common.asDay(1)}`
         });
 
         layui.table.render({
@@ -255,11 +255,10 @@
             , method: 'POST', contentType: "application/json;charset=UTF-8"
             , where: {
                 startTimestamp: (layui.$('#timestamp').val().split(":")[0]
-                    || layui.common.ymd()).trim() + ' 00:00:00'
+                    || layui.common.asDay()).trim() + ' 00:00:00'
                 , endTimestamp: (layui.$('#timestamp').val().split(":")[1]
-                    || layui.common.ymd(86400000)).trim() + ' 00:00:00'
+                    || layui.common.asDay(1)).trim() + ' 00:00:00'
             }
-            , page: true
             , toolbar: '#sys-log-toolbar'
             , cols: [
                 [
@@ -276,6 +275,7 @@
                     , {title: '操作', align: 'center', toolbar: '#sys-log-tool', width: 60}
                 ]
             ]
+            , page: true
         });
 
         layui.table.on('toolbar(sys-log-table)', function (e) {
@@ -320,9 +320,9 @@
             layui.table.reload('sys-log-table', {
                 where: {
                     startTimestamp: (layui.$('#timestamp').val().split(":")[0]
-                        || layui.common.ymd()).trim() + ' 00:00:00'
+                        || layui.common.asDay()).trim() + ' 00:00:00'
                     , endTimestamp: (layui.$('#timestamp').val().split(":")[1]
-                        || layui.common.ymd(86400000)).trim() + ' 00:00:00'
+                        || layui.common.asDay(1)).trim() + ' 00:00:00'
                 }
                 , page: {curr: 1}
             });
@@ -331,7 +331,7 @@
         layui.admin.events.refresh = function () {
             layui.laydate.render({
                 elem: '#timestamp', range: ':'
-                , value: `${layui.common.ymd()} : ${layui.common.ymd(86400000)}`
+                , value: `${layui.common.asDay()} : ${layui.common.asDay(1)}`
             });
         }
 

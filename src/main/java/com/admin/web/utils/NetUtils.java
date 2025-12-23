@@ -41,7 +41,7 @@ public class NetUtils {
         return localHosts;
     }
 
-    public static InetAddress getLocalhost() throws IOException {
+    public static InetAddress getLocalHost() throws IOException {
         InetAddress localHost = null;
         for (InetAddress inetAddress : filter(null, inetAddress ->
                 !inetAddress.isLoopbackAddress() && inetAddress instanceof Inet4Address)) {
@@ -54,25 +54,25 @@ public class NetUtils {
         return localHost != null ? localHost : InetAddress.getLocalHost();
     }
 
-    public static String getHostIp() {
+    public static String getLocalIp() {
         try {
-            return getLocalhost().getHostAddress();
+            return getLocalHost().getHostAddress();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static String getHostName() {
+    public static String getLocalName() {
         try {
-            return getLocalhost().getHostName();
+            return getLocalHost().getHostName();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static String getHostMac(String delimiter) {
+    public static String getLocalMac(String delimiter) {
         try {
-            NetworkInterface networkInterface = NetworkInterface.getByInetAddress(getLocalhost());
+            NetworkInterface networkInterface = NetworkInterface.getByInetAddress(getLocalHost());
             StringJoiner mac = new StringJoiner(delimiter == null ? "" : delimiter);
             for (byte b : networkInterface.getHardwareAddress()) {
                 mac.add(Integer.toHexString(b & 0xFF));

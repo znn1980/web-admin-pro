@@ -8,6 +8,7 @@ import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author znn
@@ -122,6 +123,15 @@ public class SysUser extends BaseEntity {
         this.roles = roles;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 
     @Override
     public String toString() {

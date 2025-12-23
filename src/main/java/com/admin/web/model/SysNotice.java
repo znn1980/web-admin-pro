@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author znn
@@ -17,13 +17,13 @@ public class SysNotice extends BaseEntity {
     @NotBlank(message = "标题不能为空！", groups = {SysCreate.class})
     @Size(min = 2, max = 255, message = "标题长度应在2-255之间！", groups = {SysCreate.class})
     private String title;
-    @Column(name = "CONTENT")
+    @Column(name = "CONTENT", columnDefinition = "TEXT")
     private String content;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "SYS_NOTICES_USERS",
             joinColumns = {@JoinColumn(name = "NOTICE_ID", referencedColumnName = "ID")},
             inverseJoinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")})
-    private List<SysUser> users;
+    private Set<SysUser> users;
 
     public SysNotice() {
         this.setTitle(null);
@@ -47,11 +47,11 @@ public class SysNotice extends BaseEntity {
         this.content = content;
     }
 
-    public List<SysUser> getUsers() {
+    public Set<SysUser> getUsers() {
         return users;
     }
 
-    public void setUsers(List<SysUser> users) {
+    public void setUsers(Set<SysUser> users) {
         this.users = users;
     }
 

@@ -61,28 +61,28 @@
         </colgroup>
         <tbody>
         <tr>
+            <td>系统名称</td>
+            <td>{{ d.osSys.name }}</td>
             <td>服务器名称</td>
             <td>{{ d.osName }}</td>
-            <td>操作系统</td>
-            <td>{{ d.osSys.name }}</td>
         </tr>
         <tr>
-            <td>服务器IP</td>
-            <td>{{ d.osIp }}</td>
             <td>系统架构</td>
             <td>{{ d.osSys.arch }}</td>
-        </tr>
-        <tr>
-            <td>虚拟机名称</td>
-            <td>{{ d.osJvm.vmName }}</td>
-            <td>虚拟机版本</td>
-            <td>{{ d.osJvm.vmVersion }}</td>
+            <td>服务器地址</td>
+            <td>{{ d.osIp }}</td>
         </tr>
         <tr>
             <td>启动时间</td>
             <td>{{ d.osJvm.startTime }}</td>
-            <td>运行时长</td>
+            <td>虚拟机名称</td>
+            <td>{{ d.osJvm.name }}</td>
+        </tr>
+        <tr>
+            <td>运行时间</td>
             <td>{{ d.osJvm.uptime }}</td>
+            <td>虚拟机版本</td>
+            <td>{{ d.osJvm.version }}</td>
         </tr>
         <tr>
             <td>运行参数</td>
@@ -119,10 +119,10 @@
             layui.common.req(`${config.base}sys/monitor`, 'GET', null, {
                 done: function (data) {
                     osSys.setOption(gauge(data.data.osSys.systemLoadAverage));
-                    osMem.setOption(gauge(layui.common.rate(data.data.osMem.usedMemory / data.data.osMem.totalMemory)));
-                    osDisk.setOption(gauge(layui.common.rate(data.data.osDisk.usedSpace / data.data.osDisk.totalSpace)));
+                    osMem.setOption(gauge(layui.common.asRate(data.data.osMem.usedMemory / data.data.osMem.totalMemory)));
+                    osDisk.setOption(gauge(layui.common.asRate(data.data.osDisk.usedSpace / data.data.osDisk.totalSpace)));
 
-                    data.data.osJvm.uptime = layui.common.ago(data.data.osJvm.uptime);
+                    data.data.osJvm.uptime = layui.common.asAgo(data.data.osJvm.uptime);
                     data.data.osJvm.startTime = layui.util.toDateString(data.data.osJvm.startTime, 'yyyy-MM-dd HH:mm:ss');
 
                     layui.laytpl(layui.$('#os-tpl').html()).render(data.data, function (html) {

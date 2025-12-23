@@ -319,7 +319,7 @@
                 done: function (data) {
                     xmSelect.render({
                         el: '#sys-menu', direction: 'down'
-                        , data: layui.common.tree(null, data.data)
+                        , data: layui.common.asTree(null, data.data)
                         , tree: {show: true, strict: false}
                         , prop: {name: 'title', value: 'id',}
                         , model: {label: {type: 'text'}}

@@ -98,13 +98,11 @@
         layui.table.render({
             elem: '#sys-role-table'
             , url: `${config.base}sys/role/all`
-            //, method: 'GET', contentType: "application/json;charset=UTF-8"
             , toolbar: '#sys-role-toolbar'
             , cols: [
                 [
                     {type: 'radio'}
                     , {field: 'name', title: '名称', templet: '#sys-remark-tpl'}
-                    //, {field: 'remark', title: '备注'}
                     , {field: 'disable', title: '状态', align: 'center', width: 90, templet: '#sys-disable-tpl'}
                     , {field: 'createUsername', title: '创建用户', width: 90, hide: true}
                     , {field: 'createTimestamp', title: '创建时间', width: 110, hide: true}
@@ -204,7 +202,7 @@
                 done: function (data) {
                     xmSelect.render({
                         el: '#sys-menu', direction: 'up', autoRow: true
-                        , data: layui.common.tree(null, data.data)
+                        , data: layui.common.asTree(null, data.data)
                         , tree: {show: true, strict: false}
                         , prop: {name: 'title', value: 'id',}
                         , model: {label: {type: 'block', block: {showCount: 10}}}

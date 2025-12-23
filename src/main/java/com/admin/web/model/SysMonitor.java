@@ -25,15 +25,15 @@ public class SysMonitor implements Serializable {
     }
 
     public String getOsIp() {
-        return NetUtils.getHostIp();
-    }
-
-    public String getOsName() {
-        return NetUtils.getHostName();
+        return NetUtils.getLocalIp();
     }
 
     public String getOsMac() {
-        return NetUtils.getHostMac("-");
+        return NetUtils.getLocalMac("-");
+    }
+
+    public String getOsName() {
+        return NetUtils.getLocalName();
     }
 
     public OsSys getOsSys() {
@@ -54,10 +54,10 @@ public class SysMonitor implements Serializable {
 
     @Override
     public String toString() {
-        return "OsMonitor{" +
-                "osName=" + this.getOsName() +
-                ", osIp=" + this.getOsIp() +
+        return "SysMonitor{" +
+                "osIp=" + this.getOsIp() +
                 ", osMac=" + this.getOsMac() +
+                ", osName=" + this.getOsName() +
                 ", osSys=" + this.getOsSys() +
                 ", osJvm=" + this.getOsJvm() +
                 ", osMem=" + this.getOsMem() +

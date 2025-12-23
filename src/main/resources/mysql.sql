@@ -75,3 +75,16 @@ VALUES (22, 5, '查询日志', 'POST', '/sys/log/all', 22, b'0', b'0', 'admin', 
 INSERT INTO `SYS_MENU`
     (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
 VALUES (23, 5, '删除日志', 'DELETE', '/sys/log', 23, b'0', b'0', 'admin', now());
+
+INSERT INTO `SYS_MENU`
+    (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
+VALUES (24, null, '通知公告', null, null, 24, b'0', b'0', 'admin', now());
+INSERT INTO `SYS_MENU`
+    (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
+VALUES (25, 24, '添加通知公告', 'POST', '/sys/notice', 25, b'0', b'0', 'admin', now());
+INSERT INTO `SYS_MENU`
+    (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
+VALUES (26, 24, '修改通知公告', 'PUT', '/sys/notice', 26, b'0', b'0', 'admin', now());
+INSERT INTO `SYS_MENU`
+    (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
+VALUES (27, 24, '删除通知公告', 'DELETE', '/sys/notice', 27, b'0', b'0', 'admin', now());

@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author znn
@@ -24,7 +24,7 @@ public class SysRole extends BaseEntity {
     @JoinTable(name = "SYS_ROLES_MENUS",
             joinColumns = {@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")},
             inverseJoinColumns = {@JoinColumn(name = "MENU_ID", referencedColumnName = "ID")})
-    private List<SysMenu> menus;
+    private Set<SysMenu> menus;
 
 
     public SysRole() {
@@ -50,11 +50,11 @@ public class SysRole extends BaseEntity {
         this.sort = sort;
     }
 
-    public List<SysMenu> getMenus() {
+    public Set<SysMenu> getMenus() {
         return menus;
     }
 
-    public void setMenus(List<SysMenu> menus) {
+    public void setMenus(Set<SysMenu> menus) {
         this.menus = menus;
     }
 
