@@ -42,7 +42,7 @@
 <script type="text/html" id="sys-user-toolbar">
     <div class="layui-btn-group">
         <button class="layui-btn layui-btn-sm" lay-event="sys-save-toolbar">
-            <i class="layui-icon layui-icon-add-1"></i>添加
+            <i class="layui-icon layui-icon-add-1"></i>创建
         </button>
         <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="sys-edit-toolbar">
             <i class="layui-icon layui-icon-edit"></i>编辑
@@ -157,7 +157,7 @@
                 layui.$('#sys-user').show();
                 load(function () {
                     xmSelect.get('#sys-role', true).setValue([]);
-                    save('添加用户', 'POST');
+                    save('创建用户', 'POST');
                 });
             }
             if (e.event === 'sys-edit-toolbar' || e.event === 'sys-delete-toolbar' || e.event === 'sys-release-toolbar') {
