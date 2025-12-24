@@ -17,10 +17,13 @@
         <div class="layui-tabs" id="sys-notice-tabs">
             <ul class="layui-tabs-header">
                 <li class="layui-icon layui-icon-dialogue layui-this">
-                    未读<span id="notice-unread"></span>
+                    未读<span id="sys-notice-unread"></span>
                 </li>
                 <li class="layui-icon layui-icon-read">
                     已读
+                </li>
+                <li class="layui-icon layui-icon-username">
+                    我的
                 </li>
                 <li class="layui-icon layui-icon-notice" lay-id="all">
                     全部
@@ -127,6 +130,7 @@
             elem: '#sys-notice-table'
             , url: `${config.base}sys/notice/all`
             , method: 'POST', contentType: "application/json;charset=UTF-8"
+            , where: {state: 'UNREAD'}
             , toolbar: '#sys-notice-toolbar'
             , cols: [
                 [
@@ -141,6 +145,14 @@
                 ]
             ]
             , page: true
+            , done: function (data) {
+                if ('UNREAD' === layui.table.getOptions('sys-notice-table').where.state) {
+                    if (data.count === 0) {
+                        layui.tabs.change('sys-notice-tabs', 'all');
+                    }
+                }
+                load(data);
+            }
         });
 
         layui.table.on('toolbar(sys-notice-table)', function (e) {
@@ -164,7 +176,11 @@
                 }
             }
             if (e.event === 'sys-refresh-toolbar') {
-                layui.table.reload('sys-notice-table');
+                layui.table.reload('sys-notice-table', {
+                    done: function (data) {
+                        load(data);
+                    }
+                });
             }
         });
 
@@ -179,6 +195,11 @@
                                 layui.$('#sys-notice-list').show();
                                 layui.$('#sys-notice-show').hide();
                             });
+                        });
+                        layui.table.reload('sys-notice-table', {
+                            done: function (data) {
+                                load(data);
+                            }
                         });
                     }
                 });
@@ -197,7 +218,11 @@
                         layui.layer.msg(data.msg);
                     }
                     , complete: function () {
-                        layui.table.reload('sys-notice-table');
+                        layui.table.reload('sys-notice-table', {
+                            done: function (data) {
+                                load(data);
+                            }
+                        });
                     }
                 });
             }, function () {
@@ -206,14 +231,30 @@
         });
 
         layui.tabs.on('afterChange(sys-notice-tabs)', function (e) {
-            if (e.index === 0) {
-            }
-            if (e.index === 1) {
-            }
-            if (e.index === 2) {
-            }
-            layui.table.reload('sys-notice-table');
+            layui.table.reload('sys-notice-table', {
+                where: {
+                    state: e.index === 0 ? 'UNREAD' :
+                        e.index === 1 ? 'READ' :
+                            e.index === 2 ? 'ME' :
+                                e.index === 3 ? 'ALL' : 'ALL'
+                }
+                , page: {curr: 1}
+                , done: function (data) {
+                    load(data);
+                }
+            });
         });
+
+        function load(data) {
+            if ('UNREAD' === layui.table.getOptions('sys-notice-table').where.state) {
+                layui.$('#sys-notice-unread')
+                    .attr('class', `${data.count > 0 ? 'layui-badge' : ''}`)
+                    .text(`${data.count > 0 ? data.count > 99 ? '99+' : data.count : ''}`);
+                parent.layui.$('#sys-notice-unread')
+                    .attr('class', `${data.count > 0 ? 'layui-badge' : ''}`)
+                    .text(`${data.count > 0 ? data.count > 99 ? '99+' : data.count : ''}`);
+            }
+        }
 
         function save(title, type) {
             layui.admin.popup({
@@ -227,7 +268,11 @@
                         layui.common.req(`${config.base}sys/notice`, type, data.field, {
                             done: function (data) {
                                 layui.layer.msg(data.msg);
-                                layui.table.reload('sys-notice-table');
+                                layui.table.reload('sys-notice-table', {
+                                    done: function (data) {
+                                        load(data);
+                                    }
+                                });
                             }
                         });
                     });
@@ -247,7 +292,11 @@
                 layui.common.req(`${config.base}sys/notice`, 'DELETE', notice.id, {
                     done: function (data) {
                         layui.layer.msg(data.msg);
-                        layui.table.reload('sys-notice-table');
+                        layui.table.reload('sys-notice-table', {
+                            done: function (data) {
+                                load(data);
+                            }
+                        });
                     }
                 });
             });

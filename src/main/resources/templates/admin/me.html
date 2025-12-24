@@ -67,7 +67,7 @@
                 <div class="layui-tabs" id="sys-tabs" lay-filter="sys-tabs">
                     <ul class="layui-tabs-header">
                         <li>用户资料</li>
-                        <li>修改密码</li>
+                        <li lay-id="pass">修改密码</li>
                         <li>操作日志</li>
                     </ul>
                     <div class="layui-tabs-body">
@@ -241,7 +241,7 @@
         });
 
         layui.$('#sys-pass').on('click', function () {
-            layui.tabs.change('sys-tabs', 1);
+            layui.tabs.change('sys-tabs', 'pass');
         });
 
         layui.laydate.render({

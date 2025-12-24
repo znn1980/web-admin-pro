@@ -26,7 +26,6 @@ public class SysRole extends BaseEntity {
             inverseJoinColumns = {@JoinColumn(name = "MENU_ID", referencedColumnName = "ID")})
     private Set<SysMenu> menus;
 
-
     public SysRole() {
         super();
         this.setName(null);
@@ -58,6 +57,15 @@ public class SysRole extends BaseEntity {
         this.menus = menus;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 
     @Override
     public String toString() {

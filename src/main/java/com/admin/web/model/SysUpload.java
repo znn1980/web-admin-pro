@@ -1,9 +1,11 @@
 package com.admin.web.model;
 
+import java.io.Serializable;
+
 /**
  * @author znn
  */
-public class SysUpload {
+public class SysUpload implements Serializable {
     private String src;
     private String title;
 

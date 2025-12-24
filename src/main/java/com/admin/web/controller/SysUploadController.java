@@ -29,7 +29,7 @@ import java.time.format.DateTimeFormatter;
  */
 @RestController
 public class SysUploadController extends BaseController {
-    private static final Path UPLOAD_ROOT_PATH = Paths.get(System.getProperty("user.dir"), "upload");
+    private static final Path UPLOAD_ROOT = Paths.get("uploads");
     private static final DateTimeFormatter UPLOAD_PATH = DateTimeFormatter.ofPattern("yyyy/MM/dd");
     private static final DateTimeFormatter UPLOAD_NAME = DateTimeFormatter.ofPattern("HHmmssSSS");
     private final Producer producer;
@@ -45,8 +45,8 @@ public class SysUploadController extends BaseController {
                 , LocalDate.now().format(UPLOAD_PATH)
                 , LocalTime.now().format(UPLOAD_NAME)
                 , file.getOriginalFilename());
-        Files.createDirectories(UPLOAD_ROOT_PATH.resolve(fileName).getParent());
-        file.transferTo(UPLOAD_ROOT_PATH.resolve(fileName));
+        Files.createDirectories(UPLOAD_ROOT.resolve(fileName).getParent());
+        file.transferTo(UPLOAD_ROOT.resolve(fileName));
         SysUpload sysUpload = new SysUpload();
         sysUpload.setSrc(String.format("/sys/download?fileName=%s", fileName));
         sysUpload.setTitle(file.getOriginalFilename());
@@ -59,7 +59,7 @@ public class SysUploadController extends BaseController {
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;fileName=%s"
                 , URLEncoder.encode(fileName, StandardCharsets.UTF_8)));
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-        Files.copy(UPLOAD_ROOT_PATH.resolve(fileName), response.getOutputStream());
+        Files.copy(UPLOAD_ROOT.resolve(fileName), response.getOutputStream());
     }
 
     @GetMapping("/sys/code.jpg")

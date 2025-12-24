@@ -19,7 +19,7 @@ public class SysNotice extends BaseEntity {
     private String title;
     @Column(name = "CONTENT", columnDefinition = "TEXT")
     private String content;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "SYS_NOTICES_USERS",
             joinColumns = {@JoinColumn(name = "NOTICE_ID", referencedColumnName = "ID")},
             inverseJoinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")})
@@ -53,6 +53,16 @@ public class SysNotice extends BaseEntity {
 
     public void setUsers(Set<SysUser> users) {
         this.users = users;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     @Override

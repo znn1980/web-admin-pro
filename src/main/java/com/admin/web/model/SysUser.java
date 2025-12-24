@@ -3,12 +3,12 @@ package com.admin.web.model;
 import com.admin.web.annotation.SysCreate;
 import com.admin.web.annotation.SysUpdate;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author znn
@@ -41,7 +41,10 @@ public class SysUser extends BaseEntity {
     @JoinTable(name = "SYS_USERS_ROLES",
             joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
             inverseJoinColumns = {@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")})
-    private List<SysRole> roles;
+    private Set<SysRole> roles;
+    @ManyToMany(mappedBy = "users")
+    @JsonIgnore
+    private Set<SysNotice> notices;
 
     public SysUser() {
         super();
@@ -57,6 +60,7 @@ public class SysUser extends BaseEntity {
         this.setPassTimestamp(null);
         this.setSysAdmin(false);
         this.setRoles(null);
+        this.setNotices(null);
     }
 
     public String getUsername() {
@@ -115,12 +119,20 @@ public class SysUser extends BaseEntity {
         this.sysAdmin = sysAdmin;
     }
 
-    public List<SysRole> getRoles() {
+    public Set<SysRole> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<SysRole> roles) {
+    public void setRoles(Set<SysRole> roles) {
         this.roles = roles;
+    }
+
+    public Set<SysNotice> getNotices() {
+        return notices;
+    }
+
+    public void setNotices(Set<SysNotice> notices) {
+        this.notices = notices;
     }
 
     @Override
@@ -145,6 +157,7 @@ public class SysUser extends BaseEntity {
                 ", passTimestamp=" + this.getPassTimestamp() +
                 ", sysAdmin=" + this.isSysAdmin() +
                 ", roles=" + this.getRoles() +
+                ", notices=" + this.getNotices() +
                 '}';
     }
 }

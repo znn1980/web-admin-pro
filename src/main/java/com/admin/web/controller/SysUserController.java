@@ -3,8 +3,10 @@ package com.admin.web.controller;
 import com.admin.web.exception.WebServerException;
 import com.admin.web.annotation.*;
 import com.admin.web.model.ServerResponseEntity;
+import com.admin.web.model.SysNotice;
 import com.admin.web.model.SysUser;
 import com.admin.web.model.vo.*;
+import com.admin.web.service.SysNoticeService;
 import com.admin.web.service.SysUserService;
 import com.admin.web.utils.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -23,9 +25,11 @@ import java.util.Objects;
 @RequestMapping("/sys/user")
 public class SysUserController extends BaseController {
     private final SysUserService sysUserService;
+    private final SysNoticeService sysNoticeService;
 
-    public SysUserController(SysUserService sysUserService) {
+    public SysUserController(SysUserService sysUserService, SysNoticeService sysNoticeService) {
         this.sysUserService = sysUserService;
+        this.sysNoticeService = sysNoticeService;
     }
 
     @SysLog("用户登录")
@@ -67,8 +71,9 @@ public class SysUserController extends BaseController {
     @SysPermissions(SysLogin.class)
     @GetMapping("/me")
     public ServerResponseEntity<SysUser> me() {
-        return ServerResponseEntity.ok(this.sysUserService.findById(super.getSysUser().getId())
-                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！"))));
+        return ServerResponseEntity.ok(this.sysNoticeService.countUnreadByUserId(super.getSysUser().getId())
+                , this.sysUserService.findById(super.getSysUser().getId())
+                        .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！"))));
     }
 
     @SysPermissions

@@ -4,8 +4,7 @@ import com.admin.web.annotation.*;
 import com.admin.web.exception.WebServerException;
 import com.admin.web.model.ServerResponseEntity;
 import com.admin.web.model.SysNotice;
-import com.admin.web.model.SysUser;
-import com.admin.web.model.vo.PageVo;
+import com.admin.web.model.vo.NoticeVo;
 import com.admin.web.service.SysNoticeService;
 import com.admin.web.utils.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -30,8 +29,10 @@ public class SysNoticeController extends BaseController {
 
     @SysPermissions(SysLogin.class)
     @PostMapping("/all")
-    public ServerResponseEntity<List<SysNotice>> all(@RequestBody @Validated PageVo pageVo) {
-        Page<SysNotice> sysNotices = this.sysNoticeService.findAll(PageRequest.of(pageVo.getPage(), pageVo.getLimit()));
+    public ServerResponseEntity<List<SysNotice>> all(@RequestBody @Validated NoticeVo noticeVo) {
+        noticeVo.setUser(super.getSysUser());
+        Page<SysNotice> sysNotices = this.sysNoticeService.findAll(noticeVo
+                , PageRequest.of(noticeVo.getPage(), noticeVo.getLimit()));
         return ServerResponseEntity.ok(sysNotices.getTotalElements(), sysNotices.getContent());
     }
 
@@ -40,6 +41,10 @@ public class SysNoticeController extends BaseController {
     public ServerResponseEntity<SysNotice> me(@RequestBody Long id) {
         SysNotice sysNotice = this.sysNoticeService.findById(id)
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("通知公告不存在！")));
+        if (!Objects.equals(sysNotice.getCreateUsername(), super.getSysUser().getUsername())
+                && !super.isSuperAdmin() && sysNotice.isDisable()) {
+            return ServerResponseEntity.fail("您不能查看已禁用通知公告！");
+        }
         this.sysNoticeService.save(sysNotice, super.getSysUser());
         return ServerResponseEntity.ok(sysNotice);
     }
@@ -62,6 +67,7 @@ public class SysNoticeController extends BaseController {
                 && !Objects.equals(oldSysNotice.getCreateUsername(), super.getSysUser().getUsername())) {
             return ServerResponseEntity.fail("您只能修改自己发布的通知公告！");
         }
+        sysNotice.setUsers(null);
         BeanUtils.copyNonNullProperties(sysNotice, oldSysNotice);
         this.sysNoticeService.save(oldSysNotice);
         return ServerResponseEntity.ok();

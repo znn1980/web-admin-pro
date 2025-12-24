@@ -60,7 +60,7 @@ public interface SysMenuDao extends JpaRepository<SysMenu, Long>, JpaSpecificati
      */
     @Query(value = """
             SELECT sys_menu.*  FROM sys_menu,sys_role,sys_roles_menus,sys_user,sys_users_roles
-            WHERE sys_menu.id = sys_roles_menus.menu_id
+             WHERE sys_menu.id = sys_roles_menus.menu_id
              AND sys_roles_menus.role_id = sys_role.id
              AND sys_role.id=sys_users_roles.role_id
              AND sys_users_roles.user_id = sys_user.id

@@ -42,8 +42,7 @@
                 <li class="layui-nav-item" lay-unselect>
                     <a lay-href="notice.html" layadmin-event="message" lay-text="通知公告">
                         <i class="layui-icon layui-icon-notice"></i>
-                        <!-- 如果有新消息，则显示小圆点 -->
-                        <span class="layui-badge-dot"></span>
+                        <span id="sys-notice-unread"></span>
                     </a>
                 </li>
                 <li class="layui-nav-item layui-hide-xs" lay-unselect>
@@ -177,6 +176,9 @@
         layui.common.req(`${config.base}sys/user/me`, 'GET', null, {
             done: function (data) {
                 load(data.data);
+                layui.$('#sys-notice-unread')
+                    .attr('class', `${data.count > 0 ? 'layui-badge' : ''}`)
+                    .text(`${data.count > 0 ? data.count > 99 ? '99+' : data.count : ''}`);
             }
         });
 
