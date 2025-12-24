@@ -84,10 +84,10 @@ public class SysUserController extends BaseController {
         return ServerResponseEntity.ok(sysUsers.getTotalElements(), sysUsers.getContent());
     }
 
-    @SysLog("添加用户")
+    @SysLog("创建用户")
     @SysPermissions
     @PostMapping
-    public ServerResponseEntity<SysUser> save(@RequestBody @Validated(SysCreate.class) SysUser sysUser) {
+    public ServerResponseEntity<SysUser> create(@RequestBody @Validated(SysCreate.class) SysUser sysUser) {
         if (Objects.nonNull(this.sysUserService.findByUsername(sysUser.getUsername()))) {
             return ServerResponseEntity.fail("用户名称已存在！");
         }
@@ -108,7 +108,7 @@ public class SysUserController extends BaseController {
     @SysLog("修改用户")
     @SysPermissions
     @PutMapping
-    public ServerResponseEntity<SysUser> edit(@RequestBody @Validated(SysUpdate.class) SysUser sysUser) {
+    public ServerResponseEntity<SysUser> update(@RequestBody @Validated(SysUpdate.class) SysUser sysUser) {
         SysUser oldSysUser = this.sysUserService.findById(sysUser.getId())
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！")));
         if (!super.isSuperAdmin() && super.isSuperAdmin(oldSysUser)) {

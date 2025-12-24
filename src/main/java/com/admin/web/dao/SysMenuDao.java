@@ -24,7 +24,7 @@ public interface SysMenuDao extends JpaRepository<SysMenu, Long>, JpaSpecificati
      *
      * @return 菜单列表
      */
-    List<SysMenu> findAllByOrderBySort();
+    List<SysMenu> findByOrderBySort();
 
     /**
      * 查询菜单表
@@ -55,7 +55,7 @@ public interface SysMenuDao extends JpaRepository<SysMenu, Long>, JpaSpecificati
     /**
      * 查询菜单表
      *
-     * @param userId  用户ID
+     * @param userId 用户ID
      * @return 菜单列表
      */
     @Query(value = """

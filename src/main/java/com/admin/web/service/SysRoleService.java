@@ -30,7 +30,7 @@ public class SysRoleService {
     }
 
     public List<SysRole> findAll() {
-        return this.sysRoleDao.findAllByOrderBySort();
+        return this.sysRoleDao.findByOrderBySort();
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -46,7 +46,7 @@ public class SysRoleService {
 
     @Transactional(rollbackFor = Exception.class)
     public void move(SysRole sysRole, Move move) {
-        List<SysRole> sysRoles = this.sysRoleDao.findAllByOrderBySort();
+        List<SysRole> sysRoles = this.sysRoleDao.findByOrderBySort();
         int index = -1;
         for (int i = 0; i < sysRoles.size(); i++) {
             if (sysRoles.get(i).getId().equals(sysRole.getId())) {

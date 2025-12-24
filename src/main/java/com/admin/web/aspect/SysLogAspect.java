@@ -62,7 +62,7 @@ public class SysLogAspect {
         try {
             UserAgent userAgent = UserAgentUtils.getUserAgent(WebUtils.getRequest());
             SysUserLog sysUserLog = new SysUserLog();
-            sysUserLog.setUsername(getSysUser().getUsername());
+            sysUserLog.setUsername(this.getSysUser().getUsername());
             sysUserLog.setIp(WebUtils.getClientIp(WebUtils.getRequest()));
             sysUserLog.setOs(UserAgentUtils.getOs(userAgent));
             sysUserLog.setBrowser(UserAgentUtils.getBrowser(userAgent));
@@ -70,7 +70,7 @@ public class SysLogAspect {
             sysUserLog.setUrl(WebUtils.getRequest().getRequestURI());
             sysUserLog.setName(sysLog.value());
             if (Objects.nonNull(joinPoint.getArgs())) {
-                sysUserLog.setParams(getParams(joinPoint.getArgs()));
+                sysUserLog.setParams(this.getParams(joinPoint.getArgs()));
                 log.info("SYS-REQUEST => {}", sysUserLog.getParams());
             }
             if (Objects.nonNull(result)) {
@@ -78,7 +78,7 @@ public class SysLogAspect {
                 log.info("SYS-RESPONSE => {}", sysUserLog.getResult());
             }
             if (Objects.nonNull(e)) {
-                sysUserLog.setErrors(getStackTrace(e));
+                sysUserLog.setErrors(this.getStackTrace(e));
             }
             sysUserLog.setMs(System.currentTimeMillis() - THREAD_LOCAL.get());
             sysUserLog.setTimestamp(LocalDateTime.now());
@@ -88,28 +88,28 @@ public class SysLogAspect {
         }
     }
 
-    static SysUser getSysUser() {
+    private SysUser getSysUser() {
         SysUser sysUser = SecurityUtils.getSysUser(WebUtils.getRequest());
         return Objects.requireNonNullElse(sysUser, SecurityUtils.getSysUser());
     }
 
-    static boolean filterObject(Object o) {
+    private boolean filterObject(Object o) {
         return o instanceof MultipartFile
                 || o instanceof HttpServletRequest
                 || o instanceof HttpServletResponse;
     }
 
-    static String getParams(Object[] args) {
+    private String getParams(Object[] args) {
         StringJoiner params = new StringJoiner(System.lineSeparator());
         Arrays.asList(args).forEach(arg -> {
-            if (Objects.nonNull(arg) && !filterObject(arg)) {
+            if (Objects.nonNull(arg) && !this.filterObject(arg)) {
                 params.add(arg.toString());
             }
         });
         return params.toString();
     }
 
-    static String getStackTrace(Exception e) {
+    private String getStackTrace(Exception e) {
         return new StringWriter() {{
             e.printStackTrace(new PrintWriter(this, true));
         }}.toString();

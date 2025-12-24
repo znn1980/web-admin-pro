@@ -25,7 +25,7 @@ public interface SysRoleDao extends JpaRepository<SysRole, Long>, JpaSpecificati
      *
      * @return 角色列表
      */
-    List<SysRole> findAllByOrderBySort();
+    List<SysRole> findByOrderBySort();
 
     /**
      * 查询用户角色表

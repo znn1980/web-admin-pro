@@ -37,7 +37,7 @@ public class SysUser extends BaseEntity {
     private LocalDateTime passTimestamp;
     @Column(name = "SYS_ADMIN")
     private boolean sysAdmin;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "SYS_USERS_ROLES",
             joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
             inverseJoinColumns = {@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")})

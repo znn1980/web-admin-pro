@@ -1,5 +1,6 @@
 package com.admin.web.controller;
 
+import com.admin.web.annotation.SysLog;
 import com.admin.web.annotation.SysLogin;
 import com.admin.web.annotation.SysPermissions;
 import com.admin.web.model.ServerResponseEntity;
@@ -39,6 +40,7 @@ public class SysUploadController extends BaseController {
         this.producer = producer;
     }
 
+    @SysLog("上传文件")
     @SysPermissions(SysLogin.class)
     @PostMapping("/sys/upload")
     public ServerResponseEntity<SysUpload> upload(HttpServletRequest request, MultipartFile file) throws IOException {

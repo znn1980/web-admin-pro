@@ -22,7 +22,7 @@ public class SysMenuService {
     }
 
     public List<SysMenu> findAll() {
-        return this.sysMenuDao.findAllByOrderBySort();
+        return this.sysMenuDao.findByOrderBySort();
     }
 
     public List<SysMenu> findAll(SysUser sysUser) {

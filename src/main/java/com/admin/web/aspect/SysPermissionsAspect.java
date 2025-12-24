@@ -7,6 +7,7 @@ import com.admin.web.annotation.SysLogin;
 import com.admin.web.annotation.SysPermissions;
 import com.admin.web.model.enums.ResponseCode;
 import com.admin.web.model.SysUser;
+import com.admin.web.service.SysUserService;
 import com.admin.web.utils.SecurityUtils;
 import com.admin.web.utils.WebUtils;
 import org.aspectj.lang.JoinPoint;
@@ -30,6 +31,11 @@ import java.util.Optional;
 @Component
 public class SysPermissionsAspect {
     private static final Logger log = LoggerFactory.getLogger(SysPermissionsAspect.class);
+    private final SysUserService sysUserService;
+
+    public SysPermissionsAspect(SysUserService sysUserService) {
+        this.sysUserService = sysUserService;
+    }
 
     @Before(value = "@annotation(sysPermissions)")
     public void doBefore(JoinPoint joinPoint, SysPermissions sysPermissions) {
@@ -39,13 +45,20 @@ public class SysPermissionsAspect {
         });
         if (!SecurityUtils.isSuperAdmin(sysUser)
                 && !Arrays.asList(sysPermissions.value()).contains(SysLogin.class)) {
-            if (!this.hasPermission(sysUser)) {
+            if (!this.hasPermission(this.sysUserService.findById(sysUser.getId()))) {
                 throw new WebServerException(ResponseCode.DENIED);
             }
         }
     }
 
-    boolean hasPermission(SysUser sysUser) {
+    private boolean hasPermission(Optional<SysUser> optional) {
+        SysUser sysUser = optional.orElseThrow(() -> {
+            throw new WebServerException(ResponseCode.DENIED);
+        });
+        return this.hasPermission(sysUser);
+    }
+
+    private boolean hasPermission(SysUser sysUser) {
         PathMatcher matcher = new AntPathMatcher();
         for (SysRole sysRole : sysUser.getRoles()) {
             for (SysMenu sysMenu : sysRole.getMenus()) {

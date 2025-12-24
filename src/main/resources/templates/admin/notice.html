@@ -186,7 +186,7 @@
 
         layui.table.on('tool(sys-notice-table)', function (e) {
             if (e.event === 'sys-search-tool') {
-                layui.common.req(`${config.base}sys/notice/me`, 'POST', e.data.id, {
+                layui.common.req(`${config.base}sys/notice/show`, 'POST', e.data.id, {
                     done: function (data) {
                         layui.laytpl(layui.$('#sys-notice-tpl').html()).render(data.data, function (html) {
                             layui.$('#sys-notice-show').html(html).show();

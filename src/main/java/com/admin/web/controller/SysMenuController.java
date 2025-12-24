@@ -48,10 +48,10 @@ public class SysMenuController extends BaseController {
         return ServerResponseEntity.ok();
     }
 
-    @SysLog("添加菜单")
+    @SysLog("创建菜单")
     @SysPermissions
     @PostMapping
-    public ServerResponseEntity<?> save(@RequestBody @Validated(SysCreate.class) SysMenu sysMenu) {
+    public ServerResponseEntity<?> create(@RequestBody @Validated(SysCreate.class) SysMenu sysMenu) {
         if (Objects.nonNull(sysMenu.getPid())
                 && !this.sysMenuService.existsById(sysMenu.getPid())) {
             return ServerResponseEntity.fail("上级菜单不存在！");
@@ -66,7 +66,7 @@ public class SysMenuController extends BaseController {
     @SysLog("修改菜单")
     @SysPermissions
     @PutMapping
-    public ServerResponseEntity<?> edit(@RequestBody @Validated(SysUpdate.class) SysMenu sysMenu) {
+    public ServerResponseEntity<?> update(@RequestBody @Validated(SysUpdate.class) SysMenu sysMenu) {
         SysMenu oldSysMenu = this.sysMenuService.findById(sysMenu.getId())
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("菜单不存在！")));
         if (Objects.equals(sysMenu.getId(), sysMenu.getPid())) {

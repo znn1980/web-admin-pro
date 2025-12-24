@@ -37,8 +37,8 @@ public class SysNoticeController extends BaseController {
     }
 
     @SysPermissions(SysLogin.class)
-    @PostMapping("/me")
-    public ServerResponseEntity<SysNotice> me(@RequestBody Long id) {
+    @PostMapping("/show")
+    public ServerResponseEntity<SysNotice> show(@RequestBody Long id) {
         SysNotice sysNotice = this.sysNoticeService.findById(id)
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("通知公告不存在！")));
         if (!Objects.equals(sysNotice.getCreateUsername(), super.getSysUser().getUsername())
@@ -49,10 +49,10 @@ public class SysNoticeController extends BaseController {
         return ServerResponseEntity.ok(sysNotice);
     }
 
-    @SysLog("添加通知公告")
+    @SysLog("创建通知公告")
     @SysPermissions
     @PostMapping
-    public ServerResponseEntity<?> save(@RequestBody @Validated(SysCreate.class) SysNotice sysNotice) {
+    public ServerResponseEntity<?> create(@RequestBody @Validated(SysCreate.class) SysNotice sysNotice) {
         this.sysNoticeService.save(sysNotice);
         return ServerResponseEntity.ok();
     }
@@ -60,7 +60,7 @@ public class SysNoticeController extends BaseController {
     @SysLog("修改通知公告")
     @SysPermissions
     @PutMapping
-    public ServerResponseEntity<?> edit(@RequestBody @Validated(SysUpdate.class) SysNotice sysNotice) {
+    public ServerResponseEntity<?> update(@RequestBody @Validated(SysUpdate.class) SysNotice sysNotice) {
         SysNotice oldSysNotice = this.sysNoticeService.findById(sysNotice.getId())
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("通知公告不存在！")));
         if (!super.isSuperAdmin()
