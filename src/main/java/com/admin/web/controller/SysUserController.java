@@ -71,16 +71,17 @@ public class SysUserController extends BaseController {
     @SysPermissions(SysLogin.class)
     @GetMapping("/me")
     public ServerResponseEntity<SysUser> me() {
-        return ServerResponseEntity.ok(this.sysNoticeService.countUnreadByUserId(super.getSysUser().getId())
-                , this.sysUserService.findById(super.getSysUser().getId())
-                        .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！"))));
+        SysUser sysUser = this.sysUserService.findById(super.getSysUser().getId())
+                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！")));
+        Long unRead = this.sysNoticeService.countUnreadByUserId(super.getSysUser().getId());
+        return ServerResponseEntity.ok(unRead, sysUser);
     }
 
     @SysPermissions
     @PostMapping("/all")
     public ServerResponseEntity<List<SysUser>> all(@RequestBody @Validated PageVo pageVo) {
-        Page<SysUser> sysUserLogs = this.sysUserService.findAll(PageRequest.of(pageVo.getPage(), pageVo.getLimit()));
-        return ServerResponseEntity.ok(sysUserLogs.getTotalElements(), sysUserLogs.getContent());
+        Page<SysUser> sysUsers = this.sysUserService.findAll(PageRequest.of(pageVo.getPage(), pageVo.getLimit()));
+        return ServerResponseEntity.ok(sysUsers.getTotalElements(), sysUsers.getContent());
     }
 
     @SysLog("添加用户")
@@ -171,14 +172,14 @@ public class SysUserController extends BaseController {
         if (Objects.equals(userPassVo.getNewPassword(), userPassVo.getOldPassword())) {
             return ServerResponseEntity.fail("新密码不能与原密码重复！");
         }
-        SysUser oldSysUser = this.sysUserService.findById(super.getSysUser().getId())
+        SysUser sysUser = this.sysUserService.findById(super.getSysUser().getId())
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！")));
-        if (!Objects.equals(oldSysUser.getPassword(), userPassVo.getOldPassword())) {
+        if (!Objects.equals(sysUser.getPassword(), userPassVo.getOldPassword())) {
             return ServerResponseEntity.fail("原密码输入不正确！");
         }
-        oldSysUser.setPassTimestamp(LocalDateTime.now());
-        oldSysUser.setPassword(userPassVo.getNewPassword());
-        this.sysUserService.save(oldSysUser);
+        sysUser.setPassTimestamp(LocalDateTime.now());
+        sysUser.setPassword(userPassVo.getNewPassword());
+        this.sysUserService.save(sysUser);
         return ServerResponseEntity.ok();
     }
 

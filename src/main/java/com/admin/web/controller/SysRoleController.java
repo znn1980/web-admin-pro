@@ -31,7 +31,8 @@ public class SysRoleController extends BaseController {
     @SysPermissions
     @GetMapping("/all")
     public ServerResponseEntity<List<SysRole>> all() {
-        return ServerResponseEntity.ok(this.sysRoleService.findAll());
+        List<SysRole> sysRoles = this.sysRoleService.findAll();
+        return ServerResponseEntity.ok(sysRoles);
     }
 
     @SysLog("移动角色")
@@ -74,10 +75,12 @@ public class SysRoleController extends BaseController {
     @SysPermissions
     @DeleteMapping
     public ServerResponseEntity<?> delete(@RequestBody Long id) {
-        if (this.sysRoleService.existsByRoleId(id)) {
+        SysRole sysRole = this.sysRoleService.findById(id)
+                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("角色不存在！")));
+        if (this.sysRoleService.existsByRoleId(sysRole.getId())) {
             return ServerResponseEntity.fail("此角色已绑定用户，请先解绑用户下的角色！");
         }
-        this.sysRoleService.deleteById(id);
+        this.sysRoleService.deleteById(sysRole.getId());
         return ServerResponseEntity.ok();
     }
 

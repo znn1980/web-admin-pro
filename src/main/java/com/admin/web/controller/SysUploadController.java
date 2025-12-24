@@ -5,6 +5,7 @@ import com.admin.web.annotation.SysPermissions;
 import com.admin.web.model.ServerResponseEntity;
 import com.admin.web.model.SysUpload;
 import com.google.code.kaptcha.Producer;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -40,7 +41,7 @@ public class SysUploadController extends BaseController {
 
     @SysPermissions(SysLogin.class)
     @PostMapping("/sys/upload")
-    public ServerResponseEntity<SysUpload> upload(MultipartFile file) throws IOException {
+    public ServerResponseEntity<SysUpload> upload(HttpServletRequest request, MultipartFile file) throws IOException {
         String fileName = String.format("%s/%s.%s"
                 , LocalDate.now().format(UPLOAD_PATH)
                 , LocalTime.now().format(UPLOAD_NAME)
@@ -48,7 +49,7 @@ public class SysUploadController extends BaseController {
         Files.createDirectories(UPLOAD_ROOT.resolve(fileName).getParent());
         file.transferTo(UPLOAD_ROOT.resolve(fileName));
         SysUpload sysUpload = new SysUpload();
-        sysUpload.setSrc(String.format("/sys/download?fileName=%s", fileName));
+        sysUpload.setSrc(String.format("%s/sys/download?fileName=%s", request.getContextPath(), fileName));
         sysUpload.setTitle(file.getOriginalFilename());
         return ServerResponseEntity.ok(sysUpload);
     }

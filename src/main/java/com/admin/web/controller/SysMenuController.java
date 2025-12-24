@@ -27,22 +27,15 @@ public class SysMenuController extends BaseController {
     @SysPermissions(SysLogin.class)
     @GetMapping
     public ServerResponseEntity<List<SysMenu>> menus() {
-        if (super.isSuperAdmin()) {
-            //超级管理员可以看到所有菜单
-            return ServerResponseEntity.ok(this.sysMenuService.findBySysMenuOrderBySort());
-        }
-        if (super.isSysAdmin()) {
-            //普通管理员可以看到所有权限菜单，但是禁用的菜单任然不能操作
-            return ServerResponseEntity.ok(this.sysMenuService.findByUserIdOrderBySort(super.getSysUser().getId()));
-        }
-        //普通用户可以看到所有权限并且没有禁用的菜单
-        return ServerResponseEntity.ok(this.sysMenuService.findByUserIdAndEnableOrderBySort(super.getSysUser().getId()));
+        List<SysMenu> sysMenus = this.sysMenuService.findAll(super.getSysUser());
+        return ServerResponseEntity.ok(sysMenus);
     }
 
     @SysPermissions
     @GetMapping("/all")
     public ServerResponseEntity<List<SysMenu>> all() {
-        return ServerResponseEntity.ok(this.sysMenuService.findAllByOrderBySort());
+        List<SysMenu> sysMenus = this.sysMenuService.findAll();
+        return ServerResponseEntity.ok(sysMenus);
     }
 
     @SysLog("移动菜单")
@@ -101,13 +94,15 @@ public class SysMenuController extends BaseController {
     @SysPermissions
     @DeleteMapping
     public ServerResponseEntity<?> delete(@RequestBody Long id) {
-        if (this.sysMenuService.existsByMenuId(id)) {
+        SysMenu sysMenu = this.sysMenuService.findById(id)
+                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("菜单不存在！")));
+        if (this.sysMenuService.existsByMenuId(sysMenu.getId())) {
             return ServerResponseEntity.fail("此菜单已绑定角色，请先解绑角色下的菜单！");
         }
-        if (this.sysMenuService.existsByPid(id)) {
+        if (this.sysMenuService.existsByPid(sysMenu.getId())) {
             return ServerResponseEntity.fail("请先删除下级菜单！");
         }
-        this.sysMenuService.deleteById(id);
+        this.sysMenuService.deleteById(sysMenu.getId());
         return ServerResponseEntity.ok();
     }
 }

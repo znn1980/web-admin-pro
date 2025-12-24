@@ -2,7 +2,9 @@ package com.admin.web.service;
 
 import com.admin.web.dao.SysMenuDao;
 import com.admin.web.model.SysMenu;
+import com.admin.web.model.SysUser;
 import com.admin.web.model.enums.Move;
+import com.admin.web.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,20 +21,21 @@ public class SysMenuService {
         this.sysMenuDao = sysMenuDao;
     }
 
-    public List<SysMenu> findAllByOrderBySort() {
+    public List<SysMenu> findAll() {
         return this.sysMenuDao.findAllByOrderBySort();
     }
 
-    public List<SysMenu> findBySysMenuOrderBySort() {
-        return this.sysMenuDao.findBySysMenuOrderBySort(true);
-    }
-
-    public List<SysMenu> findByUserIdOrderBySort(Long userId) {
-        return this.sysMenuDao.findByUserIdOrderBySort(userId);
-    }
-
-    public List<SysMenu> findByUserIdAndEnableOrderBySort(Long userId) {
-        return this.sysMenuDao.findByUserIdAndEnableOrderBySort(userId);
+    public List<SysMenu> findAll(SysUser sysUser) {
+        if (SecurityUtils.isSuperAdmin(sysUser)) {
+            //超级管理员可以看到所有菜单
+            return this.sysMenuDao.findBySysMenuOrderBySort(true);
+        }
+        if (SecurityUtils.isSysAdmin(sysUser)) {
+            //普通管理员可以看到所有权限菜单，但是禁用的菜单任然不能操作
+            return this.sysMenuDao.findByUserIdOrderBySort(sysUser.getId());
+        }
+        //普通用户可以看到所有权限并且没有禁用的菜单
+        return this.sysMenuDao.findByUserIdAndEnableOrderBySort(sysUser.getId());
     }
 
     public SysMenu findByTitle(String title) {

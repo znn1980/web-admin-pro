@@ -5,6 +5,10 @@ config:
 
 server:
   port: 80
+  ssl:
+    enabled: false
+    key-store: classpath:keystore.jks
+    key-store-password: 123456
 
 spring:
   datasource:
@@ -12,6 +16,10 @@ spring:
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
   session:
     jdbc:
       initialize-schema: always
@@ -22,14 +30,13 @@ spring:
           content:
             enabled: true
             paths: /**
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
+  servlet:
+    multipart:
+      max-file-size: 1MB
+      max-request-size: 10MB
 
 logging:
   level:
     com.admin.web: info
   file:
-    path: /
     name: logs/web-admin-pro.log

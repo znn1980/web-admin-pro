@@ -77,10 +77,10 @@ public class SysNoticeController extends BaseController {
     @SysPermissions
     @DeleteMapping
     public ServerResponseEntity<?> delete(@RequestBody Long id) {
-        SysNotice oldSysNotice = this.sysNoticeService.findById(id)
+        SysNotice sysNotice = this.sysNoticeService.findById(id)
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("通知公告不存在！")));
         if (!super.isSuperAdmin()
-                && !Objects.equals(oldSysNotice.getCreateUsername(), super.getSysUser().getUsername())) {
+                && !Objects.equals(sysNotice.getCreateUsername(), super.getSysUser().getUsername())) {
             return ServerResponseEntity.fail("您只能删除自己发布的通知公告！");
         }
         this.sysNoticeService.deleteById(id);

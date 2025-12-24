@@ -3,8 +3,10 @@ package com.admin.web.config;
 import com.admin.web.exception.WebServerException;
 import com.admin.web.model.enums.ResponseCode;
 import com.admin.web.model.ServerResponseEntity;
+import com.admin.web.model.os.Os;
 import com.admin.web.utils.WebUtils;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
@@ -43,6 +46,14 @@ public class ControllerAdviceConfig {
             if (e instanceof BindException ex) {
                 FieldError fieldError = ex.getBindingResult().getFieldError();
                 return ResponseEntity.ok(ServerResponseEntity.fail(fieldError.getDefaultMessage()));
+            }
+            if (e instanceof MaxUploadSizeExceededException ex) {
+                if (e.getCause().getCause() instanceof FileSizeLimitExceededException exx) {
+                    return ResponseEntity.ok(ServerResponseEntity.fail(String.format("上传文件(%s)超出(%s)限制！"
+                            , Os.asBytes(exx.getActualSize()), Os.asBytes(exx.getPermittedSize()))));
+                }
+                return ResponseEntity.ok(ServerResponseEntity.fail(ex.getMaxUploadSize() <= 0
+                        ? "上传文件超出限制！" : String.format("上传文件超出(%s)限制！", Os.asBytes(ex.getMaxUploadSize()))));
             }
             return ResponseEntity.ok(ServerResponseEntity.fail(ResponseCode.ERROR));
         }
