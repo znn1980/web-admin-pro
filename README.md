@@ -4,7 +4,7 @@
 一个基于 Java 21、SpringBoot 3.5.8、SpringBoot Jpa、Spring Session、Thymeleaf 的后台管理系统。
 
 #### 前端框架
-最新版[AdminUI](https://gitee.com/znn1980/admin-ui-pro)主题。
+最新版[AdminUI](https://gitee.com/znn1980/admin-ui-pro)主题。（注：iframe版不涉及最新的前端技术，对服务端程序员来说非常友好）
 
 ####  系统功能
 - 用户管理：提供用户的相关配置，新增用户后，默认密码为手机号码后六位。
