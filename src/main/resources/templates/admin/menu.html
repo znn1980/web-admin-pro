@@ -281,7 +281,7 @@
             }, function (index) {
                 layui.layer.close(index);
                 menu.sysMenu = data.elem.checked;
-                layui.common.req(`${config.base}sys/menu`, 'PUT', menu, {
+                layui.common.req(`${config.base}sys/menu/update`, 'PUT', menu, {
                     done: function (data) {
                         layui.layer.msg(data.msg);
                     }
@@ -301,7 +301,7 @@
             }, function (index) {
                 layui.layer.close(index);
                 menu.disable = !data.elem.checked;
-                layui.common.req(`${config.base}sys/menu`, 'PUT', menu, {
+                layui.common.req(`${config.base}sys/menu/update`, 'PUT', menu, {
                     done: function (data) {
                         layui.layer.msg(data.msg);
                     }
@@ -345,7 +345,7 @@
                         const pid = xmSelect.get('#sys-menu', true).getValue('valueStr');
                         data.field.pid = pid ? pid : null;
                         layui.layer.close(index);
-                        layui.common.req(`${config.base}sys/menu`, type, data.field, {
+                        layui.common.req(`${config.base}sys/menu/${type === 'POST' ? 'create' : 'update'}`, type, data.field, {
                             done: function (data) {
                                 layui.layer.msg(data.msg);
                                 layui.table.reload('sys-menu-table');
@@ -362,7 +362,7 @@
                 title: '删除菜单', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);
-                layui.common.req(`${config.base}sys/menu`, 'DELETE', menu.id, {
+                layui.common.req(`${config.base}sys/menu/delete`, 'DELETE', menu.id, {
                     done: function (data) {
                         layui.layer.msg(data.msg);
                         layui.table.reload('sys-menu-table');

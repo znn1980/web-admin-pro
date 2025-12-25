@@ -35,7 +35,7 @@ public class SysMenuService {
             return this.sysMenuDao.findByUserIdOrderBySort(sysUser.getId());
         }
         //普通用户可以看到所有权限并且没有禁用的菜单
-        return this.sysMenuDao.findByUserIdAndEnableOrderBySort(sysUser.getId());
+        return this.sysMenuDao.findByUserIdAndDisableOrderBySort(sysUser.getId(), false);
     }
 
     public SysMenu findByTitle(String title) {

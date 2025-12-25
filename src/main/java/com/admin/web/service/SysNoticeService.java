@@ -69,7 +69,12 @@ public class SysNoticeService {
         this.sysNoticeDao.deleteById(id);
     }
 
-    public Long countUnreadByUserId(Long userId) {
-        return this.sysNoticeDao.countUnreadByUserId(userId);
+    public Long countByUserId(Long userId) {
+        return this.sysNoticeDao.count((root, query, builder) -> {
+            Subquery<Long> subQuery = query.subquery(Long.class);
+            Root<SysNotice> subRoot = subQuery.from(SysNotice.class);
+            subQuery.select(subRoot.get("id")).where(builder.equal(subRoot.join("users").get("id"), userId));
+            return builder.not(root.get("id").in(subQuery));
+        });
     }
 }

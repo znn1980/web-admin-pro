@@ -72,7 +72,7 @@ public class SysUserController extends BaseController {
     public ServerResponseEntity<SysUser> me() {
         SysUser sysUser = this.sysUserService.findById(super.getSysUser().getId())
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！")));
-        Long unRead = this.sysNoticeService.countUnreadByUserId(super.getSysUser().getId());
+        Long unRead = this.sysNoticeService.countByUserId(super.getSysUser().getId());
         return ServerResponseEntity.ok(unRead, sysUser);
     }
 
@@ -85,7 +85,7 @@ public class SysUserController extends BaseController {
 
     @SysLog("创建用户")
     @SysPermissions
-    @PostMapping
+    @PostMapping("/create")
     public ServerResponseEntity<SysUser> create(@RequestBody @Validated(SysCreate.class) SysUser sysUser) {
         if (!super.isSuperAdmin() && sysUser.isSysAdmin()) {
             return ServerResponseEntity.fail("您不是超级管理员，不能创建管理员用户！");
@@ -106,7 +106,7 @@ public class SysUserController extends BaseController {
 
     @SysLog("修改用户")
     @SysPermissions
-    @PutMapping
+    @PutMapping("/update")
     public ServerResponseEntity<SysUser> update(@RequestBody @Validated(SysUpdate.class) SysUser sysUser) {
         SysUser oldSysUser = this.sysUserService.findById(sysUser.getId())
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！")));
@@ -145,7 +145,7 @@ public class SysUserController extends BaseController {
 
     @SysLog("删除用户")
     @SysPermissions
-    @DeleteMapping
+    @DeleteMapping("/delete")
     public ServerResponseEntity<?> delete(@RequestBody Long id) {
         SysUser sysUser = this.sysUserService.findById(id)
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("用户不存在！")));

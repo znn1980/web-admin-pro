@@ -42,7 +42,7 @@ public class SysUserLogController extends BaseController {
     }
 
     @SysPermissions
-    @DeleteMapping
+    @DeleteMapping("/delete")
     public ServerResponseEntity<?> delete(@RequestBody List<Long> id) {
         this.sysUserLogService.deleteAllById(id);
         return ServerResponseEntity.ok();

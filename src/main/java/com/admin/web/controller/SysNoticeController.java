@@ -51,7 +51,7 @@ public class SysNoticeController extends BaseController {
 
     @SysLog("创建通知公告")
     @SysPermissions
-    @PostMapping
+    @PostMapping("/create")
     public ServerResponseEntity<?> create(@RequestBody @Validated(SysCreate.class) SysNotice sysNotice) {
         this.sysNoticeService.save(sysNotice);
         return ServerResponseEntity.ok();
@@ -59,7 +59,7 @@ public class SysNoticeController extends BaseController {
 
     @SysLog("修改通知公告")
     @SysPermissions
-    @PutMapping
+    @PutMapping("/update")
     public ServerResponseEntity<?> update(@RequestBody @Validated(SysUpdate.class) SysNotice sysNotice) {
         SysNotice oldSysNotice = this.sysNoticeService.findById(sysNotice.getId())
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("通知公告不存在！")));
@@ -75,7 +75,7 @@ public class SysNoticeController extends BaseController {
 
     @SysLog("删除通知公告")
     @SysPermissions
-    @DeleteMapping
+    @DeleteMapping("/delete")
     public ServerResponseEntity<?> delete(@RequestBody Long id) {
         SysNotice sysNotice = this.sysNoticeService.findById(id)
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("通知公告不存在！")));

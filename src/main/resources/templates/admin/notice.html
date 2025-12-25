@@ -213,7 +213,7 @@
             }, function (index) {
                 layui.layer.close(index);
                 notice.disable = !data.elem.checked;
-                layui.common.req(`${config.base}sys/notice`, 'PUT', notice, {
+                layui.common.req(`${config.base}sys/notice/update`, 'PUT', notice, {
                     done: function (data) {
                         layui.layer.msg(data.msg);
                     }
@@ -265,7 +265,7 @@
                     layui.form.on('submit(sys-notice-submit)', function (data) {
                         data.field.content = layui.layedit.getContent(editor);
                         layui.layer.close(index);
-                        layui.common.req(`${config.base}sys/notice`, type, data.field, {
+                        layui.common.req(`${config.base}sys/notice/${type === 'POST' ? 'create' : 'update'}`, type, data.field, {
                             done: function (data) {
                                 layui.layer.msg(data.msg);
                                 layui.table.reload('sys-notice-table', {
@@ -289,7 +289,7 @@
                 title: '删除通知公告', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);
-                layui.common.req(`${config.base}sys/notice`, 'DELETE', notice.id, {
+                layui.common.req(`${config.base}sys/notice/delete`, 'DELETE', notice.id, {
                     done: function (data) {
                         layui.layer.msg(data.msg);
                         layui.table.reload('sys-notice-table', {

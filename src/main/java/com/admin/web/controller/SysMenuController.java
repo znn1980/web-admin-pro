@@ -25,8 +25,8 @@ public class SysMenuController extends BaseController {
     }
 
     @SysPermissions(SysLogin.class)
-    @GetMapping
-    public ServerResponseEntity<List<SysMenu>> menus() {
+    @GetMapping("/me")
+    public ServerResponseEntity<List<SysMenu>> me() {
         List<SysMenu> sysMenus = this.sysMenuService.findAll(super.getSysUser());
         return ServerResponseEntity.ok(sysMenus);
     }
@@ -50,7 +50,7 @@ public class SysMenuController extends BaseController {
 
     @SysLog("创建菜单")
     @SysPermissions
-    @PostMapping
+    @PostMapping("/create")
     public ServerResponseEntity<?> create(@RequestBody @Validated(SysCreate.class) SysMenu sysMenu) {
         if (Objects.nonNull(sysMenu.getPid())
                 && !this.sysMenuService.existsById(sysMenu.getPid())) {
@@ -65,7 +65,7 @@ public class SysMenuController extends BaseController {
 
     @SysLog("修改菜单")
     @SysPermissions
-    @PutMapping
+    @PutMapping("/update")
     public ServerResponseEntity<?> update(@RequestBody @Validated(SysUpdate.class) SysMenu sysMenu) {
         SysMenu oldSysMenu = this.sysMenuService.findById(sysMenu.getId())
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("菜单不存在！")));
@@ -92,7 +92,7 @@ public class SysMenuController extends BaseController {
 
     @SysLog("删除菜单")
     @SysPermissions
-    @DeleteMapping
+    @DeleteMapping("/delete")
     public ServerResponseEntity<?> delete(@RequestBody Long id) {
         SysMenu sysMenu = this.sysMenuService.findById(id)
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("菜单不存在！")));

@@ -5,14 +5,12 @@ import com.admin.web.annotation.SysPermissions;
 import com.admin.web.model.ServerResponseEntity;
 import com.admin.web.model.SysMonitor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author znn
  */
 @RestController
-@RequestMapping("/sys/monitor")
 public class SysMonitorController {
     private final SysMonitor sysMonitor;
 
@@ -21,7 +19,7 @@ public class SysMonitorController {
     }
 
     @SysPermissions(SysLogin.class)
-    @GetMapping
+    @GetMapping("/sys/monitor")
     public ServerResponseEntity<SysMonitor> monitor() {
         return ServerResponseEntity.ok(this.sysMonitor);
     }

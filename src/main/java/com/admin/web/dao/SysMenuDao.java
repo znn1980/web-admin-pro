@@ -56,7 +56,8 @@ public interface SysMenuDao extends JpaRepository<SysMenu, Long>, JpaSpecificati
     /**
      * 查询菜单表
      *
-     * @param userId 用户ID
+     * @param userId  用户ID
+     * @param disable 是否禁用
      * @return 菜单列表
      */
     @Query(value = """
@@ -67,11 +68,11 @@ public interface SysMenuDao extends JpaRepository<SysMenu, Long>, JpaSpecificati
             	AND sys_role.id = sys_users_roles.role_id
             	AND sys_users_roles.user_id = sys_user.id
             	AND sys_menu.sys_menu = true
-            	AND sys_menu.disable = false
+            	AND sys_menu.disable = :disable
             	AND sys_user.id = :userId
             ORDER BY sys_menu.sort
             """, nativeQuery = true)
-    List<SysMenu> findByUserIdAndEnableOrderBySort(Long userId);
+    List<SysMenu> findByUserIdAndDisableOrderBySort(Long userId, boolean disable);
 
     /**
      * 查询菜单表

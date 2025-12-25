@@ -145,7 +145,7 @@
                         title: '删除', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
                     }, function (index) {
                         layui.layer.close(index);
-                        layui.common.req(`${config.base}sys/log`, 'DELETE', logs.map(log => log.id), {
+                        layui.common.req(`${config.base}sys/log/delete`, 'DELETE', logs.map(log => log.id), {
                             done: function (data) {
                                 layui.layer.msg(data.msg);
                                 layui.table.reload('sys-log-table');

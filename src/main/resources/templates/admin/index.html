@@ -182,7 +182,7 @@
             }
         });
 
-        layui.common.req(`${config.base}sys/menu`, 'GET', null, {
+        layui.common.req(`${config.base}sys/menu/me`, 'GET', null, {
             done: function (data) {
                 layui.$('#LAY-system-side-menu').html(nav(null, data.data));
                 layui.element.render('nav', 'layadmin-system-side-menu');
