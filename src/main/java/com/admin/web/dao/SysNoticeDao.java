@@ -35,10 +35,14 @@ public interface SysNoticeDao extends JpaRepository<SysNotice, Long>, JpaSpecifi
      * @return 数量
      */
     @Query(value = """
-            SELECT COUNT(*) FROM sys_notice
-             WHERE sys_notice.id NOT IN (SELECT id FROM sys_notice
-             JOIN sys_notices_users ON sys_notice.id = sys_notices_users.notice_id
-             WHERE sys_notices_users.user_id = :userId)
-             """, nativeQuery = true)
+            SELECT COUNT(*)
+            FROM sys_notice
+            WHERE sys_notice.id NOT IN (
+            	SELECT id
+            	FROM sys_notice
+            		JOIN sys_notices_users ON sys_notice.id = sys_notices_users.notice_id
+            	WHERE sys_notices_users.user_id = :userId
+            )
+            """, nativeQuery = true)
     Long countUnreadByUserId(Long userId);
 }

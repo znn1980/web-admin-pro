@@ -22,14 +22,13 @@ spring:
       ddl-auto: update
   session:
     jdbc:
-      initialize-schema: always
+      initialize-schema: ALWAYS
   web:
     resources:
       chain:
         strategy:
           content:
             enabled: true
-            paths: /**
   servlet:
     multipart:
       max-file-size: 1MB
