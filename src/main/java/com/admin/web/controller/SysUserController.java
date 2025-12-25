@@ -3,7 +3,6 @@ package com.admin.web.controller;
 import com.admin.web.exception.WebServerException;
 import com.admin.web.annotation.*;
 import com.admin.web.model.ServerResponseEntity;
-import com.admin.web.model.SysNotice;
 import com.admin.web.model.SysUser;
 import com.admin.web.model.vo.*;
 import com.admin.web.service.SysNoticeService;
@@ -88,6 +87,9 @@ public class SysUserController extends BaseController {
     @SysPermissions
     @PostMapping
     public ServerResponseEntity<SysUser> create(@RequestBody @Validated(SysCreate.class) SysUser sysUser) {
+        if (!super.isSuperAdmin() && sysUser.isSysAdmin()) {
+            return ServerResponseEntity.fail("您不是超级管理员，不能创建管理员用户！");
+        }
         if (Objects.nonNull(this.sysUserService.findByUsername(sysUser.getUsername()))) {
             return ServerResponseEntity.fail("用户名称已存在！");
         }
@@ -96,9 +98,6 @@ public class SysUserController extends BaseController {
         }
         if (Objects.nonNull(this.sysUserService.findByEmail(sysUser.getEmail()))) {
             return ServerResponseEntity.fail("邮箱地址已存在！");
-        }
-        if (!super.isSysAdmin() && sysUser.isSysAdmin()) {
-            return ServerResponseEntity.fail("您不是管理员，不能添加管理员用户！");
         }
         sysUser.setPassword(super.hexPassword(sysUser));
         this.sysUserService.save(sysUser);
@@ -114,11 +113,11 @@ public class SysUserController extends BaseController {
         if (!super.isSuperAdmin() && super.isSuperAdmin(oldSysUser)) {
             return ServerResponseEntity.fail("您不是超级管理员，不能修改超级管理员的信息！");
         }
+        if (!super.isSuperAdmin() && !Objects.equals(oldSysUser.isSysAdmin(), sysUser.isSysAdmin())) {
+            return ServerResponseEntity.fail("您不是超级管理员，不能修改管理员状态！");
+        }
         if (!super.isSysAdmin() && super.isSysAdmin(oldSysUser)) {
             return ServerResponseEntity.fail("您不是管理员，不能修改管理员的信息！");
-        }
-        if (!super.isSysAdmin() && !Objects.equals(oldSysUser.isSysAdmin(), sysUser.isSysAdmin())) {
-            return ServerResponseEntity.fail("您不是管理员，不能修改管理员状态！");
         }
         if (!Objects.equals(oldSysUser.isSysAdmin(), sysUser.isSysAdmin())
                 && Objects.equals(super.getSysUser().getId(), sysUser.getId())) {
@@ -139,6 +138,7 @@ public class SysUserController extends BaseController {
                 && Objects.nonNull(this.sysUserService.findByEmail(sysUser.getEmail()))) {
             return ServerResponseEntity.fail("邮箱地址已存在！");
         }
+        oldSysUser.setNotices(null);
         BeanUtils.copyNonNullProperties(sysUser, oldSysUser);
         return ServerResponseEntity.ok(this.sysUserService.save(oldSysUser));
     }
