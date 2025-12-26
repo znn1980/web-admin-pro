@@ -20,33 +20,43 @@
             <div class="layui-card-body" id="os"></div>
         </div>
     </div>
-    <div class="layui-col-md4">
+    <div class="layui-col-md3">
         <div class="layui-card">
-            <div class="layui-card-header layui-icon layui-icon-app">
-                系统负载
+            <div class="layui-card-header layui-icon layui-icon-chart">
+                CPU使用率
             </div>
             <div class="layui-card-body">
-                <div id="os-sys" style="height: 300px;"></div>
+                <div id="os-sys" style="height: 230px;"></div>
             </div>
         </div>
     </div>
-    <div class="layui-col-md4">
+    <div class="layui-col-md3">
         <div class="layui-card">
-            <div class="layui-card-header layui-icon layui-icon-engine">
+            <div class="layui-card-header layui-icon layui-icon-console">
                 内存使用率
             </div>
             <div class="layui-card-body">
-                <div id="os-mem" style="height: 300px;"></div>
+                <div id="os-sys-mem" style="height: 230px;"></div>
             </div>
         </div>
     </div>
-    <div class="layui-col-md4">
+    <div class="layui-col-md3">
+        <div class="layui-card">
+            <div class="layui-card-header layui-icon layui-icon-engine">
+                Jvm内存使用率
+            </div>
+            <div class="layui-card-body">
+                <div id="os-jvm-mem" style="height: 230px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md3">
         <div class="layui-card">
             <div class="layui-card-header layui-icon layui-icon-folder">
                 磁盘使用率
             </div>
             <div class="layui-card-body">
-                <div id="os-disk" style="height: 300px;"></div>
+                <div id="os-disk" style="height: 230px;"></div>
             </div>
         </div>
     </div>
@@ -103,23 +113,26 @@
     }).use(['index', 'common'], function () {
 
         const osSys = echarts.init(layui.$('#os-sys')[0]);
-        const osMem = echarts.init(layui.$('#os-mem')[0]);
+        const osSysMem = echarts.init(layui.$('#os-sys-mem')[0]);
+        const osJvmMem = echarts.init(layui.$('#os-jvm-mem')[0]);
         const osDisk = echarts.init(layui.$('#os-disk')[0]);
 
         layui.admin.resize(function () {
             osSys.resize();
-            osMem.resize();
+            osSysMem.resize();
+            osJvmMem.resize();
             osDisk.resize();
         });
 
         load();
-        setInterval(load, 10000);
+        setInterval(load, 1000 * 10);
 
         function load() {
             layui.common.req(`${config.base}sys/monitor`, 'GET', null, {
                 done: function (data) {
-                    osSys.setOption(gauge(data.data.osSys.systemLoadAverage));
-                    osMem.setOption(gauge(layui.common.asRate(data.data.osMem.usedMemory / data.data.osMem.totalMemory)));
+                    osSys.setOption(gauge(layui.common.asRate(data.data.osSys.cpuLoad)));
+                    osSysMem.setOption(gauge(layui.common.asRate(data.data.osSysMem.usedMemorySize / data.data.osSysMem.totalMemorySize)));
+                    osJvmMem.setOption(gauge(layui.common.asRate(data.data.osJvmMem.usedMemory / data.data.osJvmMem.totalMemory)));
                     osDisk.setOption(gauge(layui.common.asRate(data.data.osDisk.usedSpace / data.data.osDisk.totalSpace)));
 
                     data.data.osJvm.uptime = layui.common.asAgo(data.data.osJvm.uptime);
@@ -129,7 +142,8 @@
                         layui.$('#os').html(html)
                     });
                     layui.$('#os-sys').attr('lay-tips', data.data.osSys.tips.replaceAll(',', '<br>'));
-                    layui.$('#os-mem').attr('lay-tips', data.data.osMem.tips.replaceAll(',', '<br>'));
+                    layui.$('#os-sys-mem').attr('lay-tips', data.data.osSysMem.tips.replaceAll(',', '<br>'));
+                    layui.$('#os-jvm-mem').attr('lay-tips', data.data.osJvmMem.tips.replaceAll(',', '<br>'));
                     layui.$('#os-disk').attr('lay-tips', data.data.osDisk.tips.replaceAll(',', '<br>'));
                     window.parent.os = data.data;
                 }

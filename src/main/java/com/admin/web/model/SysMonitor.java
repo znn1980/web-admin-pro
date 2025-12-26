@@ -1,9 +1,6 @@
 package com.admin.web.model;
 
-import com.admin.web.model.os.OsDisk;
-import com.admin.web.model.os.OsJvm;
-import com.admin.web.model.os.OsMem;
-import com.admin.web.model.os.OsSys;
+import com.admin.web.model.os.*;
 import com.admin.web.utils.NetUtils;
 
 import java.io.Serializable;
@@ -13,14 +10,16 @@ import java.io.Serializable;
  */
 public class SysMonitor implements Serializable {
     private final OsSys osSys;
+    private final OsSysMem osSysMem;
     private final OsJvm osJvm;
-    private final OsMem osMem;
+    private final OsJvmMem osJvmMem;
     private final OsDisk osDisk;
 
     public SysMonitor() {
         this.osSys = new OsSys();
+        this.osSysMem = new OsSysMem();
         this.osJvm = new OsJvm();
-        this.osMem = new OsMem();
+        this.osJvmMem = new OsJvmMem();
         this.osDisk = new OsDisk();
     }
 
@@ -37,19 +36,23 @@ public class SysMonitor implements Serializable {
     }
 
     public OsSys getOsSys() {
-        return osSys;
+        return this.osSys;
+    }
+
+    public OsSysMem getOsSysMem() {
+        return this.osSysMem;
     }
 
     public OsJvm getOsJvm() {
-        return osJvm;
+        return this.osJvm;
     }
 
-    public OsMem getOsMem() {
-        return osMem;
+    public OsJvmMem getOsJvmMem() {
+        return this.osJvmMem;
     }
 
     public OsDisk getOsDisk() {
-        return osDisk;
+        return this.osDisk;
     }
 
     @Override
@@ -59,8 +62,9 @@ public class SysMonitor implements Serializable {
                 ", osMac=" + this.getOsMac() +
                 ", osName=" + this.getOsName() +
                 ", osSys=" + this.getOsSys() +
+                ", osSysMem=" + this.getOsSysMem() +
                 ", osJvm=" + this.getOsJvm() +
-                ", osMem=" + this.getOsMem() +
+                ", osJvmMem=" + this.getOsJvmMem() +
                 ", osDisk=" + this.getOsDisk() +
                 '}';
     }

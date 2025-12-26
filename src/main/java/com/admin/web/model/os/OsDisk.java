@@ -1,24 +1,41 @@
 package com.admin.web.model.os;
 
-import java.io.File;
-import java.util.Arrays;
+import java.io.IOException;
+import java.nio.file.FileStore;
+import java.nio.file.FileSystems;
+import java.util.stream.StreamSupport;
 
 /**
  * @author znn
  */
 public class OsDisk extends Os {
-    private final File[] disks;
+    private final Iterable<FileStore> disks;
 
     public OsDisk() {
-        disks = File.listRoots();
+        this.disks = FileSystems.getDefault().getFileStores();
     }
 
+    public static void main(String[] args) {
+        System.out.println(new OsDisk());
+    }
     public long getTotalSpace() {
-        return Arrays.stream(disks).mapToLong(File::getTotalSpace).sum();
+        return StreamSupport.stream(this.disks.spliterator(), false).mapToLong((fileStore) -> {
+            try {
+                return fileStore.getTotalSpace();
+            } catch (IOException e) {
+                return 0;
+            }
+        }).sum();
     }
 
     public long getUsableSpace() {
-        return Arrays.stream(disks).mapToLong(File::getUsableSpace).sum();
+        return StreamSupport.stream(this.disks.spliterator(), false).mapToLong((fileStore) -> {
+            try {
+                return fileStore.getUsableSpace();
+            } catch (IOException e) {
+                return 0;
+            }
+        }).sum();
     }
 
     public long getUsedSpace() {

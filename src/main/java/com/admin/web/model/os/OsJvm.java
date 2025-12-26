@@ -40,11 +40,11 @@ public class OsJvm extends Os {
 
     @Override
     public String toString() {
-        return "Java虚拟机名称：" + this.getName()
-                + ",Java虚拟机版本：" + this.getVersion()
-                + ",Java虚拟机厂商：" + this.getVendor()
-                + ",Java虚拟机启动时间：" + this.getStartTime()
-                + ",Java虚拟机运行时间：" + this.getUptime()
-                + ",Java虚拟机运行参数：" + this.getInputArguments();
+        return "Jvm名称：" + this.getName()
+                + ",Jvm版本：" + this.getVersion()
+                + ",Jvm厂商：" + this.getVendor()
+                + ",Jvm启动时间：" + this.getStartTime()
+                + ",Jvm运行时间：" + this.getUptime()
+                + ",Jvm运行参数：" + this.getInputArguments();
     }
 }
