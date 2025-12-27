@@ -26,7 +26,7 @@ public class ModelViewController extends BaseController {
         model.addAttribute("config", this.config);
     }
 
-    @GetMapping("/admin/login.html")
+    @GetMapping({"/", "/admin/login.html"})
     public ModelAndView login() {
         return new ModelAndView("admin/login");
     }
