@@ -1,6 +1,7 @@
 package com.admin.web.model;
 
 import com.admin.web.annotation.SysCreate;
+import com.admin.web.annotation.SysUpdate;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -14,8 +15,8 @@ import java.util.Set;
 @Table(name = "SYS_NOTICE")
 public class SysNotice extends BaseEntity {
     @Column(name = "TITLE")
-    @NotBlank(message = "标题不能为空！", groups = {SysCreate.class})
-    @Size(min = 2, max = 255, message = "标题长度应在2-255之间！", groups = {SysCreate.class})
+    @NotBlank(message = "标题不能为空！", groups = {SysCreate.class, SysUpdate.class})
+    @Size(min = 2, max = 255, message = "标题长度应在2-255之间！", groups = {SysCreate.class, SysUpdate.class})
     private String title;
     @Column(name = "CONTENT", columnDefinition = "TEXT")
     private String content;

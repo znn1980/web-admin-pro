@@ -1,5 +1,7 @@
 package com.admin.web.model;
 
+import com.admin.web.annotation.SysCreate;
+import com.admin.web.annotation.SysUpdate;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -13,8 +15,8 @@ public class SysMenu extends BaseEntity {
     @Column(name = "PID")
     private Long pid;
     @Column(name = "TITLE")
-    @NotBlank(message = "菜单标题不能为空！")
-    @Size(min = 2, max = 64, message = "菜单标题长度应在2-64之间！")
+    @NotBlank(message = "菜单标题不能为空！", groups = {SysCreate.class, SysUpdate.class})
+    @Size(min = 2, max = 64, message = "菜单标题长度应在2-64之间！", groups = {SysCreate.class, SysUpdate.class})
     private String title;
     @Column(name = "METHOD")
     private String method;
