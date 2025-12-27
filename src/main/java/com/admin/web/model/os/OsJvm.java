@@ -11,31 +11,31 @@ public class OsJvm extends Os {
     private final RuntimeMXBean vm;
 
     public OsJvm() {
-        vm = ManagementFactory.getRuntimeMXBean();
+        this.vm = ManagementFactory.getRuntimeMXBean();
     }
 
     public String getName() {
-        return vm.getVmName();
+        return this.vm.getVmName();
     }
 
     public String getVersion() {
-        return vm.getVmVersion();
+        return this.vm.getVmVersion();
     }
 
     public String getVendor() {
-        return vm.getVmVendor();
+        return this.vm.getVmVendor();
     }
 
     public List<String> getInputArguments() {
-        return vm.getInputArguments();
+        return this.vm.getInputArguments();
     }
 
     public long getStartTime() {
-        return vm.getStartTime();
+        return this.vm.getStartTime();
     }
 
     public long getUptime() {
-        return vm.getUptime();
+        return this.vm.getUptime();
     }
 
     @Override

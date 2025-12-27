@@ -15,9 +15,6 @@ public class OsDisk extends Os {
         this.disks = FileSystems.getDefault().getFileStores();
     }
 
-    public static void main(String[] args) {
-        System.out.println(new OsDisk());
-    }
     public long getTotalSpace() {
         return StreamSupport.stream(this.disks.spliterator(), false).mapToLong((fileStore) -> {
             try {
