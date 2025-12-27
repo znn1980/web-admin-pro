@@ -32,10 +32,10 @@ public class OsJvmMem extends Os {
 
     @Override
     public String toString() {
-        return "Jvm内存最大容量：" + asBytes(this.getMaxMemory())
-                + ",Jvm内存最大可用容量：" + asBytes(this.getUsableMemory())
-                + ",Jvm内存容量：" + asBytes(this.getTotalMemory())
+        return "Jvm内存容量：" + asBytes(this.getTotalMemory())
                 + ",Jvm内存可用容量：" + asBytes(this.getFreeMemory())
-                + ",Jvm内存已用容量：" + asBytes(this.getUsedMemory());
+                + ",Jvm内存已用容量：" + asBytes(this.getUsedMemory())
+                + ",Jvm内存最大容量：" + asBytes(this.getMaxMemory())
+                + ",Jvm内存最大可用容量：" + asBytes(this.getUsableMemory());
     }
 }

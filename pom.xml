@@ -9,7 +9,7 @@
     </parent>
     <groupId>com.admin.pro</groupId>
     <artifactId>web-admin-pro</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.0</version>
     <properties>
         <skipTests>true</skipTests>
         <java.version>17</java.version>
