@@ -5,10 +5,10 @@ import com.admin.web.exception.WebServerException;
 import com.admin.web.model.ServerResponseEntity;
 import com.admin.web.model.SysNotice;
 import com.admin.web.model.vo.NoticeVo;
+import com.admin.web.model.vo.PageVo;
 import com.admin.web.service.SysNoticeService;
 import com.admin.web.utils.BeanUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +31,7 @@ public class SysNoticeController extends BaseController {
     @PostMapping("/all")
     public ServerResponseEntity<List<SysNotice>> all(@RequestBody @Validated NoticeVo noticeVo) {
         noticeVo.setUser(super.getSysUser());
-        Page<SysNotice> sysNotices = this.sysNoticeService.findAll(noticeVo
-                , PageRequest.of(noticeVo.getPage(), noticeVo.getLimit()));
+        Page<SysNotice> sysNotices = this.sysNoticeService.findAll(noticeVo, PageVo.of(noticeVo));
         return ServerResponseEntity.ok(sysNotices.getTotalElements(), sysNotices.getContent());
     }
 

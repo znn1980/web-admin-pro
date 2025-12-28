@@ -9,7 +9,6 @@ import com.admin.web.service.SysNoticeService;
 import com.admin.web.service.SysUserService;
 import com.admin.web.utils.BeanUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,7 +78,7 @@ public class SysUserController extends BaseController {
     @SysPermissions
     @PostMapping("/all")
     public ServerResponseEntity<List<SysUser>> all(@RequestBody @Validated PageVo pageVo) {
-        Page<SysUser> sysUsers = this.sysUserService.findAll(PageRequest.of(pageVo.getPage(), pageVo.getLimit()));
+        Page<SysUser> sysUsers = this.sysUserService.findAll(PageVo.of(pageVo));
         return ServerResponseEntity.ok(sysUsers.getTotalElements(), sysUsers.getContent());
     }
 

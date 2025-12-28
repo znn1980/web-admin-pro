@@ -131,23 +131,29 @@
             elem: '#sys-user-table'
             , url: `${config.base}sys/user/all`
             , method: 'POST', contentType: "application/json;charset=UTF-8"
-            , page: true
             , toolbar: '#sys-user-toolbar'
             , cols: [
                 [
                     {type: 'radio'}
-                    , {field: 'username', title: '用户', templet: '#sys-username-tpl'}
-                    , {field: 'mobile', title: '手机'}
-                    , {field: 'email', title: '邮箱'}
-                    , {field: 'sysAdmin', title: '管理员', align: 'center', width: 75, templet: '#sys-admin-tpl'}
-                    , {field: 'disable', title: '状态', align: 'center', width: 90, templet: '#sys-disable-tpl'}
-                    , {field: 'createUsername', title: '创建用户', width: 90, hide: true}
-                    , {field: 'createTimestamp', title: '创建时间', width: 110, hide: true}
-                    , {field: 'updateUsername', title: '修改用户', width: 90, hide: true}
-                    , {field: 'updateTimestamp', title: '修改时间', width: 110, hide: true}
+                    , {field: 'username', title: '用户', sort: true, templet: '#sys-username-tpl'}
+                    , {field: 'mobile', title: '手机', sort: true}
+                    , {field: 'email', title: '邮箱', sort: true}
+                    , {field: 'sysAdmin', title: '管理员', sort: true, align: 'center', width: 95, templet: '#sys-admin-tpl'}
+                    , {field: 'disable', title: '状态', sort: true, align: 'center', width: 90, templet: '#sys-disable-tpl'}
+                    , {field: 'createUsername', title: '创建用户', sort: true, width: 110, hide: true}
+                    , {field: 'createTimestamp', title: '创建时间', sort: true, width: 110, hide: true}
+                    , {field: 'updateUsername', title: '修改用户', sort: true, width: 110, hide: true}
+                    , {field: 'updateTimestamp', title: '修改时间', sort: true, width: 110, hide: true}
                     , {title: '操作', align: 'center', toolbar: '#sys-user-tool', width: 90}
                 ]
             ]
+            , page: true
+        });
+
+        layui.table.on('sort(sys-user-table)', function (data) {
+            layui.table.reload('sys-user-table', {
+                initSort: data, where: {sort: {field: data.field, order: data.type}}
+            });
         });
 
         layui.table.on('toolbar(sys-user-table)', function (e) {

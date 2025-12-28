@@ -2,8 +2,11 @@ package com.admin.web.model.vo;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author znn
@@ -15,10 +18,12 @@ public class PageVo implements Serializable {
     @NotNull(message = "每页数据不能为空！")
     @Min(value = 1, message = "每页数据不得小于壹！")
     private Integer limit;
+    private SortVo sort;
 
     public PageVo() {
         this.setPage(null);
         this.setLimit(null);
+        this.setSort(null);
     }
 
     public Integer getPage() {
@@ -37,11 +42,25 @@ public class PageVo implements Serializable {
         this.limit = limit;
     }
 
+    public SortVo getSort() {
+        return sort;
+    }
+
+    public void setSort(SortVo sort) {
+        this.sort = sort;
+    }
+
     @Override
     public String toString() {
         return "PageVo{" +
                 "page=" + this.getPage() +
                 ", limit=" + this.getLimit() +
+                ", sort=" + this.getSort() +
                 '}';
+    }
+
+    public static PageRequest of(PageVo pageVo) {
+        return PageRequest.of(pageVo.getPage(), pageVo.getLimit()
+                , Objects.nonNull(pageVo.getSort()) ? SortVo.by(pageVo.getSort()) : Sort.unsorted());
     }
 }
