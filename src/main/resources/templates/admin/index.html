@@ -158,7 +158,7 @@
                 layui.common.req(`${config.base}sys/user/logout`, 'GET', null, {
                     done: function () {
                         layui.admin.exit(function () {
-                            location.href = 'login.html';
+                            location.href = `${config.base}admin/login.html`;
                         });
                     }
                 });
