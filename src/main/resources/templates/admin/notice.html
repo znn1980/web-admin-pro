@@ -126,6 +126,8 @@
 
         let editor = layui.layedit.build('content', {height: 200, uploadImage: {url: `${config.base}sys/upload`}});
 
+        layui.util.fixbar();
+
         layui.table.render({
             elem: '#sys-notice-table'
             , url: `${config.base}sys/notice/all`
