@@ -3,7 +3,6 @@ package com.admin.web.model.vo;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -60,7 +59,7 @@ public class PageVo implements Serializable {
     }
 
     public static PageRequest of(PageVo pageVo) {
-        return PageRequest.of(pageVo.getPage(), pageVo.getLimit()
-                , Objects.nonNull(pageVo.getSort()) ? SortVo.by(pageVo.getSort()) : Sort.unsorted());
+        return Objects.isNull(pageVo) ? PageRequest.ofSize(10)
+                : PageRequest.of(pageVo.getPage(), pageVo.getLimit(), SortVo.by(pageVo.getSort()));
     }
 }
