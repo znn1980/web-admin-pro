@@ -80,6 +80,7 @@ public class SysNoticeService {
             throw new ServerResponseException(ServerResponse.fail("您只能修改自己发布的通知公告！"));
         }
         sysNotice.setUsers(null);
+        oldSysNotice.setUsers(null);
         BeanUtils.copyNonNullProperties(sysNotice, oldSysNotice);
         this.sysNoticeDao.save(oldSysNotice);
     }
