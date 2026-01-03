@@ -70,7 +70,8 @@ public class SysNotice extends SysBase {
 
     @Override
     public String toString() {
-        return "SysNotice{" +
+        return super.toString() + System.lineSeparator() +
+                "SysNotice{" +
                 "title='" + this.getTitle() + '\'' +
                 ", content='" + StringUtils.truncate(Objects.toString(this.getContent())) + '\'' +
                 '}';
