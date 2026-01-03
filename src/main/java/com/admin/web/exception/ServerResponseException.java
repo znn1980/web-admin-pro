@@ -7,26 +7,16 @@ import com.admin.web.model.enums.ResponseCode;
  * @author znn
  */
 public class ServerResponseException extends RuntimeException {
-    private final String code;
-
     private final ServerResponse<?> serverResponse;
 
-    public ServerResponseException(String code, String msg, ServerResponse<?> serverResponse) {
-        super(msg);
-        this.code = code;
+    public ServerResponseException(ServerResponse<?> serverResponse) {
+        super(serverResponse.getMsg());
         this.serverResponse = serverResponse;
     }
 
-    public ServerResponseException(ServerResponse<?> serverResponse) {
-        this(serverResponse.getCode(), serverResponse.getMsg(), serverResponse);
-    }
-
     public ServerResponseException(ResponseCode responseCode) {
-        this(responseCode.value(), responseCode.msg(), null);
-    }
-
-    public String getCode() {
-        return code;
+        super(responseCode.msg());
+        this.serverResponse = ServerResponse.fail(responseCode);
     }
 
     public ServerResponse<?> getServerResponse() {

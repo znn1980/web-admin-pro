@@ -69,12 +69,11 @@ public class SysUserLogService {
             sysUserLog.setParams(this.getParams(args));
         }
         if (Objects.nonNull(result)) {
-            sysUserLog.setResult(result.toString());
+            sysUserLog.setResult(Objects.toString(result));
         }
         if (Objects.nonNull(error)) {
-            if (error instanceof ServerResponseException e
-                    && Objects.nonNull(e.getServerResponse())) {
-                sysUserLog.setResult(e.getServerResponse().toString());
+            if (error instanceof ServerResponseException e) {
+                sysUserLog.setResult(Objects.toString(e.getServerResponse()));
             } else {
                 sysUserLog.setErrors(new StringWriter() {{
                     error.printStackTrace(new PrintWriter(this, true));
@@ -92,7 +91,7 @@ public class SysUserLogService {
             if (Objects.nonNull(arg) && !(arg instanceof MultipartFile
                     || arg instanceof HttpServletRequest
                     || arg instanceof HttpServletResponse)) {
-                params.add(arg.toString());
+                params.add(Objects.toString(arg));
             }
         });
         return params.toString();

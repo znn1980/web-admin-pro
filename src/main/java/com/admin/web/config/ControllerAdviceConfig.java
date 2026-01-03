@@ -36,8 +36,7 @@ public class ControllerAdviceConfig {
         }
         if (WebUtils.isRequestRest(request)) {
             if (e instanceof ServerResponseException ex) {
-                return ResponseEntity.ok(Objects.requireNonNullElse(ex.getServerResponse()
-                        , ServerResponse.fail(ex.getCode(), ex.getMessage())));
+                return ResponseEntity.ok(ex.getServerResponse());
             }
             if (e instanceof NoResourceFoundException ex) {
                 return ResponseEntity.ok(ServerResponse.fail(String.format("抱歉，你访问的资源(%s)不存在！"
