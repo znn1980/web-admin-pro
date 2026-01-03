@@ -20,7 +20,8 @@ public class NoticeVo extends PageVo {
 
     @Override
     public String toString() {
-        return "NoticeVo{" +
+        return super.toString() + System.lineSeparator() +
+                "Notice{" +
                 "state=" + this.getState() +
                 '}';
     }

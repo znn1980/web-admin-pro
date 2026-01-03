@@ -47,7 +47,7 @@ public class UserLoginVo implements Serializable {
 
     @Override
     public String toString() {
-        return "UserLoginVo{" +
+        return "UserLogin{" +
                 "username='" + this.getUsername() + '\'' +
                 ", password='" + this.getPassword() + '\'' +
                 ", sysCode='" + this.getSysCode() + '\'' +

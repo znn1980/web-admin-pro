@@ -22,7 +22,7 @@ public class SessionVo implements Serializable {
 
     @Override
     public String toString() {
-        return "SessionVo{" +
+        return "Session{" +
                 "jsessionid='" + this.getJsessionid() + '\'' +
                 '}';
     }

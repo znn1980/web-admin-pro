@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "SYS_MENU")
-public class SysMenu extends BaseEntity {
+public class SysMenu extends SysBase {
     @Column(name = "PID")
     private Long pid;
     @Column(name = "TITLE")

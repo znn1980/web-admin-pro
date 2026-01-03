@@ -47,7 +47,7 @@ public class UserLogVo extends PageVo {
     @Override
     public String toString() {
         return super.toString() + System.lineSeparator() +
-                "UserLogVo{" +
+                "UserLog{" +
                 "username='" + this.getUsername() + '\'' +
                 ", startTimestamp=" + this.getStartTimestamp() +
                 ", endTimestamp=" + this.getEndTimestamp() +

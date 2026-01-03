@@ -1,8 +1,8 @@
 package com.admin.web.config;
 
-import com.admin.web.exception.WebServerException;
+import com.admin.web.exception.ServerResponseException;
 import com.admin.web.model.enums.ResponseCode;
-import com.admin.web.model.ServerResponseEntity;
+import com.admin.web.model.ServerResponse;
 import com.admin.web.model.os.Os;
 import com.admin.web.utils.WebUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,37 +31,37 @@ public class ControllerAdviceConfig {
     @ExceptionHandler(Exception.class)
     public Object exceptionHandler(HttpServletRequest request, Exception e) {
         log.error("SYS-ERROR => {} => URL => {}", request.getMethod(), request.getRequestURI());
-        if (!(e instanceof WebServerException)) {
+        if (!(e instanceof ServerResponseException)) {
             log.error("SYS-ERROR => {}", e, e);
         }
         if (WebUtils.isRequestRest(request)) {
-            if (e instanceof WebServerException ex) {
-                return ResponseEntity.ok(Objects.requireNonNullElse(ex.getServerResponseEntity()
-                        , ServerResponseEntity.fail(ex.getCode(), ex.getMessage())));
+            if (e instanceof ServerResponseException ex) {
+                return ResponseEntity.ok(Objects.requireNonNullElse(ex.getServerResponse()
+                        , ServerResponse.fail(ex.getCode(), ex.getMessage())));
             }
             if (e instanceof NoResourceFoundException ex) {
-                return ResponseEntity.ok(ServerResponseEntity.fail(String.format("抱歉，你访问的资源(%s)不存在！"
+                return ResponseEntity.ok(ServerResponse.fail(String.format("抱歉，你访问的资源(%s)不存在！"
                         , ex.getResourcePath())));
             }
             if (e instanceof MethodArgumentNotValidException ex) {
                 FieldError fieldError = ex.getBindingResult().getFieldError();
-                return ResponseEntity.ok(ServerResponseEntity.fail(fieldError.getDefaultMessage()));
+                return ResponseEntity.ok(ServerResponse.fail(fieldError.getDefaultMessage()));
             }
             if (e instanceof BindException ex) {
                 FieldError fieldError = ex.getBindingResult().getFieldError();
-                return ResponseEntity.ok(ServerResponseEntity.fail(fieldError.getDefaultMessage()));
+                return ResponseEntity.ok(ServerResponse.fail(fieldError.getDefaultMessage()));
             }
             if (e instanceof MaxUploadSizeExceededException ex) {
                 if (e.getCause().getCause() instanceof FileSizeLimitExceededException exx) {
-                    return ResponseEntity.ok(ServerResponseEntity.fail(String.format("上传文件(%s)超出(%s)限制！"
+                    return ResponseEntity.ok(ServerResponse.fail(String.format("上传文件(%s)超出(%s)限制！"
                             , Os.asBytes(exx.getActualSize()), Os.asBytes(exx.getPermittedSize()))));
                 }
-                return ResponseEntity.ok(ServerResponseEntity.fail(ex.getMaxUploadSize() <= 0
+                return ResponseEntity.ok(ServerResponse.fail(ex.getMaxUploadSize() <= 0
                         ? "上传文件超出限制！" : String.format("上传文件超出(%s)限制！", Os.asBytes(ex.getMaxUploadSize()))));
             }
-            return ResponseEntity.ok(ServerResponseEntity.fail(ResponseCode.ERROR));
+            return ResponseEntity.ok(ServerResponse.fail(ResponseCode.ERROR));
         }
-        if (e instanceof WebServerException) {
+        if (e instanceof ServerResponseException) {
             return new ModelAndView("error/403");
         }
         if (e instanceof NoResourceFoundException) {

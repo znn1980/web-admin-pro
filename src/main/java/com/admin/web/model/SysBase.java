@@ -19,7 +19,7 @@ import java.util.Objects;
  */
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class BaseEntity implements Serializable {
+public class SysBase implements Serializable {
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +44,7 @@ public class BaseEntity implements Serializable {
     @Column(name = "DISABLE")
     private boolean disable;
 
-    public BaseEntity() {
+    public SysBase() {
         super();
         this.setId(null);
         this.setCreateUsername(null);
@@ -113,8 +113,8 @@ public class BaseEntity implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof BaseEntity
-                && Objects.equals(((BaseEntity) o).getId(), this.getId());
+        return o instanceof SysBase
+                && Objects.equals(((SysBase) o).getId(), this.getId());
     }
 
     @Override
@@ -124,7 +124,7 @@ public class BaseEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "BaseEntity{" +
+        return "SysBase{" +
                 "id=" + this.getId() +
                 ", createUsername=" + this.getCreateUsername() +
                 ", createTimestamp=" + this.getCreateTimestamp() +

@@ -5,7 +5,9 @@ import com.admin.web.annotation.SysUpdate;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.springframework.util.StringUtils;
 
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -13,7 +15,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "SYS_NOTICE")
-public class SysNotice extends BaseEntity {
+public class SysNotice extends SysBase {
     @Column(name = "TITLE")
     @NotBlank(message = "标题不能为空！", groups = {SysCreate.class, SysUpdate.class})
     @Size(min = 2, max = 255, message = "标题长度应在2-255之间！", groups = {SysCreate.class, SysUpdate.class})
@@ -70,8 +72,7 @@ public class SysNotice extends BaseEntity {
     public String toString() {
         return "SysNotice{" +
                 "title='" + this.getTitle() + '\'' +
-                ", content='" + this.getContent() + '\'' +
-                ", users=" + this.getUsers() +
+                ", content='" + StringUtils.truncate(Objects.toString(this.getContent())) + '\'' +
                 '}';
     }
 }

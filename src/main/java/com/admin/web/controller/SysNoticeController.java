@@ -1,7 +1,7 @@
 package com.admin.web.controller;
 
 import com.admin.web.annotation.*;
-import com.admin.web.model.ServerResponseEntity;
+import com.admin.web.model.ServerResponse;
 import com.admin.web.model.SysNotice;
 import com.admin.web.model.vo.NoticeVo;
 import com.admin.web.service.SysNoticeService;
@@ -25,39 +25,39 @@ public class SysNoticeController extends BaseController {
 
     @SysPermissions(SysLogin.class)
     @PostMapping("/all")
-    public ServerResponseEntity<List<SysNotice>> all(@RequestBody @Validated NoticeVo vo) {
+    public ServerResponse<List<SysNotice>> all(@RequestBody @Validated NoticeVo vo) {
         Page<SysNotice> sysNotices = this.sysNoticeService.all(vo, super.getSysUser());
-        return ServerResponseEntity.ok(sysNotices.getTotalElements(), sysNotices.getContent());
+        return ServerResponse.ok(sysNotices.getTotalElements(), sysNotices.getContent());
     }
 
     @SysPermissions(SysLogin.class)
     @PostMapping("/show")
-    public ServerResponseEntity<SysNotice> show(@RequestBody Long id) {
+    public ServerResponse<SysNotice> show(@RequestBody Long id) {
         SysNotice sysNotice = this.sysNoticeService.show(id, super.getSysUser());
-        return ServerResponseEntity.ok(sysNotice);
+        return ServerResponse.ok(sysNotice);
     }
 
     @SysLog("创建通知公告")
     @SysPermissions
     @PostMapping("/create")
-    public ServerResponseEntity<?> create(@RequestBody @Validated(SysCreate.class) SysNotice sysNotice) {
+    public ServerResponse<?> create(@RequestBody @Validated(SysCreate.class) SysNotice sysNotice) {
         this.sysNoticeService.create(sysNotice);
-        return ServerResponseEntity.ok();
+        return ServerResponse.ok();
     }
 
     @SysLog("修改通知公告")
     @SysPermissions
     @PutMapping("/update")
-    public ServerResponseEntity<?> update(@RequestBody @Validated(SysUpdate.class) SysNotice sysNotice) {
+    public ServerResponse<?> update(@RequestBody @Validated(SysUpdate.class) SysNotice sysNotice) {
         this.sysNoticeService.update(sysNotice, super.getSysUser());
-        return ServerResponseEntity.ok();
+        return ServerResponse.ok();
     }
 
     @SysLog("删除通知公告")
     @SysPermissions
     @DeleteMapping("/delete")
-    public ServerResponseEntity<?> delete(@RequestBody Long id) {
+    public ServerResponse<?> delete(@RequestBody Long id) {
         this.sysNoticeService.delete(id, super.getSysUser());
-        return ServerResponseEntity.ok();
+        return ServerResponse.ok();
     }
 }

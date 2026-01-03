@@ -15,7 +15,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "SYS_USER")
-public class SysUser extends BaseEntity {
+public class SysUser extends SysBase {
     @Column(name = "USERNAME")
     @NotBlank(message = "用户名不能为空！", groups = {SysCreate.class})
     @Size(min = 2, max = 32, message = "用户名长度应在2-32之间！", groups = {SysCreate.class})
@@ -48,11 +48,6 @@ public class SysUser extends BaseEntity {
 
     public SysUser() {
         super();
-    }
-
-    public SysUser(Long id, String username) {
-        this.setId(id);
-        this.setUsername(username);
         this.setPassword(null);
         this.setMobile(null);
         this.setEmail(null);
@@ -60,7 +55,13 @@ public class SysUser extends BaseEntity {
         this.setPassTimestamp(null);
         this.setSysAdmin(false);
         this.setRoles(null);
-        this.setNotices(null);
+        this.setNotices(this.getNotices());
+    }
+
+    public SysUser(Long id, String username) {
+        this();
+        this.setId(id);
+        this.setUsername(username);
     }
 
     public String getUsername() {
@@ -156,8 +157,6 @@ public class SysUser extends BaseEntity {
                 ", avatar='" + this.getAvatar() + '\'' +
                 ", passTimestamp=" + this.getPassTimestamp() +
                 ", sysAdmin=" + this.isSysAdmin() +
-                ", roles=" + this.getRoles() +
-                ", notices=" + this.getNotices() +
                 '}';
     }
 }

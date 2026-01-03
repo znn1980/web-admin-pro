@@ -29,7 +29,7 @@
 </script>
 <script type="text/html" id="sys-role-toolbar">
     <div class="layui-btn-group">
-        <button class="layui-btn layui-btn-sm" lay-event="sys-save-toolbar">
+        <button class="layui-btn layui-btn-sm" lay-event="sys-add-toolbar">
             <i class="layui-icon layui-icon-add-1"></i>创建
         </button>
         <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="sys-edit-toolbar">
@@ -135,7 +135,7 @@
         });
 
         layui.table.on('toolbar(sys-role-table)', function (e) {
-            if (e.event === 'sys-save-toolbar') {
+            if (e.event === 'sys-add-toolbar') {
                 layui.$('#id').val('');
                 layui.$('#sys-role-form')[0].reset();
                 load(function () {

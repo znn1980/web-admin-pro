@@ -2,7 +2,7 @@ package com.admin.web.service;
 
 import com.admin.web.annotation.SysLog;
 import com.admin.web.dao.SysUserLogDao;
-import com.admin.web.exception.WebServerException;
+import com.admin.web.exception.ServerResponseException;
 import com.admin.web.model.SysUserLog;
 import com.admin.web.model.vo.UserLogVo;
 
@@ -72,9 +72,9 @@ public class SysUserLogService {
             sysUserLog.setResult(result.toString());
         }
         if (Objects.nonNull(error)) {
-            if (error instanceof WebServerException e
-                    && Objects.nonNull(e.getServerResponseEntity())) {
-                sysUserLog.setResult(e.getServerResponseEntity().toString());
+            if (error instanceof ServerResponseException e
+                    && Objects.nonNull(e.getServerResponse())) {
+                sysUserLog.setResult(e.getServerResponse().toString());
             } else {
                 sysUserLog.setErrors(new StringWriter() {{
                     error.printStackTrace(new PrintWriter(this, true));

@@ -13,7 +13,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "SYS_ROLE")
-public class SysRole extends BaseEntity {
+public class SysRole extends SysBase {
     @Column(name = "NAME")
     @NotBlank(message = "角色名称不能为空！", groups = {SysCreate.class, SysUpdate.class})
     @Size(min = 2, max = 32, message = "角色名称长度应在2-32之间！")
@@ -73,7 +73,6 @@ public class SysRole extends BaseEntity {
                 "SysRole{" +
                 "name='" + this.getName() + '\'' +
                 ", sort=" + this.getSort() +
-                ", menus=" + this.getMenus() +
                 '}';
     }
 }

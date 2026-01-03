@@ -1,5 +1,6 @@
 package com.admin.web.model.vo;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.PageRequest;
@@ -12,10 +13,11 @@ import java.util.Objects;
  */
 public class PageVo implements Serializable {
     @NotNull(message = "页码不能为空！")
-    @Min(value = 1, message = "页码不得小于零！")
+    @Min(value = 1, message = "页码不得小于壹！")
     private Integer page;
     @NotNull(message = "每页数据不能为空！")
     @Min(value = 1, message = "每页数据不得小于壹！")
+    @Max(value = 100, message = "每页数据不得大于壹佰！")
     private Integer limit;
     private SortVo sort;
 
@@ -26,7 +28,7 @@ public class PageVo implements Serializable {
     }
 
     public Integer getPage() {
-        return page - 1;
+        return page;
     }
 
     public void setPage(Integer page) {
@@ -51,7 +53,7 @@ public class PageVo implements Serializable {
 
     @Override
     public String toString() {
-        return "PageVo{" +
+        return "Page{" +
                 "page=" + this.getPage() +
                 ", limit=" + this.getLimit() +
                 ", sort=" + this.getSort() +
@@ -60,6 +62,6 @@ public class PageVo implements Serializable {
 
     public static PageRequest of(PageVo vo) {
         return Objects.isNull(vo) ? PageRequest.ofSize(10)
-                : PageRequest.of(vo.getPage(), vo.getLimit(), SortVo.by(vo.getSort()));
+                : PageRequest.of(vo.getPage() - 1, vo.getLimit(), SortVo.by(vo.getSort()));
     }
 }

@@ -35,7 +35,7 @@ public class SortVo implements Serializable {
 
     @Override
     public String toString() {
-        return "SortVo{" +
+        return "Sort{" +
                 "field='" + this.getField() + '\'' +
                 ", order='" + this.getOrder() + '\'' +
                 '}';

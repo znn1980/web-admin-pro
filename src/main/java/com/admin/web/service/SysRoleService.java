@@ -1,8 +1,8 @@
 package com.admin.web.service;
 
 import com.admin.web.dao.SysRoleDao;
-import com.admin.web.exception.WebServerException;
-import com.admin.web.model.ServerResponseEntity;
+import com.admin.web.exception.ServerResponseException;
+import com.admin.web.model.ServerResponse;
 import com.admin.web.model.SysRole;
 import com.admin.web.model.enums.Move;
 import com.admin.web.model.vo.MoveVo;
@@ -33,7 +33,7 @@ public class SysRoleService {
     @Transactional(rollbackFor = Exception.class)
     public void move(MoveVo vo) {
         SysRole sysRole = this.sysRoleDao.findById(vo.getId())
-                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("角色不存在！")));
+                .orElseThrow(() -> new ServerResponseException(ServerResponse.fail("角色不存在！")));
         List<SysRole> sysRoles = this.sysRoleDao.findByOrderBySort();
         int index = IntStream.range(0, sysRoles.size())
                 .filter(i -> Objects.equals(sysRole.getId(), sysRoles.get(i).getId()))
@@ -50,7 +50,7 @@ public class SysRoleService {
     @Transactional(rollbackFor = Exception.class)
     public void create(SysRole sysRole) {
         if (Objects.nonNull(this.sysRoleDao.findByName(sysRole.getName()))) {
-            throw new WebServerException(ServerResponseEntity.fail("角色名称已存在！"));
+            throw new ServerResponseException(ServerResponse.fail("角色名称已存在！"));
         }
         this.sysRoleDao.save(sysRole);
         sysRole.setSort(sysRole.getId());
@@ -59,10 +59,10 @@ public class SysRoleService {
 
     public void update(SysRole sysRole) {
         SysRole oldSysRole = this.sysRoleDao.findById(sysRole.getId())
-                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("角色不存在！")));
+                .orElseThrow(() -> new ServerResponseException(ServerResponse.fail("角色不存在！")));
         if (!Objects.equals(oldSysRole.getName(), sysRole.getName())
                 && Objects.nonNull(this.sysRoleDao.findByName(sysRole.getName()))) {
-            throw new WebServerException(ServerResponseEntity.fail("角色名称已存在！"));
+            throw new ServerResponseException(ServerResponse.fail("角色名称已存在！"));
         }
         BeanUtils.copyNonNullProperties(sysRole, oldSysRole);
         this.sysRoleDao.save(oldSysRole);
@@ -70,9 +70,9 @@ public class SysRoleService {
 
     public void delete(Long id) {
         SysRole sysRole = this.sysRoleDao.findById(id)
-                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("角色不存在！")));
+                .orElseThrow(() -> new ServerResponseException(ServerResponse.fail("角色不存在！")));
         if (this.sysRoleDao.existsByRoleId(sysRole.getId())) {
-            throw new WebServerException(ServerResponseEntity.fail("此角色已绑定用户，请先解绑用户下的角色！"));
+            throw new ServerResponseException(ServerResponse.fail("此角色已绑定用户，请先解绑用户下的角色！"));
         }
         this.sysRoleDao.deleteById(id);
     }

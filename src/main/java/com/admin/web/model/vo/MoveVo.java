@@ -34,7 +34,7 @@ public class MoveVo implements Serializable {
 
     @Override
     public String toString() {
-        return "MoveVo{" +
+        return "Move{" +
                 "id=" + this.getId() +
                 ", move=" + this.getMove() +
                 '}';

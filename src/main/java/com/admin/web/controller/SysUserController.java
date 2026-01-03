@@ -1,7 +1,7 @@
 package com.admin.web.controller;
 
 import com.admin.web.annotation.*;
-import com.admin.web.model.ServerResponseEntity;
+import com.admin.web.model.ServerResponse;
 import com.admin.web.model.SysUser;
 import com.admin.web.model.vo.*;
 import com.admin.web.service.SysNoticeService;
@@ -28,80 +28,80 @@ public class SysUserController extends BaseController {
 
     @SysLog("用户登录")
     @PostMapping("/login")
-    public ServerResponseEntity<?> login(@RequestBody @Validated UserLoginVo vo) {
+    public ServerResponse<?> login(@RequestBody @Validated UserLoginVo vo) {
         SysUser sysUser = this.sysUserService.login(vo, super.getSysCode());
         super.setSysUser(sysUser);
         super.setSysCode(null);
-        return ServerResponseEntity.ok(new SessionVo(super.getSessionId()));
+        return ServerResponse.ok(new SessionVo(super.getSessionId()));
     }
 
     @SysLog("用户退出")
     @GetMapping("/logout")
-    public ServerResponseEntity<?> logout() {
+    public ServerResponse<?> logout() {
         super.setSysUser(null);
         super.setSysCode(null);
-        return ServerResponseEntity.ok();
+        return ServerResponse.ok();
     }
 
     @SysPermissions(SysLogin.class)
     @PostMapping("/unlock")
-    public ServerResponseEntity<?> unlock(@RequestBody SysUser sysUser) {
+    public ServerResponse<?> unlock(@RequestBody SysUser sysUser) {
         this.sysUserService.unlock(sysUser);
-        return ServerResponseEntity.ok();
+        return ServerResponse.ok();
     }
 
     @SysPermissions(SysLogin.class)
     @GetMapping("/me")
-    public ServerResponseEntity<SysUser> me() {
+    public ServerResponse<SysUser> me() {
         SysUser sysUser = this.sysUserService.show(super.getSysUser().getId());
         Long unRead = this.sysNoticeService.countByUserId(super.getSysUser().getId());
-        return ServerResponseEntity.ok(unRead, sysUser);
+        return ServerResponse.ok(unRead, sysUser);
     }
 
     @SysPermissions
     @PostMapping("/all")
-    public ServerResponseEntity<List<SysUser>> all(@RequestBody @Validated PageVo vo) {
+    public ServerResponse<List<SysUser>> all(@RequestBody @Validated PageVo vo) {
         Page<SysUser> sysUsers = this.sysUserService.all(vo);
-        return ServerResponseEntity.ok(sysUsers.getTotalElements(), sysUsers.getContent());
+        return ServerResponse.ok(sysUsers.getTotalElements(), sysUsers.getContent());
     }
 
     @SysLog("创建用户")
     @SysPermissions
     @PostMapping("/create")
-    public ServerResponseEntity<SysUser> create(@RequestBody @Validated(SysCreate.class) SysUser sysUser) {
+    public ServerResponse<SysUser> create(@RequestBody @Validated(SysCreate.class) SysUser sysUser) {
         this.sysUserService.create(sysUser);
-        return ServerResponseEntity.ok();
+        return ServerResponse.ok();
     }
 
     @SysLog("修改用户")
     @SysPermissions
     @PutMapping("/update")
-    public ServerResponseEntity<SysUser> update(@RequestBody @Validated(SysUpdate.class) SysUser sysUser) {
-        return ServerResponseEntity.ok(this.sysUserService.update(sysUser));
+    public ServerResponse<SysUser> update(@RequestBody @Validated(SysUpdate.class) SysUser sysUser) {
+        return ServerResponse.ok(this.sysUserService.update(sysUser));
     }
 
     @SysLog("删除用户")
     @SysPermissions
     @DeleteMapping("/delete")
-    public ServerResponseEntity<?> delete(@RequestBody Long id) {
+    public ServerResponse<?> delete(@RequestBody Long id) {
         this.sysUserService.delete(id);
-        return ServerResponseEntity.ok();
+        return ServerResponse.ok();
     }
 
     @SysLog("修改密码")
     @SysPermissions
     @PutMapping("/pass")
-    public ServerResponseEntity<?> pass(@RequestBody @Validated UserPassVo vo) {
+    public ServerResponse<?> pass(@RequestBody @Validated UserPassVo vo) {
         this.sysUserService.pass(vo);
-        return ServerResponseEntity.ok();
+        return ServerResponse.ok();
     }
 
     @SysLog("重置密码")
     @SysPermissions
     @PutMapping("/reset")
-    public ServerResponseEntity<?> reset(@RequestBody Long id) {
+    public ServerResponse<?> reset(@RequestBody Long id) {
         this.sysUserService.reset(id);
-        return ServerResponseEntity.ok();
+        return ServerResponse.ok();
     }
 
 }
