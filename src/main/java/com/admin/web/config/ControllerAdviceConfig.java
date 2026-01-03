@@ -30,14 +30,18 @@ public class ControllerAdviceConfig {
 
     @ExceptionHandler(Exception.class)
     public Object exceptionHandler(HttpServletRequest request, Exception e) {
-        log.error("SYS-ERROR => {} => URL => {} => {}", request.getMethod(), request.getRequestURI(), getHeaders(request), e);
+        log.error("SYS-ERROR => {} => URL => {}", request.getMethod(), request.getRequestURI());
+        if (!(e instanceof WebServerException)) {
+            log.error("SYS-ERROR => {}", e, e);
+        }
         if (WebUtils.isRequestRest(request)) {
             if (e instanceof WebServerException ex) {
                 return ResponseEntity.ok(Objects.requireNonNullElse(ex.getServerResponseEntity()
                         , ServerResponseEntity.fail(ex.getCode(), ex.getMessage())));
             }
-            if (e instanceof NoResourceFoundException) {
-                return ResponseEntity.ok(ServerResponseEntity.fail(e.getMessage()));
+            if (e instanceof NoResourceFoundException ex) {
+                return ResponseEntity.ok(ServerResponseEntity.fail(String.format("抱歉，你访问的资源(%s)不存在！"
+                        , ex.getResourcePath())));
             }
             if (e instanceof MethodArgumentNotValidException ex) {
                 FieldError fieldError = ex.getBindingResult().getFieldError();
@@ -64,13 +68,5 @@ public class ControllerAdviceConfig {
             return new ModelAndView("error/404");
         }
         return new ModelAndView("error/500");
-    }
-
-    static Map<String, List<String>> getHeaders(HttpServletRequest request) {
-        return new HashMap<>() {{
-            request.getHeaderNames().asIterator().forEachRemaining(name -> this.put(name, new ArrayList<>() {{
-                request.getHeaders(name).asIterator().forEachRemaining(this::add);
-            }}));
-        }};
     }
 }

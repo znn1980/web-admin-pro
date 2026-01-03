@@ -10,8 +10,10 @@ import com.admin.web.utils.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.IntStream;
 
 /**
  * @author znn
@@ -33,20 +35,15 @@ public class SysRoleService {
         SysRole sysRole = this.sysRoleDao.findById(vo.getId())
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("角色不存在！")));
         List<SysRole> sysRoles = this.sysRoleDao.findByOrderBySort();
-        int index = -1;
-        for (int i = 0; i < sysRoles.size(); i++) {
-            if (sysRoles.get(i).getId().equals(sysRole.getId())) {
-                index = i;
-                break;
-            }
-        }
-        if (Move.UP == vo.getMove() ? index > 0 : index < sysRoles.size() - 1 && index != -1) {
-            SysRole oldSysRole = sysRoles.get(Move.UP == vo.getMove() ? index - 1 : index + 1);
-            Long oldSort = oldSysRole.getSort();
+        int index = IntStream.range(0, sysRoles.size())
+                .filter(i -> Objects.equals(sysRole.getId(), sysRoles.get(i).getId()))
+                .boxed().findFirst().orElse(-1);
+        if (Objects.equals(Move.UP, vo.getMove()) ? index > 0 : index < sysRoles.size() - 1 && index != -1) {
+            SysRole oldSysRole = sysRoles.get(Objects.equals(Move.UP, vo.getMove()) ? index - 1 : index + 1);
+            Long oldSysRoleSort = oldSysRole.getSort();
             oldSysRole.setSort(sysRole.getSort());
-            sysRole.setSort(oldSort);
-            this.sysRoleDao.save(sysRole);
-            this.sysRoleDao.save(oldSysRole);
+            sysRole.setSort(oldSysRoleSort);
+            this.sysRoleDao.saveAll(Arrays.asList(sysRole, oldSysRole));
         }
     }
 

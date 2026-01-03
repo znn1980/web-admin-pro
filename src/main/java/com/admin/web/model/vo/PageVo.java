@@ -58,8 +58,8 @@ public class PageVo implements Serializable {
                 '}';
     }
 
-    public static PageRequest of(PageVo pageVo) {
-        return Objects.isNull(pageVo) ? PageRequest.ofSize(10)
-                : PageRequest.of(pageVo.getPage(), pageVo.getLimit(), SortVo.by(pageVo.getSort()));
+    public static PageRequest of(PageVo vo) {
+        return Objects.isNull(vo) ? PageRequest.ofSize(10)
+                : PageRequest.of(vo.getPage(), vo.getLimit(), SortVo.by(vo.getSort()));
     }
 }

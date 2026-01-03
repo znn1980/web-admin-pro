@@ -41,9 +41,9 @@ public class SortVo implements Serializable {
                 '}';
     }
 
-    public static Sort by(SortVo sortVo) {
-        return ObjectUtils.isEmpty(sortVo)
-                || ObjectUtils.isEmpty(sortVo.getField()) || ObjectUtils.isEmpty(sortVo.getOrder())
-                ? Sort.unsorted() : Sort.by(Sort.Direction.fromString(sortVo.getOrder()), sortVo.getField());
+    public static Sort by(SortVo vo) {
+        return ObjectUtils.isEmpty(vo)
+                || ObjectUtils.isEmpty(vo.getField()) || ObjectUtils.isEmpty(vo.getOrder())
+                ? Sort.unsorted() : Sort.by(Sort.Direction.fromString(vo.getOrder()), vo.getField());
     }
 }

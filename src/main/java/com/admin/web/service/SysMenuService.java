@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * @author znn
@@ -47,20 +48,15 @@ public class SysMenuService {
         SysMenu sysMenu = this.sysMenuDao.findById(vo.getId())
                 .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("菜单不存在！")));
         List<SysMenu> sysMenus = this.sysMenuDao.findByPidOrderBySort(sysMenu.getPid());
-        int index = -1;
-        for (int i = 0; i < sysMenus.size(); i++) {
-            if (sysMenus.get(i).getId().equals(sysMenu.getId())) {
-                index = i;
-                break;
-            }
-        }
-        if (Move.UP == vo.getMove() ? index > 0 : index < sysMenus.size() - 1 && index != -1) {
-            SysMenu oldSysMenu = sysMenus.get(Move.UP == vo.getMove() ? index - 1 : index + 1);
-            Long oldSort = oldSysMenu.getSort();
+        int index = IntStream.range(0, sysMenus.size())
+                .filter(i -> Objects.equals(sysMenu.getId(), sysMenus.get(i).getId()))
+                .boxed().findFirst().orElse(-1);
+        if (Objects.equals(Move.UP, vo.getMove()) ? index > 0 : index < sysMenus.size() - 1 && index != -1) {
+            SysMenu oldSysMenu = sysMenus.get(Objects.equals(Move.UP, vo.getMove()) ? index - 1 : index + 1);
+            Long oldSysMenuSort = oldSysMenu.getSort();
             oldSysMenu.setSort(sysMenu.getSort());
-            sysMenu.setSort(oldSort);
-            this.sysMenuDao.save(sysMenu);
-            this.sysMenuDao.save(oldSysMenu);
+            sysMenu.setSort(oldSysMenuSort);
+            this.sysMenuDao.saveAll(Arrays.asList(sysMenu, oldSysMenu));
         }
     }
 
