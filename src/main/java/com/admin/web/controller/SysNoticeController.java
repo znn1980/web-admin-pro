@@ -1,19 +1,15 @@
 package com.admin.web.controller;
 
 import com.admin.web.annotation.*;
-import com.admin.web.exception.WebServerException;
 import com.admin.web.model.ServerResponseEntity;
 import com.admin.web.model.SysNotice;
 import com.admin.web.model.vo.NoticeVo;
-import com.admin.web.model.vo.PageVo;
 import com.admin.web.service.SysNoticeService;
-import com.admin.web.utils.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author znn
@@ -29,22 +25,15 @@ public class SysNoticeController extends BaseController {
 
     @SysPermissions(SysLogin.class)
     @PostMapping("/all")
-    public ServerResponseEntity<List<SysNotice>> all(@RequestBody @Validated NoticeVo noticeVo) {
-        noticeVo.setUser(super.getSysUser());
-        Page<SysNotice> sysNotices = this.sysNoticeService.findAll(noticeVo, PageVo.of(noticeVo));
+    public ServerResponseEntity<List<SysNotice>> all(@RequestBody @Validated NoticeVo vo) {
+        Page<SysNotice> sysNotices = this.sysNoticeService.all(vo, super.getSysUser());
         return ServerResponseEntity.ok(sysNotices.getTotalElements(), sysNotices.getContent());
     }
 
     @SysPermissions(SysLogin.class)
     @PostMapping("/show")
     public ServerResponseEntity<SysNotice> show(@RequestBody Long id) {
-        SysNotice sysNotice = this.sysNoticeService.findById(id)
-                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("通知公告不存在！")));
-        if (!Objects.equals(sysNotice.getCreateUsername(), super.getSysUser().getUsername())
-                && !super.isSuperAdmin() && sysNotice.isDisable()) {
-            return ServerResponseEntity.fail("您不能查看已禁用通知公告！");
-        }
-        this.sysNoticeService.save(sysNotice, super.getSysUser());
+        SysNotice sysNotice = this.sysNoticeService.show(id, super.getSysUser());
         return ServerResponseEntity.ok(sysNotice);
     }
 
@@ -52,7 +41,7 @@ public class SysNoticeController extends BaseController {
     @SysPermissions
     @PostMapping("/create")
     public ServerResponseEntity<?> create(@RequestBody @Validated(SysCreate.class) SysNotice sysNotice) {
-        this.sysNoticeService.save(sysNotice);
+        this.sysNoticeService.create(sysNotice);
         return ServerResponseEntity.ok();
     }
 
@@ -60,15 +49,7 @@ public class SysNoticeController extends BaseController {
     @SysPermissions
     @PutMapping("/update")
     public ServerResponseEntity<?> update(@RequestBody @Validated(SysUpdate.class) SysNotice sysNotice) {
-        SysNotice oldSysNotice = this.sysNoticeService.findById(sysNotice.getId())
-                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("通知公告不存在！")));
-        if (!super.isSuperAdmin()
-                && !Objects.equals(oldSysNotice.getCreateUsername(), super.getSysUser().getUsername())) {
-            return ServerResponseEntity.fail("您只能修改自己发布的通知公告！");
-        }
-        sysNotice.setUsers(null);
-        BeanUtils.copyNonNullProperties(sysNotice, oldSysNotice);
-        this.sysNoticeService.save(oldSysNotice);
+        this.sysNoticeService.update(sysNotice, super.getSysUser());
         return ServerResponseEntity.ok();
     }
 
@@ -76,13 +57,7 @@ public class SysNoticeController extends BaseController {
     @SysPermissions
     @DeleteMapping("/delete")
     public ServerResponseEntity<?> delete(@RequestBody Long id) {
-        SysNotice sysNotice = this.sysNoticeService.findById(id)
-                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("通知公告不存在！")));
-        if (!super.isSuperAdmin()
-                && !Objects.equals(sysNotice.getCreateUsername(), super.getSysUser().getUsername())) {
-            return ServerResponseEntity.fail("您只能删除自己发布的通知公告！");
-        }
-        this.sysNoticeService.deleteById(id);
+        this.sysNoticeService.delete(id, super.getSysUser());
         return ServerResponseEntity.ok();
     }
 }

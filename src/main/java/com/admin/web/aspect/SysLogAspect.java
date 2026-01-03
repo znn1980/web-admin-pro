@@ -1,15 +1,8 @@
 package com.admin.web.aspect;
 
 import com.admin.web.annotation.SysLog;
-import com.admin.web.model.SysUser;
 import com.admin.web.model.SysUserLog;
 import com.admin.web.service.SysUserLogService;
-import com.admin.web.utils.SecurityUtils;
-import com.admin.web.utils.UserAgentUtils;
-import com.admin.web.utils.WebUtils;
-import eu.bitwalker.useragentutils.UserAgent;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -19,14 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.NamedThreadLocal;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.StringJoiner;
 
 /**
  * @author znn
@@ -50,68 +35,21 @@ public class SysLogAspect {
 
     @AfterReturning(pointcut = "@annotation(sysLog)", returning = "result")
     public void doAfterReturning(JoinPoint joinPoint, SysLog sysLog, Object result) {
-        this.doAround(joinPoint, sysLog, result, null);
+        this.doAround(sysLog, joinPoint.getArgs(), result, null);
     }
 
     @AfterThrowing(value = "@annotation(sysLog)", throwing = "e")
     public void doAfterThrowing(JoinPoint joinPoint, SysLog sysLog, Exception e) {
-        this.doAround(joinPoint, sysLog, null, e);
+        this.doAround(sysLog, joinPoint.getArgs(), null, e);
     }
 
-    void doAround(JoinPoint joinPoint, SysLog sysLog, Object result, Exception e) {
+    private void doAround(SysLog sysLog, Object[] args, Object result, Exception e) {
         try {
-            UserAgent userAgent = UserAgentUtils.getUserAgent(WebUtils.getRequest());
-            SysUserLog sysUserLog = new SysUserLog();
-            sysUserLog.setUsername(this.getSysUser().getUsername());
-            sysUserLog.setIp(WebUtils.getClientIp(WebUtils.getRequest()));
-            sysUserLog.setOs(UserAgentUtils.getOs(userAgent));
-            sysUserLog.setBrowser(UserAgentUtils.getBrowser(userAgent));
-            sysUserLog.setMethod(WebUtils.getRequest().getMethod());
-            sysUserLog.setUrl(WebUtils.getRequest().getRequestURI());
-            sysUserLog.setName(sysLog.value());
-            if (Objects.nonNull(joinPoint.getArgs())) {
-                sysUserLog.setParams(this.getParams(joinPoint.getArgs()));
-                log.info("SYS-REQUEST => {}", sysUserLog.getParams());
-            }
-            if (Objects.nonNull(result)) {
-                sysUserLog.setResult(result.toString());
-                log.info("SYS-RESPONSE => {}", sysUserLog.getResult());
-            }
-            if (Objects.nonNull(e)) {
-                sysUserLog.setErrors(this.getStackTrace(e));
-            }
-            sysUserLog.setMs(System.currentTimeMillis() - THREAD_LOCAL.get());
-            sysUserLog.setTimestamp(LocalDateTime.now());
-            this.sysUserLogService.save(sysUserLog);
+            SysUserLog sysUserLog = this.sysUserLogService.log(sysLog, args, result, e, THREAD_LOCAL.get());
+            log.info("SYS-REQUEST => {}", sysUserLog.getParams());
+            log.info("SYS-RESPONSE => {}", sysUserLog.getResult());
         } finally {
             THREAD_LOCAL.remove();
         }
-    }
-
-    private SysUser getSysUser() {
-        SysUser sysUser = SecurityUtils.getSysUser(WebUtils.getRequest());
-        return Objects.requireNonNullElse(sysUser, SecurityUtils.getSysUser());
-    }
-
-    private boolean filterObject(Object o) {
-        return o instanceof MultipartFile
-                || o instanceof HttpServletRequest
-                || o instanceof HttpServletResponse;
-    }
-
-    private String getParams(Object[] args) {
-        StringJoiner params = new StringJoiner(System.lineSeparator());
-        Arrays.asList(args).forEach(arg -> {
-            if (Objects.nonNull(arg) && !this.filterObject(arg)) {
-                params.add(arg.toString());
-            }
-        });
-        return params.toString();
-    }
-
-    private String getStackTrace(Exception e) {
-        return new StringWriter() {{
-            e.printStackTrace(new PrintWriter(this, true));
-        }}.toString();
     }
 }

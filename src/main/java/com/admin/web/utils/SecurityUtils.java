@@ -48,4 +48,8 @@ public class SecurityUtils {
     public static String hexPassword(String password) {
         return DigestUtils.md5DigestAsHex(String.format(PASSWORD_SALT, password).getBytes());
     }
+
+    public static String hexPassword(SysUser sysUser) {
+        return hexPassword(sysUser.getMobile().substring(sysUser.getMobile().length() - 6));
+    }
 }

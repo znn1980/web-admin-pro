@@ -1,6 +1,5 @@
 package com.admin.web.controller;
 
-import com.admin.web.exception.WebServerException;
 import com.admin.web.annotation.SysCreate;
 import com.admin.web.annotation.SysLog;
 import com.admin.web.annotation.SysPermissions;
@@ -9,12 +8,10 @@ import com.admin.web.model.ServerResponseEntity;
 import com.admin.web.model.SysRole;
 import com.admin.web.model.vo.MoveVo;
 import com.admin.web.service.SysRoleService;
-import com.admin.web.utils.BeanUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author znn
@@ -31,17 +28,15 @@ public class SysRoleController extends BaseController {
     @SysPermissions
     @GetMapping("/all")
     public ServerResponseEntity<List<SysRole>> all() {
-        List<SysRole> sysRoles = this.sysRoleService.findAll();
+        List<SysRole> sysRoles = this.sysRoleService.all();
         return ServerResponseEntity.ok(sysRoles);
     }
 
     @SysLog("移动角色")
     @SysPermissions
     @PutMapping("/move")
-    public ServerResponseEntity<?> move(@RequestBody MoveVo moveVo) {
-        SysRole sysRole = this.sysRoleService.findById(moveVo.getId())
-                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("角色不存在！")));
-        this.sysRoleService.move(sysRole, moveVo.getMove());
+    public ServerResponseEntity<?> move(@RequestBody MoveVo vo) {
+        this.sysRoleService.move(vo);
         return ServerResponseEntity.ok();
     }
 
@@ -49,10 +44,7 @@ public class SysRoleController extends BaseController {
     @SysPermissions
     @PostMapping("/create")
     public ServerResponseEntity<?> create(@RequestBody @Validated(SysCreate.class) SysRole sysRole) {
-        if (Objects.nonNull(this.sysRoleService.findByName(sysRole.getName()))) {
-            return ServerResponseEntity.fail("角色名称已存在！");
-        }
-        this.sysRoleService.save(sysRole);
+        this.sysRoleService.create(sysRole);
         return ServerResponseEntity.ok();
     }
 
@@ -60,14 +52,7 @@ public class SysRoleController extends BaseController {
     @SysPermissions
     @PutMapping("/update")
     public ServerResponseEntity<?> update(@RequestBody @Validated(SysUpdate.class) SysRole sysRole) {
-        SysRole oldSysRole = this.sysRoleService.findById(sysRole.getId())
-                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("角色不存在！")));
-        if (!Objects.equals(oldSysRole.getName(), sysRole.getName())
-                && Objects.nonNull(this.sysRoleService.findByName(sysRole.getName()))) {
-            return ServerResponseEntity.fail("角色名称已存在！");
-        }
-        BeanUtils.copyNonNullProperties(sysRole, oldSysRole);
-        this.sysRoleService.save(oldSysRole);
+        this.sysRoleService.update(sysRole);
         return ServerResponseEntity.ok();
     }
 
@@ -75,12 +60,7 @@ public class SysRoleController extends BaseController {
     @SysPermissions
     @DeleteMapping("/delete")
     public ServerResponseEntity<?> delete(@RequestBody Long id) {
-        SysRole sysRole = this.sysRoleService.findById(id)
-                .orElseThrow(() -> new WebServerException(ServerResponseEntity.fail("角色不存在！")));
-        if (this.sysRoleService.existsByRoleId(sysRole.getId())) {
-            return ServerResponseEntity.fail("此角色已绑定用户，请先解绑用户下的角色！");
-        }
-        this.sysRoleService.deleteById(sysRole.getId());
+        this.sysRoleService.delete(id);
         return ServerResponseEntity.ok();
     }
 
