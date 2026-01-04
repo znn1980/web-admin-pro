@@ -11,15 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
-
-import java.util.*;
 
 /**
  * @author znn
@@ -39,16 +36,13 @@ public class ControllerAdviceConfig {
                 return ResponseEntity.ok(ex.getServerResponse());
             }
             if (e instanceof NoResourceFoundException ex) {
-                return ResponseEntity.ok(ServerResponse.fail(String.format("抱歉，你访问的资源(%s)不存在！"
-                        , ex.getResourcePath())));
+                return ResponseEntity.ok(ServerResponse.fail(String.format("访问的资源(%s)不存在！", ex.getResourcePath())));
             }
             if (e instanceof MethodArgumentNotValidException ex) {
-                FieldError fieldError = ex.getBindingResult().getFieldError();
-                return ResponseEntity.ok(ServerResponse.fail(fieldError.getDefaultMessage()));
+                return ResponseEntity.ok(ServerResponse.fail(ex.getBindingResult().getFieldError().getDefaultMessage()));
             }
             if (e instanceof BindException ex) {
-                FieldError fieldError = ex.getBindingResult().getFieldError();
-                return ResponseEntity.ok(ServerResponse.fail(fieldError.getDefaultMessage()));
+                return ResponseEntity.ok(ServerResponse.fail(ex.getBindingResult().getFieldError().getDefaultMessage()));
             }
             if (e instanceof MaxUploadSizeExceededException ex) {
                 if (e.getCause().getCause() instanceof FileSizeLimitExceededException exx) {

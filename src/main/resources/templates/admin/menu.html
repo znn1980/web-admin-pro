@@ -180,7 +180,7 @@
 
         layui.treeTable.render({
             elem: '#sys-menu-table'
-            , url: `${config.base}sys/menu/all`
+            , url: `${config.base}sys/menu/all.json`
             , toolbar: '#sys-menu-toolbar'
             , tree: {
                 customName: {name: 'title', pid: 'pid'}
@@ -261,7 +261,7 @@
                     , data: [{id: 'UP', title: '上移'}, {id: 'DOWN', title: '下移'}]
                     , click: function (data) {
                         if (data.id === 'UP' || data.id === 'DOWN') {
-                            layui.common.req(`${config.base}sys/menu/move`, 'PUT', {
+                            layui.common.req(`${config.base}sys/menu/move.json`, 'PUT', {
                                 id: e.data.id, move: data.id
                             }, {
                                 done: function (data) {
@@ -282,7 +282,7 @@
             }, function (index) {
                 layui.layer.close(index);
                 menu.sysMenu = data.elem.checked;
-                layui.common.req(`${config.base}sys/menu/update`, 'PUT', menu, {
+                layui.common.req(`${config.base}sys/menu/update.json`, 'PUT', menu, {
                     done: function (data) {
                         layui.layer.msg(data.msg);
                     }
@@ -302,7 +302,7 @@
             }, function (index) {
                 layui.layer.close(index);
                 menu.disable = !data.elem.checked;
-                layui.common.req(`${config.base}sys/menu/update`, 'PUT', menu, {
+                layui.common.req(`${config.base}sys/menu/update.json`, 'PUT', menu, {
                     done: function (data) {
                         layui.layer.msg(data.msg);
                     }
@@ -316,7 +316,7 @@
         });
 
         function load(callback) {
-            layui.common.req(`${config.base}sys/menu/all`, 'GET', null, {
+            layui.common.req(`${config.base}sys/menu/all.json`, 'GET', null, {
                 done: function (data) {
                     xmSelect.render({
                         el: '#sys-menu', direction: 'down'
@@ -346,7 +346,7 @@
                         const pid = xmSelect.get('#sys-menu', true).getValue('valueStr');
                         data.field.pid = pid ? pid : null;
                         layui.layer.close(index);
-                        layui.common.req(`${config.base}sys/menu/${type === 'POST' ? 'create' : 'update'}`, type, data.field, {
+                        layui.common.req(`${config.base}sys/menu/${type === 'POST' ? 'create.json' : 'update.json'}`, type, data.field, {
                             done: function (data) {
                                 layui.layer.msg(data.msg);
                                 layui.table.reload('sys-menu-table');
@@ -363,7 +363,7 @@
                 title: '删除菜单', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);
-                layui.common.req(`${config.base}sys/menu/delete`, 'DELETE', menu.id, {
+                layui.common.req(`${config.base}sys/menu/delete.json`, 'DELETE', menu.id, {
                     done: function (data) {
                         layui.layer.msg(data.msg);
                         layui.table.reload('sys-menu-table');

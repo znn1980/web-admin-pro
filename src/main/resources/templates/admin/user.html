@@ -129,7 +129,7 @@
 
         layui.table.render({
             elem: '#sys-user-table'
-            , url: `${config.base}sys/user/all`
+            , url: `${config.base}sys/user/all.json`
             , method: 'POST', contentType: "application/json;charset=UTF-8"
             , toolbar: '#sys-user-toolbar'
             , cols: [
@@ -189,7 +189,7 @@
                             title: '重置密码', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
                         }, function (index) {
                             layui.layer.close(index);
-                            layui.common.req(`${config.base}sys/user/reset`, 'PUT', users[0].id, {
+                            layui.common.req(`${config.base}sys/user/reset.json`, 'PUT', users[0].id, {
                                 done: function (data) {
                                     layui.layer.msg(data.msg);
                                 }
@@ -225,7 +225,7 @@
             }, function (index) {
                 layui.layer.close(index);
                 user.sysAdmin = data.elem.checked;
-                layui.common.req(`${config.base}sys/user/update`, 'PUT', user, {
+                layui.common.req(`${config.base}sys/user/update.json`, 'PUT', user, {
                     done: function (data) {
                         layui.layer.msg(data.msg);
                     }
@@ -245,7 +245,7 @@
             }, function (index) {
                 layui.layer.close(index);
                 user.disable = !data.elem.checked;
-                layui.common.req(`${config.base}sys/user/update`, 'PUT', user, {
+                layui.common.req(`${config.base}sys/user/update.json`, 'PUT', user, {
                     done: function (data) {
                         layui.layer.msg(data.msg);
                     }
@@ -259,7 +259,7 @@
         });
 
         function load(callback) {
-            layui.common.req(`${config.base}sys/role/all`, 'GET', null, {
+            layui.common.req(`${config.base}sys/role/all.json`, 'GET', null, {
                 done: function (data) {
                     xmSelect.render({
                         el: '#sys-role', direction: 'up', autoRow: true
@@ -284,7 +284,7 @@
                         data.field.disable = data.field.disable !== 'on';
                         data.field.roles = xmSelect.get('#sys-role', true).getValue();
                         layui.layer.close(index);
-                        layui.common.req(`${config.base}sys/user/${type === 'POST' ? 'create' : 'update'}`, type, data.field, {
+                        layui.common.req(`${config.base}sys/user/${type === 'POST' ? 'create.json' : 'update.json'}`, type, data.field, {
                             done: function (data) {
                                 layui.layer.msg(data.msg);
                                 layui.table.reload('sys-user-table');
@@ -301,7 +301,7 @@
                 title: '删除用户', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);
-                layui.common.req(`${config.base}sys/user/delete`, 'DELETE', user.id, {
+                layui.common.req(`${config.base}sys/user/delete.json`, 'DELETE', user.id, {
                     done: function (data) {
                         layui.layer.msg(data.msg);
                         layui.table.reload('sys-user-table');

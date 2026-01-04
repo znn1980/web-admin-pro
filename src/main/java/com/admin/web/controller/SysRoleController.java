@@ -26,7 +26,7 @@ public class SysRoleController extends BaseController {
     }
 
     @SysPermissions
-    @GetMapping("/all")
+    @GetMapping("/all.json")
     public ServerResponse<List<SysRole>> all() {
         List<SysRole> sysRoles = this.sysRoleService.all();
         return ServerResponse.ok(sysRoles);
@@ -34,7 +34,7 @@ public class SysRoleController extends BaseController {
 
     @SysLog("移动角色")
     @SysPermissions
-    @PutMapping("/move")
+    @PutMapping("/move.json")
     public ServerResponse<?> move(@RequestBody MoveVo vo) {
         this.sysRoleService.move(vo);
         return ServerResponse.ok();
@@ -42,7 +42,7 @@ public class SysRoleController extends BaseController {
 
     @SysLog("创建角色")
     @SysPermissions
-    @PostMapping("/create")
+    @PostMapping("/create.json")
     public ServerResponse<?> create(@RequestBody @Validated(SysCreate.class) SysRole sysRole) {
         this.sysRoleService.create(sysRole);
         return ServerResponse.ok();
@@ -50,7 +50,7 @@ public class SysRoleController extends BaseController {
 
     @SysLog("修改角色")
     @SysPermissions
-    @PutMapping("/update")
+    @PutMapping("/update.json")
     public ServerResponse<?> update(@RequestBody @Validated(SysUpdate.class) SysRole sysRole) {
         this.sysRoleService.update(sysRole);
         return ServerResponse.ok();
@@ -58,7 +58,7 @@ public class SysRoleController extends BaseController {
 
     @SysLog("删除角色")
     @SysPermissions
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete.json")
     public ServerResponse<?> delete(@RequestBody Long id) {
         this.sysRoleService.delete(id);
         return ServerResponse.ok();

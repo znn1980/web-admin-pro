@@ -130,7 +130,7 @@
         setInterval(load, 1000 * 10);
 
         function load() {
-            layui.common.req(`${config.base}sys/monitor`, 'GET', null, {
+            layui.common.req(`${config.base}sys/monitor.json`, 'GET', null, {
                 done: function (data) {
                     osSys.setOption(gauge(layui.common.asRate(data.data.osSys.cpuLoad)));
                     osSysMem.setOption(gauge(layui.common.asRate(data.data.osSysMem.usedMemorySize / data.data.osSysMem.totalMemorySize)));

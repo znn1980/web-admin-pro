@@ -251,7 +251,7 @@
 
         layui.table.render({
             elem: '#sys-log-table'
-            , url: `${config.base}sys/log/me`
+            , url: `${config.base}sys/log/me.json`
             , method: 'POST', contentType: "application/json;charset=UTF-8"
             , where: {
                 startTimestamp: (layui.$('#timestamp').val().split(":")[0]
@@ -288,7 +288,7 @@
                         title: '删除', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
                     }, function (index) {
                         layui.layer.close(index);
-                        layui.common.req(`${config.base}sys/log/delete`, 'DELETE', logs.map(log => log.id), {
+                        layui.common.req(`${config.base}sys/log/delete.json`, 'DELETE', logs.map(log => log.id), {
                             done: function () {
                                 layui.layer.msg(data.msg);
                                 layui.table.reload('sys-log-table');
@@ -336,7 +336,7 @@
         }
 
         layui.form.on('submit(sys-user-submit)', function (data) {
-            layui.common.req(`${config.base}sys/user/update`, 'PUT', data.field, {
+            layui.common.req(`${config.base}sys/user/update.json`, 'PUT', data.field, {
                 done: function (data) {
                     layui.layer.msg(data.msg);
                     load(data.data);
@@ -345,7 +345,7 @@
         });
 
         layui.form.on('submit(sys-pass-submit)', function (data) {
-            layui.common.req(`${config.base}sys/user/pass`, 'PUT', data.field, {
+            layui.common.req(`${config.base}sys/user/pass.json`, 'PUT', data.field, {
                 done: function (data) {
                     layui.layer.msg(data.msg);
                     layui.$('#sys-pass-form')[0].reset();
@@ -353,7 +353,7 @@
             });
         });
 
-        layui.common.req(`${config.base}sys/user/me`, 'GET', null, {
+        layui.common.req(`${config.base}sys/user/me.json`, 'GET', null, {
             done: function (data) {
                 load(data.data);
             }

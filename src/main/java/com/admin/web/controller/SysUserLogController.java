@@ -24,7 +24,7 @@ public class SysUserLogController extends BaseController {
     }
 
     @SysPermissions(SysLogin.class)
-    @PostMapping("/me")
+    @PostMapping("/me.json")
     public ServerResponse<List<SysUserLog>> me(@RequestBody @Validated UserLogVo vo) {
         vo.setUsername(super.getSysUser().getUsername());
         Page<SysUserLog> logs = this.sysUserLogService.all(vo);
@@ -32,14 +32,14 @@ public class SysUserLogController extends BaseController {
     }
 
     @SysPermissions
-    @PostMapping("/all")
+    @PostMapping("/all.json")
     public ServerResponse<List<SysUserLog>> all(@RequestBody @Validated UserLogVo vo) {
         Page<SysUserLog> logs = this.sysUserLogService.all(vo);
         return ServerResponse.ok(logs.getTotalElements(), logs.getContent());
     }
 
     @SysPermissions
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete.json")
     public ServerResponse<?> delete(@RequestBody List<Long> id) {
         this.sysUserLogService.delete(id);
         return ServerResponse.ok();

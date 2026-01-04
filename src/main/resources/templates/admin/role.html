@@ -97,7 +97,7 @@
 
         layui.table.render({
             elem: '#sys-role-table'
-            , url: `${config.base}sys/role/all`
+            , url: `${config.base}sys/role/all.json`
             , toolbar: '#sys-role-toolbar'
             , cols: [
                 [
@@ -121,7 +121,7 @@
             }, function (index) {
                 layui.layer.close(index);
                 role.disable = !data.elem.checked;
-                layui.common.req(`${config.base}sys/role/update`, 'PUT', role, {
+                layui.common.req(`${config.base}sys/role/update.json`, 'PUT', role, {
                     done: function (data) {
                         layui.layer.msg(data.msg);
                     }
@@ -184,7 +184,7 @@
                     , data: [{id: 'UP', title: '上移'}, {id: 'DOWN', title: '下移'}]
                     , click: function (data) {
                         if (data.id === 'UP' || data.id === 'DOWN') {
-                            layui.common.req(`${config.base}sys/role/move`, 'PUT', {
+                            layui.common.req(`${config.base}sys/role/move.json`, 'PUT', {
                                 id: e.data.id, move: data.id
                             }, {
                                 done: function (data) {
@@ -199,7 +199,7 @@
         });
 
         function load(callback) {
-            layui.common.req(`${config.base}sys/menu/all`, 'GET', null, {
+            layui.common.req(`${config.base}sys/menu/all.json`, 'GET', null, {
                 done: function (data) {
                     xmSelect.render({
                         el: '#sys-menu', direction: 'up', autoRow: true
@@ -224,7 +224,7 @@
                         data.field.disable = data.field.disable !== 'on';
                         data.field.menus = xmSelect.get('#sys-menu', true).getValue();
                         layui.layer.close(index);
-                        layui.common.req(`${config.base}sys/role/${type === 'POST' ? 'create' : 'update'}`, type, data.field, {
+                        layui.common.req(`${config.base}sys/role/${type === 'POST' ? 'create.json' : 'update.json'}`, type, data.field, {
                             done: function (data) {
                                 layui.layer.msg(data.msg);
                                 layui.table.reload('sys-role-table');
@@ -241,7 +241,7 @@
                 title: '删除角色', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);
-                layui.common.req(`${config.base}sys/role/delete`, 'DELETE', role.id, {
+                layui.common.req(`${config.base}sys/role/delete.json`, 'DELETE', role.id, {
                     done: function (data) {
                         layui.layer.msg(data.msg);
                         layui.table.reload('sys-role-table');

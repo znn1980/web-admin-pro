@@ -155,7 +155,7 @@
                 title: '退出系统', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layer.close(index);
-                layui.common.req(`${config.base}sys/user/logout`, 'GET', null, {
+                layui.common.req(`${config.base}sys/user/logout.json`, 'GET', null, {
                     done: function () {
                         layui.admin.exit(function () {
                             location.href = `${config.base}admin/login.html`;
@@ -173,7 +173,7 @@
             lock();
         }
 
-        layui.common.req(`${config.base}sys/user/me`, 'GET', null, {
+        layui.common.req(`${config.base}sys/user/me.json`, 'GET', null, {
             done: function (data) {
                 load(data.data);
                 layui.$('#sys-notice-unread')
@@ -182,7 +182,7 @@
             }
         });
 
-        layui.common.req(`${config.base}sys/menu/me`, 'GET', null, {
+        layui.common.req(`${config.base}sys/menu/me.json`, 'GET', null, {
             done: function (data) {
                 layui.$('#LAY-system-side-menu').html(nav(null, data.data));
                 layui.element.render('nav', 'layadmin-system-side-menu');
@@ -226,7 +226,7 @@
                     layui.$('#lock-form')[0].reset();
                     layui.$('#sys-pin')[0].focus();
                     layui.$('#sys-unlock').on('click', function () {
-                        layui.common.req(`${config.base}sys/user/unlock`, 'POST', {
+                        layui.common.req(`${config.base}sys/user/unlock.json`, 'POST', {
                             password: layui.$.trim(layui.$('#sys-pin').val())
                         }, {
                             done: function () {

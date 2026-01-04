@@ -24,14 +24,14 @@ public class SysNoticeController extends BaseController {
     }
 
     @SysPermissions(SysLogin.class)
-    @PostMapping("/all")
+    @PostMapping("/all.json")
     public ServerResponse<List<SysNotice>> all(@RequestBody @Validated NoticeVo vo) {
         Page<SysNotice> sysNotices = this.sysNoticeService.all(vo, super.getSysUser());
         return ServerResponse.ok(sysNotices.getTotalElements(), sysNotices.getContent());
     }
 
     @SysPermissions(SysLogin.class)
-    @PostMapping("/show")
+    @PostMapping("/show.json")
     public ServerResponse<SysNotice> show(@RequestBody Long id) {
         SysNotice sysNotice = this.sysNoticeService.show(id, super.getSysUser());
         return ServerResponse.ok(sysNotice);
@@ -39,7 +39,7 @@ public class SysNoticeController extends BaseController {
 
     @SysLog("创建通知公告")
     @SysPermissions
-    @PostMapping("/create")
+    @PostMapping("/create.json")
     public ServerResponse<?> create(@RequestBody @Validated(SysCreate.class) SysNotice sysNotice) {
         this.sysNoticeService.create(sysNotice);
         return ServerResponse.ok();
@@ -47,7 +47,7 @@ public class SysNoticeController extends BaseController {
 
     @SysLog("修改通知公告")
     @SysPermissions
-    @PutMapping("/update")
+    @PutMapping("/update.json")
     public ServerResponse<?> update(@RequestBody @Validated(SysUpdate.class) SysNotice sysNotice) {
         this.sysNoticeService.update(sysNotice, super.getSysUser());
         return ServerResponse.ok();
@@ -55,7 +55,7 @@ public class SysNoticeController extends BaseController {
 
     @SysLog("删除通知公告")
     @SysPermissions
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete.json")
     public ServerResponse<?> delete(@RequestBody Long id) {
         this.sysNoticeService.delete(id, super.getSysUser());
         return ServerResponse.ok();

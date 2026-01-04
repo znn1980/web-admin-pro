@@ -19,7 +19,7 @@ public class SysMonitorController {
     }
 
     @SysPermissions(SysLogin.class)
-    @GetMapping("/sys/monitor")
+    @GetMapping("/sys/monitor.json")
     public ServerResponse<SysMonitor> monitor() {
         return ServerResponse.ok(this.sysMonitor);
     }

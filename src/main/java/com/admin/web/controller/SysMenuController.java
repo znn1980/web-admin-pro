@@ -23,14 +23,14 @@ public class SysMenuController extends BaseController {
     }
 
     @SysPermissions(SysLogin.class)
-    @GetMapping("/me")
+    @GetMapping("/me.json")
     public ServerResponse<List<SysMenu>> me() {
         List<SysMenu> sysMenus = this.sysMenuService.all(super.getSysUser());
         return ServerResponse.ok(sysMenus);
     }
 
     @SysPermissions
-    @GetMapping("/all")
+    @GetMapping("/all.json")
     public ServerResponse<List<SysMenu>> all() {
         List<SysMenu> sysMenus = this.sysMenuService.all();
         return ServerResponse.ok(sysMenus);
@@ -38,7 +38,7 @@ public class SysMenuController extends BaseController {
 
     @SysLog("移动菜单")
     @SysPermissions
-    @PutMapping("/move")
+    @PutMapping("/move.json")
     public ServerResponse<?> move(@RequestBody MoveVo vo) {
         this.sysMenuService.move(vo);
         return ServerResponse.ok();
@@ -46,7 +46,7 @@ public class SysMenuController extends BaseController {
 
     @SysLog("创建菜单")
     @SysPermissions
-    @PostMapping("/create")
+    @PostMapping("/create.json")
     public ServerResponse<?> create(@RequestBody @Validated(SysCreate.class) SysMenu sysMenu) {
         this.sysMenuService.create(sysMenu);
         return ServerResponse.ok();
@@ -54,7 +54,7 @@ public class SysMenuController extends BaseController {
 
     @SysLog("修改菜单")
     @SysPermissions
-    @PutMapping("/update")
+    @PutMapping("/update.json")
     public ServerResponse<?> update(@RequestBody @Validated(SysUpdate.class) SysMenu sysMenu) {
         this.sysMenuService.update(sysMenu);
         return ServerResponse.ok();
@@ -62,7 +62,7 @@ public class SysMenuController extends BaseController {
 
     @SysLog("删除菜单")
     @SysPermissions
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete.json")
     public ServerResponse<?> delete(@RequestBody Long id) {
         this.sysMenuService.delete(id);
         return ServerResponse.ok();
