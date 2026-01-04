@@ -1,7 +1,7 @@
 <h1 style="text-align: center">WEB-ADMIN-PRO 后台管理系统</h1>
 
 #### 项目简介
-一个基于 Java 21、SpringBoot 3.5.8、SpringBoot Jpa、Spring Session、Thymeleaf 的后台管理系统。
+一个基于 Java 21、Spring Boot 3.5.x、Spring Data JPA、Spring Session、Thymeleaf 的后台管理系统。
 
 #### 前端框架
 最新版《[AdminUI](https://gitee.com/znn1980/admin-ui-pro)》主题。（注：iframe版不涉及最新的前端技术，对服务端程序员来说非常友好）
