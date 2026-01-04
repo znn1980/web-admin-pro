@@ -4,7 +4,6 @@ import com.admin.web.annotation.SysLogin;
 import com.admin.web.annotation.SysPermissions;
 import com.admin.web.dao.SysUserDao;
 import com.admin.web.exception.ServerResponseException;
-import com.admin.web.model.ServerResponse;
 import com.admin.web.model.SysMenu;
 import com.admin.web.model.SysRole;
 import com.admin.web.model.SysUser;
@@ -43,29 +42,29 @@ public class SysUserService {
     public SysUser login(UserLoginVo vo, String sysCode) {
         vo.setPassword(SecurityUtils.hexPassword(vo.getPassword()));
         if (!Objects.equals(vo.getSysCode(), sysCode)) {
-            throw new ServerResponseException(ServerResponse.fail("验证码输入不正确！"));
+            throw new ServerResponseException("验证码输入不正确！");
         }
         SysUser sysUser = Optional.ofNullable(this.sysUserDao.findByUsername(vo.getUsername()))
                 .orElseGet(() -> Optional.ofNullable(this.sysUserDao.findByMobile(vo.getUsername()))
                         .orElseGet(() -> this.sysUserDao.findByEmail(vo.getUsername())));
         if (Objects.isNull(sysUser) || !Objects.equals(sysUser.getPassword(), vo.getPassword())) {
-            throw new ServerResponseException(ServerResponse.fail("登录失败，请检查用户名密码是否正确！"));
+            throw new ServerResponseException("登录失败，请检查用户名密码是否正确！");
         }
         if (!SecurityUtils.isSuperAdmin(sysUser) && sysUser.isDisable()) {
-            throw new ServerResponseException(ServerResponse.fail("账号未启用，请联系管理员！"));
+            throw new ServerResponseException("账号未启用，请联系管理员！");
         }
         return sysUser;
     }
 
     public void unlock(SysUser sysUser) {
         if (!Objects.equals(this.getSysUser().getPassword(), SecurityUtils.hexPassword(sysUser.getPassword()))) {
-            throw new ServerResponseException(ServerResponse.fail("密码输入不正确！"));
+            throw new ServerResponseException("密码输入不正确！");
         }
     }
 
     public SysUser show(Long id) {
         return this.sysUserDao.findById(id)
-                .orElseThrow(() -> new ServerResponseException(ServerResponse.fail("用户不存在！")));
+                .orElseThrow(() -> new ServerResponseException("用户不存在！"));
     }
 
     public Page<SysUser> all(PageVo vo) {
@@ -74,16 +73,16 @@ public class SysUserService {
 
     public void create(SysUser sysUser) {
         if (!SecurityUtils.isSuperAdmin(this.getSysUser()) && sysUser.isSysAdmin()) {
-            throw new ServerResponseException(ServerResponse.fail("您不是超级管理员，不能创建管理员用户！"));
+            throw new ServerResponseException("您不是超级管理员，不能创建管理员用户！");
         }
         if (Objects.nonNull(this.sysUserDao.findByUsername(sysUser.getUsername()))) {
-            throw new ServerResponseException(ServerResponse.fail("用户名称已存在！"));
+            throw new ServerResponseException("用户名称已存在！");
         }
         if (Objects.nonNull(this.sysUserDao.findByMobile(sysUser.getMobile()))) {
-            throw new ServerResponseException(ServerResponse.fail("手机号码已存在！"));
+            throw new ServerResponseException("手机号码已存在！");
         }
         if (Objects.nonNull(this.sysUserDao.findByEmail(sysUser.getEmail()))) {
-            throw new ServerResponseException(ServerResponse.fail("邮箱地址已存在！"));
+            throw new ServerResponseException("邮箱地址已存在！");
         }
         sysUser.setPassword(SecurityUtils.hexPassword(sysUser));
         this.sysUserDao.save(sysUser);
@@ -91,34 +90,34 @@ public class SysUserService {
 
     public SysUser update(SysUser sysUser) {
         SysUser oldSysUser = this.sysUserDao.findById(sysUser.getId())
-                .orElseThrow(() -> new ServerResponseException(ServerResponse.fail("用户不存在！")));
+                .orElseThrow(() -> new ServerResponseException("用户不存在！"));
         if (!SecurityUtils.isSuperAdmin(this.getSysUser()) && SecurityUtils.isSuperAdmin(oldSysUser)) {
-            throw new ServerResponseException(ServerResponse.fail("您不是超级管理员，不能修改超级管理员的信息！"));
+            throw new ServerResponseException("您不是超级管理员，不能修改超级管理员的信息！");
         }
         if (!SecurityUtils.isSuperAdmin(this.getSysUser()) && !Objects.equals(oldSysUser.isSysAdmin(), sysUser.isSysAdmin())) {
-            throw new ServerResponseException(ServerResponse.fail("您不是超级管理员，不能修改管理员状态！"));
+            throw new ServerResponseException("您不是超级管理员，不能修改管理员状态！");
         }
         if (!SecurityUtils.isSysAdmin(this.getSysUser()) && SecurityUtils.isSysAdmin(oldSysUser)) {
-            throw new ServerResponseException(ServerResponse.fail("您不是管理员，不能修改管理员的信息！"));
+            throw new ServerResponseException("您不是管理员，不能修改管理员的信息！");
         }
         if (!Objects.equals(oldSysUser.isSysAdmin(), sysUser.isSysAdmin())
                 && Objects.equals(this.getSysUser().getId(), sysUser.getId())) {
-            throw new ServerResponseException(ServerResponse.fail("您不能修改自己的管理员状态！"));
+            throw new ServerResponseException("您不能修改自己的管理员状态！");
         }
         if (!Objects.equals(oldSysUser.isDisable(), sysUser.isDisable())
                 && Objects.equals(this.getSysUser().getId(), sysUser.getId())) {
-            throw new ServerResponseException(ServerResponse.fail("您不能修改自己的状态！"));
+            throw new ServerResponseException("您不能修改自己的状态！");
         }
         if (!Objects.equals(oldSysUser.getUsername(), sysUser.getUsername())) {
-            throw new ServerResponseException(ServerResponse.fail("用户名称不能修改！"));
+            throw new ServerResponseException("用户名称不能修改！");
         }
         if (!Objects.equals(oldSysUser.getMobile(), sysUser.getMobile())
                 && Objects.nonNull(this.sysUserDao.findByMobile(sysUser.getMobile()))) {
-            throw new ServerResponseException(ServerResponse.fail("手机号码已存在！"));
+            throw new ServerResponseException("手机号码已存在！");
         }
         if (!Objects.equals(oldSysUser.getEmail(), sysUser.getEmail())
                 && Objects.nonNull(this.sysUserDao.findByEmail(sysUser.getEmail()))) {
-            throw new ServerResponseException(ServerResponse.fail("邮箱地址已存在！"));
+            throw new ServerResponseException("邮箱地址已存在！");
         }
         oldSysUser.setNotices(null);
         BeanUtils.copyNonNullProperties(sysUser, oldSysUser);
@@ -127,12 +126,12 @@ public class SysUserService {
 
     public void delete(Long id) {
         SysUser sysUser = this.sysUserDao.findById(id)
-                .orElseThrow(() -> new ServerResponseException(ServerResponse.fail("用户不存在！")));
+                .orElseThrow(() -> new ServerResponseException("用户不存在！"));
         if (Objects.equals(this.getSysUser().getId(), sysUser.getId())) {
-            throw new ServerResponseException(ServerResponse.fail("不能删除自己！"));
+            throw new ServerResponseException("不能删除自己！");
         }
         if (SecurityUtils.isSuperAdmin(sysUser)) {
-            throw new ServerResponseException(ServerResponse.fail("超级管理员不能删除！"));
+            throw new ServerResponseException("超级管理员不能删除！");
         }
         this.sysUserDao.deleteById(id);
     }
@@ -142,15 +141,15 @@ public class SysUserService {
         vo.setNewPassword(SecurityUtils.hexPassword(vo.getNewPassword()));
         vo.setConfirmPassword(SecurityUtils.hexPassword(vo.getConfirmPassword()));
         if (!Objects.equals(vo.getNewPassword(), vo.getConfirmPassword())) {
-            throw new ServerResponseException(ServerResponse.fail("新密码与确认密码输入不一致！"));
+            throw new ServerResponseException("新密码与确认密码输入不一致！");
         }
         if (Objects.equals(vo.getNewPassword(), vo.getOldPassword())) {
-            throw new ServerResponseException(ServerResponse.fail("新密码不能与原密码重复！"));
+            throw new ServerResponseException("新密码不能与原密码重复！");
         }
         SysUser sysUser = this.sysUserDao.findById(this.getSysUser().getId())
-                .orElseThrow(() -> new ServerResponseException(ServerResponse.fail("用户不存在！")));
+                .orElseThrow(() -> new ServerResponseException("用户不存在！"));
         if (!Objects.equals(sysUser.getPassword(), vo.getOldPassword())) {
-            throw new ServerResponseException(ServerResponse.fail("原密码输入不正确！"));
+            throw new ServerResponseException("原密码输入不正确！");
         }
         sysUser.setPassTimestamp(LocalDateTime.now());
         sysUser.setPassword(vo.getNewPassword());
@@ -159,12 +158,12 @@ public class SysUserService {
 
     public void reset(Long id) {
         SysUser sysUser = this.sysUserDao.findById(id)
-                .orElseThrow(() -> new ServerResponseException(ServerResponse.fail("用户不存在！")));
+                .orElseThrow(() -> new ServerResponseException("用户不存在！"));
         if (Objects.equals(this.getSysUser().getId(), sysUser.getId())) {
-            throw new ServerResponseException(ServerResponse.fail("不能重置自己的密码！"));
+            throw new ServerResponseException("不能重置自己的密码！");
         }
         if (SecurityUtils.isSuperAdmin(sysUser)) {
-            throw new ServerResponseException(ServerResponse.fail("超级管理员的密码不能重置！"));
+            throw new ServerResponseException("超级管理员的密码不能重置！");
         }
         sysUser.setPassword(SecurityUtils.hexPassword(sysUser));
         this.sysUserDao.save(sysUser);
@@ -172,13 +171,13 @@ public class SysUserService {
 
     public void hasPermissions(SysPermissions sysPermissions) {
         SysUser sysUser = Optional.ofNullable(this.getSysUser())
-                .orElseThrow(() -> new ServerResponseException(ServerResponse.fail(ResponseCode.LOGOUT)));
+                .orElseThrow(() -> new ServerResponseException(ResponseCode.LOGOUT));
         if (!SecurityUtils.isSuperAdmin(sysUser)
                 && !Arrays.asList(sysPermissions.value()).contains(SysLogin.class)) {
             if (!this.hasPermissions(this.sysUserDao.findById(sysUser.getId()).orElseThrow(() -> {
-                throw new ServerResponseException(ServerResponse.fail("用户不存在！"));
+                throw new ServerResponseException("用户不存在！");
             }))) {
-                throw new ServerResponseException(ServerResponse.fail(ResponseCode.DENIED));
+                throw new ServerResponseException(ResponseCode.DENIED);
             }
         }
     }

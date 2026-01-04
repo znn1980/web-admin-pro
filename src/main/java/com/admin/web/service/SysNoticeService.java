@@ -2,7 +2,6 @@ package com.admin.web.service;
 
 import com.admin.web.dao.SysNoticeDao;
 import com.admin.web.exception.ServerResponseException;
-import com.admin.web.model.ServerResponse;
 import com.admin.web.model.SysNotice;
 import com.admin.web.model.SysUser;
 import com.admin.web.model.vo.NoticeVo;
@@ -55,10 +54,10 @@ public class SysNoticeService {
 
     public SysNotice show(Long id, SysUser sysUser) {
         SysNotice sysNotice = this.sysNoticeDao.findById(id)
-                .orElseThrow(() -> new ServerResponseException(ServerResponse.fail("通知公告不存在！")));
+                .orElseThrow(() -> new ServerResponseException("通知公告不存在！"));
         if (!Objects.equals(sysNotice.getCreateUsername(), sysUser.getUsername())
                 && !SecurityUtils.isSuperAdmin(sysUser) && sysNotice.isDisable()) {
-            throw new ServerResponseException(ServerResponse.fail("您不能查看已禁用通知公告！"));
+            throw new ServerResponseException("您不能查看已禁用通知公告！");
         }
         Set<SysUser> sysUsers = sysNotice.getUsers();
         if (Objects.nonNull(sysUsers) && !sysUsers.contains(sysUser)) {
@@ -74,10 +73,10 @@ public class SysNoticeService {
 
     public void update(SysNotice sysNotice, SysUser sysUser) {
         SysNotice oldSysNotice = this.sysNoticeDao.findById(sysNotice.getId())
-                .orElseThrow(() -> new ServerResponseException(ServerResponse.fail("通知公告不存在！")));
+                .orElseThrow(() -> new ServerResponseException("通知公告不存在！"));
         if (!SecurityUtils.isSuperAdmin(sysUser)
                 && !Objects.equals(oldSysNotice.getCreateUsername(), sysUser.getUsername())) {
-            throw new ServerResponseException(ServerResponse.fail("您只能修改自己发布的通知公告！"));
+            throw new ServerResponseException("您只能修改自己发布的通知公告！");
         }
         sysNotice.setUsers(null);
         oldSysNotice.setUsers(null);
@@ -87,10 +86,10 @@ public class SysNoticeService {
 
     public void delete(Long id, SysUser sysUser) {
         SysNotice sysNotice = this.sysNoticeDao.findById(id)
-                .orElseThrow(() -> new ServerResponseException(ServerResponse.fail("通知公告不存在！")));
+                .orElseThrow(() -> new ServerResponseException("通知公告不存在！"));
         if (!SecurityUtils.isSuperAdmin(sysUser)
                 && !Objects.equals(sysNotice.getCreateUsername(), sysUser.getUsername())) {
-            throw new ServerResponseException(ServerResponse.fail("您只能删除自己发布的通知公告！"));
+            throw new ServerResponseException("您只能删除自己发布的通知公告！");
         }
         this.sysNoticeDao.deleteById(id);
     }

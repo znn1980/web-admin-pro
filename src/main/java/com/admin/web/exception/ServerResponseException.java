@@ -9,6 +9,11 @@ import com.admin.web.model.enums.ResponseCode;
 public class ServerResponseException extends RuntimeException {
     private final ServerResponse<?> serverResponse;
 
+    public ServerResponseException(String msg) {
+        super(msg);
+        this.serverResponse = ServerResponse.fail(msg);
+    }
+
     public ServerResponseException(ServerResponse<?> serverResponse) {
         super(serverResponse.getMsg());
         this.serverResponse = serverResponse;

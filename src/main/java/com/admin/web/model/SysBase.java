@@ -113,8 +113,8 @@ public class SysBase implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof SysBase
-                && Objects.equals(((SysBase) o).getId(), this.getId());
+        return o instanceof SysBase sysBase
+                && Objects.equals(sysBase.getId(), this.getId());
     }
 
     @Override

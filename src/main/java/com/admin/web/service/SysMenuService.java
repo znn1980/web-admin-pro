@@ -2,7 +2,6 @@ package com.admin.web.service;
 
 import com.admin.web.dao.SysMenuDao;
 import com.admin.web.exception.ServerResponseException;
-import com.admin.web.model.ServerResponse;
 import com.admin.web.model.SysMenu;
 import com.admin.web.model.SysUser;
 import com.admin.web.model.enums.Move;
@@ -46,7 +45,7 @@ public class SysMenuService {
     @Transactional(rollbackFor = Exception.class)
     public void move(MoveVo vo) {
         SysMenu sysMenu = this.sysMenuDao.findById(vo.getId())
-                .orElseThrow(() -> new ServerResponseException(ServerResponse.fail("菜单不存在！")));
+                .orElseThrow(() -> new ServerResponseException("菜单不存在！"));
         List<SysMenu> sysMenus = this.sysMenuDao.findByPidOrderBySort(sysMenu.getPid());
         int index = IntStream.range(0, sysMenus.size())
                 .filter(i -> Objects.equals(sysMenu.getId(), sysMenus.get(i).getId()))
@@ -64,10 +63,10 @@ public class SysMenuService {
     public void create(SysMenu sysMenu) {
         if (Objects.nonNull(sysMenu.getPid())
                 && !this.sysMenuDao.existsById(sysMenu.getPid())) {
-            throw new ServerResponseException(ServerResponse.fail("上级菜单不存在！"));
+            throw new ServerResponseException("上级菜单不存在！");
         }
         if (Objects.nonNull(this.sysMenuDao.findByTitle(sysMenu.getTitle()))) {
-            throw new ServerResponseException(ServerResponse.fail("菜单标题已存在！"));
+            throw new ServerResponseException("菜单标题已存在！");
         }
         this.sysMenuDao.save(sysMenu);
         sysMenu.setSort(sysMenu.getId());
@@ -76,21 +75,21 @@ public class SysMenuService {
 
     public void update(SysMenu sysMenu) {
         SysMenu oldSysMenu = this.sysMenuDao.findById(sysMenu.getId())
-                .orElseThrow(() -> new ServerResponseException(ServerResponse.fail("菜单不存在！")));
+                .orElseThrow(() -> new ServerResponseException("菜单不存在！"));
         if (Objects.equals(sysMenu.getId(), sysMenu.getPid())) {
-            throw new ServerResponseException(ServerResponse.fail("不能选择自己作为上级菜单！"));
+            throw new ServerResponseException("不能选择自己作为上级菜单！");
         }
         if (Objects.nonNull(sysMenu.getPid())
                 && this.existsByIdAndPid(sysMenu.getId(), sysMenu.getPid())) {
-            throw new ServerResponseException(ServerResponse.fail("不能选择自己的下级菜单作为上级菜单！"));
+            throw new ServerResponseException("不能选择自己的下级菜单作为上级菜单！");
         }
         if (Objects.nonNull(sysMenu.getPid())
                 && !this.sysMenuDao.existsById(sysMenu.getPid())) {
-            throw new ServerResponseException(ServerResponse.fail("上级菜单不存在！"));
+            throw new ServerResponseException("上级菜单不存在！");
         }
         if (!Objects.equals(oldSysMenu.getTitle(), sysMenu.getTitle())
                 && Objects.nonNull(this.sysMenuDao.findByTitle(sysMenu.getTitle()))) {
-            throw new ServerResponseException(ServerResponse.fail("菜单标题已存在！"));
+            throw new ServerResponseException("菜单标题已存在！");
         }
         oldSysMenu.setPid(sysMenu.getPid());
         BeanUtils.copyNonNullProperties(sysMenu, oldSysMenu);
@@ -99,12 +98,12 @@ public class SysMenuService {
 
     public void delete(Long id) {
         SysMenu sysMenu = this.sysMenuDao.findById(id)
-                .orElseThrow(() -> new ServerResponseException(ServerResponse.fail("菜单不存在！")));
+                .orElseThrow(() -> new ServerResponseException("菜单不存在！"));
         if (this.sysMenuDao.existsByMenuId(sysMenu.getId())) {
-            throw new ServerResponseException(ServerResponse.fail("此菜单已绑定角色，请先解绑角色下的菜单！"));
+            throw new ServerResponseException("此菜单已绑定角色，请先解绑角色下的菜单！");
         }
         if (this.sysMenuDao.existsByPid(sysMenu.getId())) {
-            throw new ServerResponseException(ServerResponse.fail("请先删除下级菜单！"));
+            throw new ServerResponseException("请先删除下级菜单！");
         }
         this.sysMenuDao.deleteById(id);
     }
