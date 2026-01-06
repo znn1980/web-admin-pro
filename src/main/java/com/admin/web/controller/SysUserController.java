@@ -54,7 +54,7 @@ public class SysUserController extends BaseController {
     @GetMapping("/me.json")
     public ServerResponse<SysUser> me() {
         SysUser sysUser = this.sysUserService.show(super.getSysUser().getId());
-        Long unRead = this.sysNoticeService.countByUserId(super.getSysUser().getId());
+        Long unRead = this.sysNoticeService.unRead(super.getSysUser().getId());
         return ServerResponse.ok(unRead, sysUser);
     }
 

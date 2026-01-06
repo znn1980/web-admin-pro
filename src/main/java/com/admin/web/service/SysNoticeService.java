@@ -94,7 +94,7 @@ public class SysNoticeService {
         this.sysNoticeDao.deleteById(id);
     }
 
-    public Long countByUserId(Long userId) {
+    public Long unRead(Long userId) {
         return this.sysNoticeDao.count((root, query, builder) -> {
             Subquery<Long> subQuery = query.subquery(Long.class);
             Root<SysNotice> subRoot = subQuery.from(SysNotice.class);

@@ -80,7 +80,7 @@ public class SysMenuService {
             throw new ServerResponseException("不能选择自己作为上级菜单！");
         }
         if (Objects.nonNull(sysMenu.getPid())
-                && this.existsByIdAndPid(sysMenu.getId(), sysMenu.getPid())) {
+                && this.exists(sysMenu.getId(), sysMenu.getPid())) {
             throw new ServerResponseException("不能选择自己的下级菜单作为上级菜单！");
         }
         if (Objects.nonNull(sysMenu.getPid())
@@ -108,7 +108,7 @@ public class SysMenuService {
         this.sysMenuDao.deleteById(id);
     }
 
-    private boolean existsByIdAndPid(Long id, Long pid) {
+    private boolean exists(Long id, Long pid) {
         Set<Long> exists = new HashSet<>();
         SysMenu sysMenu = this.sysMenuDao.findById(pid).orElse(null);
         while (Objects.nonNull(sysMenu) && Objects.nonNull(sysMenu.getPid())) {
