@@ -89,6 +89,7 @@ public class SysUserLogService {
         StringJoiner params = new StringJoiner(System.lineSeparator());
         Arrays.asList(args).forEach(arg -> {
             if (Objects.nonNull(arg) && !(arg instanceof MultipartFile
+                    || arg instanceof MultipartFile[]
                     || arg instanceof HttpServletRequest
                     || arg instanceof HttpServletResponse)) {
                 params.add(Objects.toString(arg));
