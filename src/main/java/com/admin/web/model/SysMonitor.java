@@ -28,7 +28,7 @@ public class SysMonitor implements Serializable {
     }
 
     public String getOsMac() {
-        return NetUtils.getLocalMac("-");
+        return NetUtils.getLocalMac();
     }
 
     public String getOsName() {
