@@ -4,6 +4,7 @@ import com.admin.web.dao.SysRoleDao;
 import com.admin.web.exception.ServerResponseException;
 import com.admin.web.model.SysRole;
 import com.admin.web.model.enums.Move;
+import com.admin.web.model.enums.ResponseCode;
 import com.admin.web.model.vo.MoveVo;
 import com.admin.web.utils.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class SysRoleService {
     @Transactional(rollbackFor = Exception.class)
     public void move(MoveVo vo) {
         SysRole sysRole = this.sysRoleDao.findById(vo.getId())
-                .orElseThrow(() -> new ServerResponseException("角色不存在！"));
+                .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         List<SysRole> sysRoles = this.sysRoleDao.findByOrderBySort();
         int index = IntStream.range(0, sysRoles.size())
                 .filter(i -> Objects.equals(sysRole.getId(), sysRoles.get(i).getId()))
@@ -58,7 +59,7 @@ public class SysRoleService {
 
     public void update(SysRole sysRole) {
         SysRole oldSysRole = this.sysRoleDao.findById(sysRole.getId())
-                .orElseThrow(() -> new ServerResponseException("角色不存在！"));
+                .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         if (!Objects.equals(oldSysRole.getName(), sysRole.getName())
                 && Objects.nonNull(this.sysRoleDao.findByName(sysRole.getName()))) {
             throw new ServerResponseException("角色名称已存在！");
@@ -69,7 +70,7 @@ public class SysRoleService {
 
     public void delete(Long id) {
         SysRole sysRole = this.sysRoleDao.findById(id)
-                .orElseThrow(() -> new ServerResponseException("角色不存在！"));
+                .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         if (this.sysRoleDao.existsByRoleId(sysRole.getId())) {
             throw new ServerResponseException("此角色已绑定用户，请先解绑用户下的角色！");
         }

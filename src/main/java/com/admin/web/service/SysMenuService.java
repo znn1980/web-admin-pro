@@ -5,6 +5,7 @@ import com.admin.web.exception.ServerResponseException;
 import com.admin.web.model.SysMenu;
 import com.admin.web.model.SysUser;
 import com.admin.web.model.enums.Move;
+import com.admin.web.model.enums.ResponseCode;
 import com.admin.web.model.vo.MoveVo;
 import com.admin.web.utils.BeanUtils;
 import com.admin.web.utils.SecurityUtils;
@@ -45,7 +46,7 @@ public class SysMenuService {
     @Transactional(rollbackFor = Exception.class)
     public void move(MoveVo vo) {
         SysMenu sysMenu = this.sysMenuDao.findById(vo.getId())
-                .orElseThrow(() -> new ServerResponseException("菜单不存在！"));
+                .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         List<SysMenu> sysMenus = this.sysMenuDao.findByPidOrderBySort(sysMenu.getPid());
         int index = IntStream.range(0, sysMenus.size())
                 .filter(i -> Objects.equals(sysMenu.getId(), sysMenus.get(i).getId()))
@@ -75,7 +76,7 @@ public class SysMenuService {
 
     public void update(SysMenu sysMenu) {
         SysMenu oldSysMenu = this.sysMenuDao.findById(sysMenu.getId())
-                .orElseThrow(() -> new ServerResponseException("菜单不存在！"));
+                .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         if (Objects.equals(sysMenu.getId(), sysMenu.getPid())) {
             throw new ServerResponseException("不能选择自己作为上级菜单！");
         }
@@ -98,7 +99,7 @@ public class SysMenuService {
 
     public void delete(Long id) {
         SysMenu sysMenu = this.sysMenuDao.findById(id)
-                .orElseThrow(() -> new ServerResponseException("菜单不存在！"));
+                .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         if (this.sysMenuDao.existsByMenuId(sysMenu.getId())) {
             throw new ServerResponseException("此菜单已绑定角色，请先解绑角色下的菜单！");
         }

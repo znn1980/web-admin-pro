@@ -1,6 +1,7 @@
 package com.admin.web.model;
 
 import com.admin.web.model.enums.ResponseCode;
+import org.springframework.validation.BindingResult;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -75,6 +76,10 @@ public class ServerResponse<T> implements Serializable {
 
     public static <T> ServerResponse<T> fail(ResponseCode responseCode) {
         return new ServerResponse<>(responseCode.value(), responseCode.msg(), null, null);
+    }
+
+    public static <T> ServerResponse<T> fail(BindingResult bind) {
+        return new ServerResponse<>(ResponseCode.FAIL.value(), bind.getFieldError().getDefaultMessage(), null, null);
     }
 
     @Override

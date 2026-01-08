@@ -4,6 +4,7 @@ import com.admin.web.dao.SysNoticeDao;
 import com.admin.web.exception.ServerResponseException;
 import com.admin.web.model.SysNotice;
 import com.admin.web.model.SysUser;
+import com.admin.web.model.enums.ResponseCode;
 import com.admin.web.model.vo.NoticeVo;
 import com.admin.web.model.vo.PageVo;
 import com.admin.web.utils.BeanUtils;
@@ -54,7 +55,7 @@ public class SysNoticeService {
 
     public SysNotice show(Long id, SysUser sysUser) {
         SysNotice sysNotice = this.sysNoticeDao.findById(id)
-                .orElseThrow(() -> new ServerResponseException("通知公告不存在！"));
+                .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         if (!Objects.equals(sysNotice.getCreateUsername(), sysUser.getUsername())
                 && !SecurityUtils.isSuperAdmin(sysUser) && sysNotice.isDisable()) {
             throw new ServerResponseException("您不能查看已禁用通知公告！");
@@ -73,7 +74,7 @@ public class SysNoticeService {
 
     public void update(SysNotice sysNotice, SysUser sysUser) {
         SysNotice oldSysNotice = this.sysNoticeDao.findById(sysNotice.getId())
-                .orElseThrow(() -> new ServerResponseException("通知公告不存在！"));
+                .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         if (!SecurityUtils.isSuperAdmin(sysUser)
                 && !Objects.equals(oldSysNotice.getCreateUsername(), sysUser.getUsername())) {
             throw new ServerResponseException("您只能修改自己发布的通知公告！");
@@ -86,7 +87,7 @@ public class SysNoticeService {
 
     public void delete(Long id, SysUser sysUser) {
         SysNotice sysNotice = this.sysNoticeDao.findById(id)
-                .orElseThrow(() -> new ServerResponseException("通知公告不存在！"));
+                .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         if (!SecurityUtils.isSuperAdmin(sysUser)
                 && !Objects.equals(sysNotice.getCreateUsername(), sysUser.getUsername())) {
             throw new ServerResponseException("您只能删除自己发布的通知公告！");

@@ -39,10 +39,10 @@ public class ControllerAdviceConfig {
                 return ResponseEntity.ok(ServerResponse.fail(String.format("访问的资源(%s)不存在！", ex.getResourcePath())));
             }
             if (e instanceof MethodArgumentNotValidException ex) {
-                return ResponseEntity.ok(ServerResponse.fail(ex.getBindingResult().getFieldError().getDefaultMessage()));
+                return ResponseEntity.ok(ServerResponse.fail(ex.getBindingResult()));
             }
             if (e instanceof BindException ex) {
-                return ResponseEntity.ok(ServerResponse.fail(ex.getBindingResult().getFieldError().getDefaultMessage()));
+                return ResponseEntity.ok(ServerResponse.fail(ex.getBindingResult()));
             }
             if (e instanceof MaxUploadSizeExceededException ex) {
                 if (e.getCause().getCause() instanceof FileSizeLimitExceededException exx) {

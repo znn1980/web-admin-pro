@@ -9,8 +9,9 @@ public enum ResponseCode {
      */
     OK("0", "成功！"),
     FAIL("9000", "失败！"),
-    LOGOUT("1001", "登录状态失效！"),
-    DENIED("1002", "抱歉，您无权访问！"),
+    LOGOUT("1001", "抱歉，登录状态失效！"),
+    DENIED("4003", "抱歉，您无权访问！"),
+    NOT_FOUND("4004", "抱歉，资源不存在！"),
     ERROR("9999", "抱歉，服务器出错了！");
     private final String code;
 
