@@ -1,8 +1,8 @@
 package com.admin.web.utils;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.StringJoiner;
 
@@ -11,24 +11,20 @@ import java.util.StringJoiner;
  */
 public class NetUtils {
 
-    public static InetAddress getLocalHost() throws UnknownHostException {
-        return InetAddress.getLocalHost();
+    public static InetAddress getLocalHost() {
+        try {
+            return InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static String getLocalIp() {
-        try {
-            return getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            throw new RuntimeException(e);
-        }
+        return getLocalHost().getHostAddress();
     }
 
     public static String getLocalName() {
-        try {
-            return getLocalHost().getHostName();
-        } catch (UnknownHostException e) {
-            throw new RuntimeException(e);
-        }
+        return getLocalHost().getHostName();
     }
 
     public static String getLocalMac() {
@@ -42,7 +38,7 @@ public class NetUtils {
                 mac.add(Integer.toHexString(b & 0xFF));
             }
             return mac.toString().toUpperCase();
-        } catch (IOException e) {
+        } catch (SocketException e) {
             throw new RuntimeException(e);
         }
     }
