@@ -45,9 +45,9 @@ public class SysLogAspect {
 
     private void doAround(SysLog sysLog, Object[] args, Object result, Exception e) {
         try {
-            SysUserLog sysUserLog = this.sysUserLogService.log(sysLog, args, result, e, THREAD_LOCAL.get());
-            log.info("SYS-REQUEST => {}", sysUserLog.getParams());
-            log.info("SYS-RESPONSE => {}", sysUserLog.getResult());
+            SysUserLog logs = this.sysUserLogService.log(sysLog, args, result, e, THREAD_LOCAL.get());
+            log.info("SYS-REQUEST => {}", logs.getParams());
+            log.info("SYS-RESPONSE => {}", logs.getResult());
         } finally {
             THREAD_LOCAL.remove();
         }

@@ -26,10 +26,10 @@ public class SysLicenseAspect {
     @Before("login()")
     public void doBefore() {
         try {
-            byte[] bytes = SysLicense.asSysLicense(Paths.get("key.lic"));
+            byte[] bytes = SysLicense.readSysLicense(Paths.get("key.lic"));
             SysLicense sysLicense = SysLicense.asSysLicense(bytes);
             log.info("SYS-ASPECT => {}", sysLicense);
-            SysLicense.ofSysLicense(sysLicense);
+            SysLicense.hasSysLicense(sysLicense);
         } catch (SysLicenseException e) {
             throw new ServerResponseException(e.getMessage());
         }

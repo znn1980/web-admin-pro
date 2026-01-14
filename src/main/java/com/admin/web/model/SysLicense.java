@@ -89,7 +89,7 @@ public record SysLicense(String num, LocalDate from, LocalDate to) implements Se
      *
      * @return 许可证文件内容
      */
-    public static byte[] asSysLicense(Path file) {
+    public static byte[] readSysLicense(Path file) {
         if (Files.notExists(file)) {
             throw new SysLicenseException("许可证不存在！");
         }
@@ -105,7 +105,7 @@ public record SysLicense(String num, LocalDate from, LocalDate to) implements Se
      *
      * @param sysLicense 许可证
      */
-    public static void ofSysLicense(SysLicense sysLicense) {
+    public static void hasSysLicense(SysLicense sysLicense) {
         if (!Objects.equals(asSysLicenseNumber(), sysLicense.num())) {
             throw new SysLicenseException(String.format("许可证签名无效！(%s)", sysLicense.num()));
         }
