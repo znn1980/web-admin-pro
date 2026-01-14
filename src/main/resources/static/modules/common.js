@@ -4,10 +4,8 @@
 
 layui.define(function (exports) {
 
-    layui.$('#sys-query-more').on('click', function () {
+    layui.$('button[name="sys-query-more"]').on('click', function () {
         layui.$(".sys-query-more").toggle();
-        layui.$(this).html(layui.$(this).html() === '收起' ? '展开' : '收起')
-            .toggleClass('layui-icon-down').toggleClass('layui-icon-up');
     });
 
     const common = {
