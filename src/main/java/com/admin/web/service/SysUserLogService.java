@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -56,33 +57,33 @@ public class SysUserLogService {
     }
 
     public SysUserLog log(SysLog sysLog, Object[] args, Object result, Exception error, long ms) {
-        SysUserLog sysUserLog = new SysUserLog();
-        sysUserLog.setUsername(Objects.requireNonNullElse(SecurityUtils.getSysUser(WebUtils.getRequest())
+        SysUserLog logs = new SysUserLog();
+        logs.setUsername(Objects.requireNonNullElse(SecurityUtils.getSysUser(WebUtils.getRequest())
                 , SecurityUtils.getSysUser()).getUsername());
-        sysUserLog.setIp(WebUtils.getClientIp(WebUtils.getRequest()));
-        sysUserLog.setOs(UserAgentUtils.getOs(UserAgentUtils.getUserAgent(WebUtils.getRequest())));
-        sysUserLog.setBrowser(UserAgentUtils.getBrowser(UserAgentUtils.getUserAgent(WebUtils.getRequest())));
-        sysUserLog.setMethod(WebUtils.getRequest().getMethod());
-        sysUserLog.setUrl(WebUtils.getRequest().getRequestURI());
-        sysUserLog.setName(sysLog.value());
+        logs.setIp(WebUtils.getClientIp(WebUtils.getRequest()));
+        logs.setOs(UserAgentUtils.getOs(UserAgentUtils.getUserAgent(WebUtils.getRequest())));
+        logs.setBrowser(UserAgentUtils.getBrowser(UserAgentUtils.getUserAgent(WebUtils.getRequest())));
+        logs.setMethod(WebUtils.getRequest().getMethod());
+        logs.setUrl(WebUtils.getRequest().getRequestURI());
+        logs.setName(sysLog.value());
         if (Objects.nonNull(args)) {
-            sysUserLog.setParams(this.getParams(args));
+            logs.setParams(this.getParams(args));
         }
         if (Objects.nonNull(result)) {
-            sysUserLog.setResult(Objects.toString(result));
+            logs.setResult(ObjectUtils.getDisplayString(result));
         }
         if (Objects.nonNull(error)) {
             if (error instanceof ServerResponseException e) {
-                sysUserLog.setResult(Objects.toString(e.getServerResponse()));
+                logs.setResult(ObjectUtils.getDisplayString(e.getServerResponse()));
             } else {
-                sysUserLog.setErrors(new StringWriter() {{
+                logs.setErrors(new StringWriter() {{
                     error.printStackTrace(new PrintWriter(this, true));
                 }}.toString());
             }
         }
-        sysUserLog.setMs(System.currentTimeMillis() - ms);
-        sysUserLog.setTimestamp(LocalDateTime.now());
-        return this.sysUserLogDao.save(sysUserLog);
+        logs.setMs(System.currentTimeMillis() - ms);
+        logs.setTimestamp(LocalDateTime.now());
+        return this.sysUserLogDao.save(logs);
     }
 
     private String getParams(Object[] args) {
@@ -92,7 +93,7 @@ public class SysUserLogService {
                     || arg instanceof MultipartFile[]
                     || arg instanceof HttpServletRequest
                     || arg instanceof HttpServletResponse)) {
-                params.add(Objects.toString(arg));
+                params.add(ObjectUtils.getDisplayString(arg));
             }
         });
         return params.toString();

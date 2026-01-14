@@ -74,12 +74,16 @@ public class ServerResponse<T> implements Serializable {
         return new ServerResponse<>(ResponseCode.FAIL.value(), msg, null, null);
     }
 
+    public static <T> ServerResponse<T> fail(String msg, Object... args) {
+        return new ServerResponse<>(ResponseCode.FAIL.value(), msg.formatted(args), null, null);
+    }
+
     public static <T> ServerResponse<T> fail(ResponseCode responseCode) {
         return new ServerResponse<>(responseCode.value(), responseCode.msg(), null, null);
     }
 
-    public static <T> ServerResponse<T> fail(BindingResult bind) {
-        return new ServerResponse<>(ResponseCode.FAIL.value(), bind.getFieldError().getDefaultMessage(), null, null);
+    public static <T> ServerResponse<T> fail(BindingResult bindingResult) {
+        return new ServerResponse<>(ResponseCode.FAIL.value(), bindingResult.getFieldError().getDefaultMessage(), null, null);
     }
 
     @Override

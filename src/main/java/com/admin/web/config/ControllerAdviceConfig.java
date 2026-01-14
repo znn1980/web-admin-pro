@@ -38,15 +38,15 @@ public class ControllerAdviceConfig {
                 return ResponseEntity.ok(ServerResponse.fail(ex.getBindingResult()));
             }
             if (e instanceof NoResourceFoundException ex) {
-                return ResponseEntity.ok(ServerResponse.fail(String.format("访问的资源(%s)不存在！", ex.getResourcePath())));
+                return ResponseEntity.ok(ServerResponse.fail("访问的资源(%s)不存在！", ex.getResourcePath()));
             }
             if (e instanceof MaxUploadSizeExceededException ex) {
                 if (e.getCause().getCause() instanceof FileSizeLimitExceededException exx) {
-                    return ResponseEntity.ok(ServerResponse.fail(String.format("上传文件(%s)超出(%s)限制！"
-                            , Os.asBytes(exx.getActualSize()), Os.asBytes(exx.getPermittedSize()))));
+                    return ResponseEntity.ok(ServerResponse.fail("上传文件(%s)超出(%s)限制！"
+                            , Os.asBytes(exx.getActualSize()), Os.asBytes(exx.getPermittedSize())));
                 }
-                return ResponseEntity.ok(ServerResponse.fail(ex.getMaxUploadSize() <= 0
-                        ? "上传文件超出限制！" : String.format("上传文件超出(%s)限制！", Os.asBytes(ex.getMaxUploadSize()))));
+                return ResponseEntity.ok(ServerResponse.fail("上传文件超出%s限制！", ex.getMaxUploadSize() >= 0L ?
+                        "(%s)".formatted(Os.asBytes(ex.getMaxUploadSize())) : ""));
             }
             return ResponseEntity.ok(ServerResponse.fail(ResponseCode.ERROR));
         }
