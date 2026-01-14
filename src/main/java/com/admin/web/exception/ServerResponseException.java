@@ -10,18 +10,16 @@ public class ServerResponseException extends RuntimeException {
     private final ServerResponse<?> serverResponse;
 
     public ServerResponseException(String msg) {
-        super(msg);
-        this.serverResponse = ServerResponse.fail(msg);
+        this(ServerResponse.fail(msg));
+    }
+
+    public ServerResponseException(ResponseCode responseCode) {
+        this(ServerResponse.fail(responseCode));
     }
 
     public ServerResponseException(ServerResponse<?> serverResponse) {
         super(serverResponse.getMsg());
         this.serverResponse = serverResponse;
-    }
-
-    public ServerResponseException(ResponseCode responseCode) {
-        super(responseCode.msg());
-        this.serverResponse = ServerResponse.fail(responseCode);
     }
 
     public ServerResponse<?> getServerResponse() {

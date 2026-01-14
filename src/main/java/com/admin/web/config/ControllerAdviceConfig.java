@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
@@ -35,14 +34,11 @@ public class ControllerAdviceConfig {
             if (e instanceof ServerResponseException ex) {
                 return ResponseEntity.ok(ex.getServerResponse());
             }
-            if (e instanceof NoResourceFoundException ex) {
-                return ResponseEntity.ok(ServerResponse.fail(String.format("访问的资源(%s)不存在！", ex.getResourcePath())));
-            }
-            if (e instanceof MethodArgumentNotValidException ex) {
-                return ResponseEntity.ok(ServerResponse.fail(ex.getBindingResult()));
-            }
             if (e instanceof BindException ex) {
                 return ResponseEntity.ok(ServerResponse.fail(ex.getBindingResult()));
+            }
+            if (e instanceof NoResourceFoundException ex) {
+                return ResponseEntity.ok(ServerResponse.fail(String.format("访问的资源(%s)不存在！", ex.getResourcePath())));
             }
             if (e instanceof MaxUploadSizeExceededException ex) {
                 if (e.getCause().getCause() instanceof FileSizeLimitExceededException exx) {
