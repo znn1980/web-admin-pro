@@ -103,10 +103,9 @@ public record SysLicense(String num, LocalDate from, LocalDate to) implements Se
     /**
      * 验证许可证文件
      *
-     * @param bytes 许可证文件内容
+     * @param sysLicense 许可证
      */
-    public static void ofSysLicense(byte[] bytes) {
-        SysLicense sysLicense = asSysLicense(bytes);
+    public static void ofSysLicense(SysLicense sysLicense) {
         if (!Objects.equals(asSysLicenseNumber(), sysLicense.num())) {
             throw new SysLicenseException(String.format("许可证签名无效！(%s)", sysLicense.num()));
         }
