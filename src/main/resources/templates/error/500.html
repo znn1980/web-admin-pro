@@ -18,10 +18,33 @@
         <h1>500</h1>
         <p>抱歉，服务器出错了！</p>
         <div>
+            <a th:if="${error}" class="layui-btn layui-bg-red">详细错误</a>
             <a th:href="@{/admin/login.html}" target="_top" class="layui-btn">返回登陆页</a>
         </div>
     </div>
 </div>
+<div class="layui-hide">
+    <pre class="layui-code" th:text="${error}"></pre>
+</div>
 <script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
+<script th:inline="javascript">
+    const config = {
+        base:/*[[@{/}]]*/ '../../static/'
+    }
+
+    layui.config({
+        base: config.base, version: true
+    }).use(['index', 'common'], function () {
+
+        layui.code({elem: '.layui-code', theme: 'dark', header: false, wordWrap: false});
+
+        layui.$('.layui-bg-red').on('click', function () {
+            layui.layer.open({
+                type: 1, shade: false, title: false, area: 'auto'
+                , content: layui.$('.layui-hide').html()
+            });
+        });
+    });
+</script>
 </body>
 </html>

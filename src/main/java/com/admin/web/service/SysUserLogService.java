@@ -18,8 +18,6 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -76,9 +74,7 @@ public class SysUserLogService {
             if (error instanceof ServerResponseException e) {
                 logs.setResult(ObjectUtils.getDisplayString(e.getServerResponse()));
             } else {
-                logs.setErrors(new StringWriter() {{
-                    error.printStackTrace(new PrintWriter(this, true));
-                }}.toString());
+                logs.setErrors(WebUtils.getStackTrace(error));
             }
         }
         logs.setMs(System.currentTimeMillis() - ms);

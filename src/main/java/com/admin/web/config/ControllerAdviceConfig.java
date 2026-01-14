@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+
+import java.util.Objects;
 
 /**
  * @author znn
@@ -48,14 +51,17 @@ public class ControllerAdviceConfig {
                 return ResponseEntity.ok(ServerResponse.fail("上传文件超出%s限制！", ex.getMaxUploadSize() >= 0L ?
                         "(%s)".formatted(Os.asBytes(ex.getMaxUploadSize())) : ""));
             }
+            if (Objects.nonNull(e.getMessage())) {
+                return ResponseEntity.ok(ServerResponse.fail(ResponseCode.ERROR.msg() + "(%s)".formatted(e.getMessage())));
+            }
             return ResponseEntity.ok(ServerResponse.fail(ResponseCode.ERROR));
         }
         if (e instanceof ServerResponseException) {
-            return new ModelAndView("error/403");
+            return new ModelAndView("error/403", HttpStatus.FORBIDDEN);
         }
         if (e instanceof NoResourceFoundException) {
-            return new ModelAndView("error/404");
+            return new ModelAndView("error/404", HttpStatus.NOT_FOUND);
         }
-        return new ModelAndView("error/500");
+        return new ModelAndView("error/500", "error", WebUtils.getStackTrace(e));
     }
 }
