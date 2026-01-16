@@ -75,7 +75,7 @@ public class ServerResponse<T> implements Serializable {
     }
 
     public static <T> ServerResponse<T> fail(String msg, Object... args) {
-        return new ServerResponse<>(ResponseCode.FAIL.value(), msg.formatted(args), null, null);
+        return new ServerResponse<>(ResponseCode.FAIL.value(), String.format(msg, args), null, null);
     }
 
     public static <T> ServerResponse<T> fail(ResponseCode responseCode) {

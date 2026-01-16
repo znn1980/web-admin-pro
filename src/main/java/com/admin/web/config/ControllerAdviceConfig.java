@@ -49,10 +49,10 @@ public class ControllerAdviceConfig {
                             , Os.asBytes(exx.getActualSize()), Os.asBytes(exx.getPermittedSize())));
                 }
                 return ResponseEntity.ok(ServerResponse.fail("上传文件超出%s限制！", ex.getMaxUploadSize() >= 0L ?
-                        "(%s)".formatted(Os.asBytes(ex.getMaxUploadSize())) : ""));
+                        String.format("(%s)", Os.asBytes(ex.getMaxUploadSize())) : ""));
             }
             if (Objects.nonNull(e.getMessage())) {
-                return ResponseEntity.ok(ServerResponse.fail(ResponseCode.ERROR.msg() + "(%s)".formatted(e.getMessage())));
+                return ResponseEntity.ok(ServerResponse.fail(ResponseCode.ERROR.msg() + String.format("(%s)", e.getMessage())));
             }
             return ResponseEntity.ok(ServerResponse.fail(ResponseCode.ERROR));
         }
