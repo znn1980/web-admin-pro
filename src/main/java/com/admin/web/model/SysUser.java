@@ -153,7 +153,7 @@ public class SysUser extends SysBase {
         return super.toString() + System.lineSeparator() +
                 "SysUser{" +
                 "username='" + this.getUsername() + '\'' +
-                ", password='" + this.getPassword() + '\'' +
+                ", password='" + "******" + '\'' +
                 ", mobile='" + this.getMobile() + '\'' +
                 ", email='" + this.getEmail() + '\'' +
                 ", avatar='" + this.getAvatar() + '\'' +

@@ -49,7 +49,7 @@ public class UserLoginVo implements Serializable {
     public String toString() {
         return "UserLogin{" +
                 "username='" + this.getUsername() + '\'' +
-                ", password='" + this.getPassword() + '\'' +
+                ", password='" + "******" + '\'' +
                 ", sysCode='" + this.getSysCode() + '\'' +
                 '}';
     }

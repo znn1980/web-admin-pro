@@ -14,7 +14,7 @@ public class SecurityUtils {
     static final String SYS_USER_NAME = "admin";
     static final String SYS_USER_SESSION = "SYS_USER_SESSION";
     static final String SYS_CODE_SESSION = "SYS_CODE_SESSION";
-    static final String PASSWORD_SALT = "$%s$";
+    static final String SYS_PASSWORD_SALT = "$%s$";
 
     public static SysUser getSysUser() {
         return new SysUser(SYS_USER_ID, SYS_USER_NAME);
@@ -46,7 +46,7 @@ public class SecurityUtils {
     }
 
     public static String hexPassword(String password) {
-        return DigestUtils.md5DigestAsHex(String.format(PASSWORD_SALT, password).getBytes());
+        return DigestUtils.md5DigestAsHex(String.format(SYS_PASSWORD_SALT, password).getBytes());
     }
 
     public static String hexPassword(SysUser sysUser) {

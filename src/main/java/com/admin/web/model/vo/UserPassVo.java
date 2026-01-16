@@ -53,9 +53,9 @@ public class UserPassVo implements Serializable {
     @Override
     public String toString() {
         return "UserPass{" +
-                " oldPassword='" + this.getOldPassword() + '\'' +
-                ", newPassword='" + this.getNewPassword() + '\'' +
-                ", confirmPassword='" + this.getConfirmPassword() + '\'' +
+                " oldPassword='" + "******" + '\'' +
+                ", newPassword='" + "******" + '\'' +
+                ", confirmPassword='" + "******" + '\'' +
                 '}';
     }
 }
