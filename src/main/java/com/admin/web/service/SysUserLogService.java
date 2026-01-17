@@ -45,8 +45,9 @@ public class SysUserLogService {
             } else if (Objects.nonNull(vo.getEndTimestamp())) {
                 predicates.add(builder.lessThanOrEqualTo(root.get("timestamp"), vo.getEndTimestamp()));
             }
-            query.orderBy(builder.desc(root.get("timestamp")));
-            return builder.and(predicates.toArray(new Predicate[0]));
+            return query.where(predicates.toArray(new Predicate[0]))
+                    .orderBy(builder.desc(root.get("timestamp")))
+                    .getRestriction();
         }, UserLogVo.of(vo));
     }
 
