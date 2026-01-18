@@ -42,12 +42,12 @@ public interface SysMenuDao extends JpaRepository<SysMenu, Long>, JpaSpecificati
      */
     @Query(value = """
             SELECT sys_menu.*
-            FROM sys_menu, sys_roles_menus, sys_role, sys_users_roles, sys_user
-            WHERE sys_menu.id = sys_roles_menus.menu_id
-            	AND sys_roles_menus.role_id = sys_role.id
-            	AND sys_role.id = sys_users_roles.role_id
-            	AND sys_users_roles.user_id = sys_user.id
-            	AND sys_menu.sys_menu = true
+            FROM sys_menu
+            	JOIN sys_roles_menus ON sys_menu.id = sys_roles_menus.menu_id
+            	JOIN sys_role ON sys_roles_menus.role_id = sys_role.id
+            	JOIN sys_users_roles ON sys_role.id = sys_users_roles.role_id
+            	JOIN sys_user ON sys_users_roles.user_id = sys_user.id
+            WHERE sys_menu.sys_menu = true
             	AND sys_user.id = :userId
             ORDER BY sys_menu.sort
                         """, nativeQuery = true)
@@ -62,12 +62,12 @@ public interface SysMenuDao extends JpaRepository<SysMenu, Long>, JpaSpecificati
      */
     @Query(value = """
             SELECT sys_menu.*
-            FROM sys_menu, sys_role, sys_roles_menus, sys_user, sys_users_roles
-            WHERE sys_menu.id = sys_roles_menus.menu_id
-            	AND sys_roles_menus.role_id = sys_role.id
-            	AND sys_role.id = sys_users_roles.role_id
-            	AND sys_users_roles.user_id = sys_user.id
-            	AND sys_menu.sys_menu = true
+            FROM sys_menu
+            	JOIN sys_roles_menus ON sys_menu.id = sys_roles_menus.menu_id
+            	JOIN sys_role ON sys_roles_menus.role_id = sys_role.id
+            	JOIN sys_users_roles ON sys_role.id = sys_users_roles.role_id
+            	JOIN sys_user ON sys_users_roles.user_id = sys_user.id
+            WHERE sys_menu.sys_menu = true
             	AND sys_menu.disable = :disable
             	AND sys_user.id = :userId
             ORDER BY sys_menu.sort

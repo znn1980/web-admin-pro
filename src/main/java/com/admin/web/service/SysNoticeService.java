@@ -33,16 +33,18 @@ public class SysNoticeService {
             return this.sysNoticeDao.findAll((root, query, builder) -> {
                 Subquery<Long> subQuery = query.subquery(Long.class);
                 Root<SysNotice> subRoot = subQuery.from(SysNotice.class);
-                subQuery.select(subRoot.get("id")).where(builder.equal(subRoot.join("users").get("id"), sysUser.getId()));
-                query.orderBy(builder.desc(root.get("createTimestamp")));
-                return builder.not(root.get("id").in(subQuery));
+                subQuery.select(subRoot.get("id"))
+                        .where(builder.equal(subRoot.join("users").get("id"), sysUser.getId()));
+                return query.where(builder.not(root.get("id").in(subQuery)))
+                        .orderBy(builder.desc(root.get("createTimestamp")))
+                        .getRestriction();
             }, PageVo.of(vo));
         } else if (Objects.equals(NoticeVo.State.READ, vo.getState())) {
             //已读
-            return this.sysNoticeDao.findAll((root, query, builder) -> {
-                query.orderBy(builder.desc(root.get("createTimestamp")));
-                return builder.equal(root.join("users").get("id"), sysUser.getId());
-            }, PageVo.of(vo));
+            return this.sysNoticeDao.findAll((root, query, builder) ->
+                    query.where(builder.equal(root.join("users").get("id"), sysUser.getId()))
+                            .orderBy(builder.desc(root.get("createTimestamp")))
+                            .getRestriction(), PageVo.of(vo));
         } else if (Objects.equals(NoticeVo.State.ME, vo.getState())) {
             //我的
             return this.sysNoticeDao.findByCreateUsernameOrderByCreateTimestampDesc(sysUser.getUsername(), PageVo.of(vo));
