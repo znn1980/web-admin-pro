@@ -30,7 +30,7 @@ public class SysBase implements Serializable {
     @Column(name = "CREATE_USERNAME")
     private String createUsername;
     @CreatedDate
-    @Column(name = "CREATE_TIMESTAMP", columnDefinition = "DATETIME")
+    @Column(name = "CREATE_TIMESTAMP")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTimestamp;
@@ -38,7 +38,7 @@ public class SysBase implements Serializable {
     @Column(name = "UPDATE_USERNAME")
     private String updateUsername;
     @LastModifiedDate
-    @Column(name = "UPDATE_TIMESTAMP", columnDefinition = "DATETIME")
+    @Column(name = "UPDATE_TIMESTAMP")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTimestamp;

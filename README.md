@@ -15,4 +15,16 @@
 - 通知公告：系统通知公告信息发布维护。
 - 服务监控：监视当前系统、内存、磁盘等相关信息。
 
+#### 许可证
+
+```
+//读取许可证编号
+String licenseNumber = Files.readString(Paths.get("key.txt"));
+//生成许可证文件
+Files.write(Paths.get("key.lic")
+    , SysLicense.asSysLicense(new SysLicense(licenseNumber
+        //许可证有效期
+        , LocalDate.now(), LocalDate.of(2037, 1, 1))));
+```
+
 ![DEMO](demo.png)

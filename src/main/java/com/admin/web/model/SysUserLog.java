@@ -39,7 +39,7 @@ public class SysUserLog implements Serializable {
     private String errors;
     @Column(name = "MS")
     private Long ms;
-    @Column(name = "CREATE_TIMESTAMP", columnDefinition = "DATETIME")
+    @Column(name = "CREATE_TIMESTAMP")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
