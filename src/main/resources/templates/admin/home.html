@@ -127,7 +127,7 @@
         });
 
         load();
-        setInterval(load, 1000 * 10);
+        setInterval(load, 1000 * 30);
 
         function load() {
             layui.common.req(`${config.base}sys/monitor.json`, 'GET', null, {

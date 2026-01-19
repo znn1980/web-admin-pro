@@ -264,9 +264,9 @@
                 [
                     {type: 'checkbox'}
                     , {field: 'username', title: '用户', width: 80}
-                    , {field: 'name', title: '描述', templet: '#sys-name-tpl'}
+                    , {field: 'name', title: '描述', minWidth: 120, templet: '#sys-name-tpl'}
                     , {field: 'method', title: '请求', width: 85, hide: true, templet: '#sys-method-tpl'}
-                    , {field: 'url', title: '地址', hide: true}
+                    , {field: 'url', title: '地址', minWidth: 180, hide: true}
                     , {field: 'ip', title: 'IP', width: 130}
                     , {field: 'os', title: '系统', width: 110}
                     , {field: 'browser', title: '浏览器', width: 100}
@@ -276,6 +276,10 @@
                 ]
             ]
             , page: true
+        });
+
+        layui.admin.resize(function () {
+            layui.common.asCols('sys-log-table', ['timestamp', 'ms', 'ip', 'os', 'browser']);
         });
 
         layui.table.on('toolbar(sys-log-table)', function (e) {
@@ -367,6 +371,7 @@
             layui.$('#sys-timestamp').html(data.createTimestamp);
             layui.form.val('sys-user-form', data);
         }
+
     });
 </script>
 </body>

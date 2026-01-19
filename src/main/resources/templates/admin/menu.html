@@ -190,22 +190,26 @@
             , cols: [
                 [
                     {type: 'radio'}
-                    , {field: 'title', title: '标题', templet: '#sys-title-tpl'}
+                    , {field: 'title', title: '标题', minWidth: 160, templet: '#sys-title-tpl'}
                     , {field: 'method', title: '请求', width: 85, templet: '#sys-method-tpl'}
-                    , {field: 'url', title: '地址'}
+                    , {field: 'url', title: '地址', minWidth: 180}
                     , {field: 'sysMenu', title: '菜单', align: 'center', width: 75, templet: '#sys-menu-tpl'}
                     , {field: 'disable', title: '状态', align: 'center', width: 90, templet: '#sys-disable-tpl'}
-                    , {field: 'remark', title: '备注', hide: true}
                     , {field: 'createUsername', title: '创建用户', width: 90, hide: true}
                     , {field: 'createTimestamp', title: '创建时间', width: 110, hide: true}
                     , {field: 'updateUsername', title: '修改用户', width: 90, hide: true}
                     , {field: 'updateTimestamp', title: '修改时间', width: 110, hide: true}
+                    , {field: 'remark', title: '备注', hide: true}
                     , {title: '操作', align: 'center', toolbar: '#sys-menu-tool', width: 120}
                 ]
             ]
             , done: function () {
                 layui.treeTable.expandNode('sys-menu-table', {index: 0, expandFlag: true});
             }
+        });
+
+        layui.admin.resize(function () {
+            layui.common.asCols('sys-menu-table', ['sysMenu', 'disable', 'method', 'url']);
         });
 
         layui.table.on('toolbar(sys-menu-table)', function (e) {

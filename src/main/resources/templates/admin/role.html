@@ -102,16 +102,20 @@
             , cols: [
                 [
                     {type: 'radio'}
-                    , {field: 'name', title: '名称', templet: '#sys-remark-tpl'}
+                    , {field: 'name', title: '名称', minWidth: 160, templet: '#sys-remark-tpl'}
                     , {field: 'disable', title: '状态', align: 'center', width: 90, templet: '#sys-disable-tpl'}
-                    , {field: 'remark', title: '备注', hide: true}
                     , {field: 'createUsername', title: '创建用户', width: 90, hide: true}
                     , {field: 'createTimestamp', title: '创建时间', width: 110, hide: true}
                     , {field: 'updateUsername', title: '修改用户', width: 90, hide: true}
                     , {field: 'updateTimestamp', title: '修改时间', width: 110, hide: true}
+                    , {field: 'remark', title: '备注', hide: true}
                     , {title: '操作', align: 'center', toolbar: '#sys-role-tool', width: 120}
                 ]
             ]
+        });
+
+        layui.admin.resize(function () {
+            layui.common.asCols('sys-role-table', ['disable']);
         });
 
         layui.form.on('switch(sys-disable-switch)', function (data) {
@@ -202,11 +206,11 @@
             layui.common.req(`${config.base}sys/menu/all.json`, 'GET', null, {
                 done: function (data) {
                     xmSelect.render({
-                        el: '#sys-menu', direction: 'up', autoRow: true
+                        el: '#sys-menu', direction: 'up', autoRow: false
                         , data: layui.common.asTree(null, data.data)
                         , tree: {show: true, strict: false}
                         , prop: {name: 'title', value: 'id',}
-                        , model: {label: {type: 'block', block: {showCount: 10}}}
+                        , model: {label: {type: 'block', block: {showCount: 1}}}
                         , theme: {color: '#16b777'}
                     });
                     typeof callback === 'function' && callback();
@@ -216,7 +220,7 @@
 
         function save(title, type) {
             layui.admin.popup({
-                type: 1, title: title, area: ['500px', '100']
+                type: 1, title: title, area: 'auto'
                 , content: layui.$('#sys-role-form')
                 , btn: ['确定', '取消']
                 , yes: function (index) {
