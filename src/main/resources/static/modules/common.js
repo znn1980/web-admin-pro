@@ -50,25 +50,22 @@ layui.define(function (exports) {
             });
             return trees;
         }
-        , asCols: function (id, fields) {
-            const cols = [];
-            fields.forEach(function (field) {
-                cols.push({field: field, hide: true});
-            });
+        , asCols: function (id, cols) {
             switch (layui.admin.screen()) {
                 case 0://低于768px的屏幕
-                    layui.table.hideCol(id, cols.map(field => ({...field, hide: true})));
+                    layui.table.hideCol(id, cols.map(col => ({field: col, hide: true})));
                     break;
                 case 1://768px到992px之间的屏幕
+                    layui.table.hideCol(id, cols.map((col, i) => ({field: col, hide: i >= Math.floor(cols.length / 3)})));
+                    break;
                 case 2://992px到1200px之间的屏幕
-                    for (let i = 0; i < fields.length / 2; i++) {
-                        cols[i].hide = false;
-                    }
-                    layui.table.hideCol(id, cols);
+                    layui.table.hideCol(id, cols.map((col, i) => ({field: col, hide: i >= Math.floor(cols.length / 2)})));
                     break;
                 case 3://高于1200px的屏幕
+                    layui.table.hideCol(id, cols.map(col => ({field: col, hide: false})));
+                    break;
                 default:
-                    layui.table.hideCol(id, cols.map(field => ({...field, hide: false})));
+                    layui.table.hideCol(id, cols.map(col => ({field: col, hide: false})));
                     break;
             }
         }

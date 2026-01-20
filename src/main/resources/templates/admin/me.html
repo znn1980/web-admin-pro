@@ -253,12 +253,6 @@
             elem: '#sys-log-table'
             , url: `${config.base}sys/log/me.json`
             , method: 'POST', contentType: "application/json;charset=UTF-8"
-            , where: {
-                startTimestamp: (layui.$('#timestamp').val().split(":")[0]
-                    || layui.common.asDay()).trim() + ' 00:00:00'
-                , endTimestamp: (layui.$('#timestamp').val().split(":")[1]
-                    || layui.common.asDay(1)).trim() + ' 00:00:00'
-            }
             , toolbar: '#sys-log-toolbar'
             , cols: [
                 [
@@ -276,6 +270,12 @@
                 ]
             ]
             , page: true
+            , where: {
+                startTimestamp: (layui.$('#timestamp').val().split(":")[0]
+                    || layui.common.asDay()).trim() + ' 00:00:00'
+                , endTimestamp: (layui.$('#timestamp').val().split(":")[1]
+                    || layui.common.asDay(1)).trim() + ' 00:00:00'
+            }
         });
 
         layui.admin.resize(function () {
@@ -322,13 +322,13 @@
 
         layui.admin.events.search = function () {
             layui.table.reload('sys-log-table', {
-                where: {
+                page: {curr: 1}
+                , where: {
                     startTimestamp: (layui.$('#timestamp').val().split(":")[0]
                         || layui.common.asDay()).trim() + ' 00:00:00'
                     , endTimestamp: (layui.$('#timestamp').val().split(":")[1]
                         || layui.common.asDay(1)).trim() + ' 00:00:00'
                 }
-                , page: {curr: 1}
             });
         }
 

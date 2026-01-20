@@ -132,21 +132,22 @@
             elem: '#sys-notice-table'
             , url: `${config.base}sys/notice/all.json`
             , method: 'POST', contentType: "application/json;charset=UTF-8"
-            , where: {state: 'UNREAD'}
             , toolbar: '#sys-notice-toolbar'
             , cols: [
                 [
                     {type: 'radio'}
                     , {field: 'title', title: '标题', minWidth: 200, templet: '#sys-title-tpl'}
-                    , {field: 'disable', title: '状态', align: 'center', width: 90, templet: '#sys-disable-tpl'}
-                    , {field: 'createUsername', title: '发布用户', width: 90}
-                    , {field: 'createTimestamp', title: '发布时间', width: 160}
-                    , {field: 'updateUsername', title: '修改用户', width: 90, hide: true}
-                    , {field: 'updateTimestamp', title: '修改时间', width: 160, hide: true}
+                    , {field: 'disable', title: '状态', sort: true, align: 'center', width: 90, templet: '#sys-disable-tpl'}
+                    , {field: 'createUsername', title: '发布用户', sort: true, width: 110}
+                    , {field: 'createTimestamp', title: '发布时间', sort: true, width: 160}
+                    , {field: 'updateUsername', title: '修改用户', sort: true, width: 110, hide: true}
+                    , {field: 'updateTimestamp', title: '修改时间', sort: true, width: 160, hide: true}
                     , {title: '操作', align: 'center', toolbar: '#sys-notice-tool', width: 60}
                 ]
             ]
             , page: true
+            , where: {state: 'UNREAD', sort: {field: 'createTimestamp', order: 'desc'}}
+            , initSort: {field: 'createTimestamp', type: 'desc'}
             , done: function (data) {
                 if ('UNREAD' === layui.table.getOptions('sys-notice-table').where.state) {
                     if (data.count === 0) {
@@ -159,6 +160,13 @@
 
         layui.admin.resize(function () {
             layui.common.asCols('sys-notice-table', ['createTimestamp', 'createUsername', 'disable']);
+        });
+
+        layui.table.on('sort(sys-notice-table)', function (data) {
+            layui.table.reload('sys-notice-table', {
+                where: {state: data.config.where.state, sort: {field: data.field, order: data.type}}
+                , initSort: data
+            });
         });
 
         layui.table.on('toolbar(sys-notice-table)', function (e) {
@@ -238,13 +246,15 @@
 
         layui.tabs.on('afterChange(sys-notice-tabs)', function (e) {
             layui.table.reload('sys-notice-table', {
-                where: {
+                page: {curr: 1}
+                , where: {
                     state: e.index === 0 ? 'UNREAD' :
                         e.index === 1 ? 'READ' :
                             e.index === 2 ? 'ME' :
                                 e.index === 3 ? 'ALL' : 'ALL'
+                    , sort: {field: 'createTimestamp', order: 'desc'}
                 }
-                , page: {curr: 1}
+                , initSort: layui.table.getOptions('sys-notice-table').initSort
                 , done: function (data) {
                     load(data);
                 }
