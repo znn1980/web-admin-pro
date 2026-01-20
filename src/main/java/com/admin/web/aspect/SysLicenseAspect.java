@@ -27,9 +27,9 @@ public class SysLicenseAspect {
     public void doBefore() {
         try {
             byte[] bytes = SysLicense.readSysLicense(Paths.get("key.lic"));
-            SysLicense sysLicense = SysLicense.asSysLicense(bytes);
-            log.info("SYS-ASPECT => {}", sysLicense);
-            SysLicense.hasSysLicense(sysLicense);
+            SysLicense license = SysLicense.asSysLicense(bytes);
+            log.info("SYS-ASPECT => {}", license);
+            SysLicense.hasSysLicense(license);
         } catch (SysLicenseException e) {
             throw new ServerResponseException(e.getMessage());
         }
@@ -41,9 +41,9 @@ public class SysLicenseAspect {
 
     @Bean
     public ApplicationRunner runner() {
-        String sysLicenseNumber = SysLicense.asSysLicenseNumber();
-        log.info("许可证编号 => {}", sysLicenseNumber);
-        return args -> Files.write(Paths.get("key.txt"), sysLicenseNumber.getBytes());
+        String licenseNumber = SysLicense.asSysLicenseNumber();
+        log.info("许可证编号 => {}", licenseNumber);
+        return args -> Files.write(Paths.get("key.txt"), licenseNumber.getBytes());
     }
 
 }

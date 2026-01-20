@@ -33,16 +33,16 @@ public record SysLicense(String num, LocalDate from, LocalDate to) implements Se
     /**
      * 许可证加密
      *
-     * @param sysLicense 许可证
+     * @param license 许可证
      * @return 密文
      */
-    public static byte[] asSysLicense(SysLicense sysLicense) {
+    public static byte[] asSysLicense(SysLicense license) {
         try {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(DigestUtils.md5Digest(sysLicense.num().getBytes()), "AES"));
+            cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(DigestUtils.md5Digest(license.num().getBytes()), "AES"));
             try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
                 try (ObjectOutputStream oos = new ObjectOutputStream(bos)) {
-                    oos.writeObject(sysLicense);
+                    oos.writeObject(license);
                     oos.flush();
                     return cipher.doFinal(bos.toByteArray());
                 }
@@ -103,15 +103,15 @@ public record SysLicense(String num, LocalDate from, LocalDate to) implements Se
     /**
      * 验证许可证文件
      *
-     * @param sysLicense 许可证
+     * @param license 许可证
      */
-    public static void hasSysLicense(SysLicense sysLicense) {
-        if (!Objects.equals(asSysLicenseNumber(), sysLicense.num())) {
-            throw new SysLicenseException(String.format("许可证签名无效！(%s)", sysLicense.num()));
+    public static void hasSysLicense(SysLicense license) {
+        if (!Objects.equals(asSysLicenseNumber(), license.num())) {
+            throw new SysLicenseException(String.format("许可证签名无效！(%s)", license.num()));
         }
-        if (sysLicense.from().compareTo(LocalDate.now()) > 0
-                || sysLicense.to().compareTo(LocalDate.now()) < 0) {
-            throw new SysLicenseException(String.format("许可证已到期！(%s ~ %s)", sysLicense.from(), sysLicense.to()));
+        if (license.from().compareTo(LocalDate.now()) > 0
+                || license.to().compareTo(LocalDate.now()) < 0) {
+            throw new SysLicenseException(String.format("许可证已到期！(%s ~ %s)", license.from(), license.to()));
         }
     }
 

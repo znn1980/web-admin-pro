@@ -16,7 +16,7 @@
 - 服务监控：监视当前系统、内存、磁盘等相关信息。
 
 #### 许可证
-
+系统启动后会生成《key.txt》文件，使用如下方法生成《key.lic》文件。
 ```
 //读取许可证编号
 String licenseNumber = Files.readString(Paths.get("key.txt"));
