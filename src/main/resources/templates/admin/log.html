@@ -111,7 +111,7 @@
         });
 
         layui.table.render({
-            elem: '#sys-log-table'
+            elem: '#sys-log-table', skin: 'line'
             , url: `${config.base}sys/log/all.json`
             , method: 'POST', contentType: "application/json;charset=UTF-8"
             , toolbar: '#sys-log-toolbar'

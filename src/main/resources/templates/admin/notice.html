@@ -129,7 +129,7 @@
         layui.util.fixbar();
 
         layui.table.render({
-            elem: '#sys-notice-table'
+            elem: '#sys-notice-table', skin: 'line'
             , url: `${config.base}sys/notice/all.json`
             , method: 'POST', contentType: "application/json;charset=UTF-8"
             , toolbar: '#sys-notice-toolbar'

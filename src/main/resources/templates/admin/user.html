@@ -128,7 +128,7 @@
     }).use(['index', 'common'], function () {
 
         layui.table.render({
-            elem: '#sys-user-table'
+            elem: '#sys-user-table', skin: 'line'
             , url: `${config.base}sys/user/all.json`
             , method: 'POST', contentType: "application/json;charset=UTF-8"
             , toolbar: '#sys-user-toolbar'
