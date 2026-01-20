@@ -257,16 +257,16 @@
             , cols: [
                 [
                     {type: 'checkbox'}
-                    , {field: 'username', title: '用户', width: 80}
-                    , {field: 'name', title: '描述', minWidth: 120, templet: '#sys-name-tpl'}
-                    , {field: 'method', title: '请求', width: 85, hide: true, templet: '#sys-method-tpl'}
-                    , {field: 'url', title: '地址', minWidth: 180, hide: true}
-                    , {field: 'ip', title: 'IP', width: 130}
+                    , {field: 'username', title: '用户', minWidth: 80, width: 80}
+                    , {field: 'name', title: '描述', minWidth: 100, templet: '#sys-name-tpl'}
+                    , {field: 'method', title: '请求', minWidth: 90, maxWidth: 90, width: 90, hide: true, templet: '#sys-method-tpl'}
+                    , {field: 'url', title: '地址', hide: true}
+                    , {field: 'ip', title: 'IP', maxWidth: 150}
                     , {field: 'os', title: '系统', width: 110}
                     , {field: 'browser', title: '浏览器', width: 100}
-                    , {field: 'ms', title: '耗时', align: 'right', width: 80, templet: '#sys-ms-tpl'}
-                    , {field: 'timestamp', title: '创建时间', width: 110, templet: '#sys-timestamp-tpl'}
-                    , {title: '操作', align: 'center', toolbar: '#sys-log-tool', width: 60}
+                    , {field: 'ms', title: '耗时', align: 'right', minWidth: 80, maxWidth: 80, width: 80, templet: '#sys-ms-tpl'}
+                    , {field: 'timestamp', title: '创建时间', minWidth: 120, maxWidth: 180, width: 120, templet: '#sys-timestamp-tpl'}
+                    , {title: '操作', align: 'center', toolbar: '#sys-log-tool', minWidth: 60, maxWidth: 60, width: 60}
                 ]
             ]
             , page: true

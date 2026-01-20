@@ -103,13 +103,13 @@
                 [
                     {type: 'radio'}
                     , {field: 'name', title: '名称', minWidth: 160, templet: '#sys-remark-tpl'}
-                    , {field: 'disable', title: '状态', align: 'center', width: 90, templet: '#sys-disable-tpl'}
-                    , {field: 'createUsername', title: '创建用户', width: 90, hide: true}
-                    , {field: 'createTimestamp', title: '创建时间', width: 110, hide: true}
-                    , {field: 'updateUsername', title: '修改用户', width: 90, hide: true}
-                    , {field: 'updateTimestamp', title: '修改时间', width: 110, hide: true}
+                    , {field: 'disable', title: '状态', align: 'center', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-disable-tpl'}
+                    , {field: 'createUsername', title: '创建用户', minWidth: 110, maxWidth: 110, width: 110, hide: true}
+                    , {field: 'createTimestamp', title: '创建时间', minWidth: 120, maxWidth: 180, width: 180, hide: true}
+                    , {field: 'updateUsername', title: '修改用户', minWidth: 110, maxWidth: 110, width: 110, hide: true}
+                    , {field: 'updateTimestamp', title: '修改时间', minWidth: 120, maxWidth: 180, width: 180, hide: true}
                     , {field: 'remark', title: '备注', hide: true}
-                    , {title: '操作', align: 'center', toolbar: '#sys-role-tool', width: 120}
+                    , {title: '操作', align: 'center', toolbar: '#sys-role-tool', minWidth: 120, maxWidth: 120, width: 120}
                 ]
             ]
         });

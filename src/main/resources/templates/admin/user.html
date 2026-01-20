@@ -136,16 +136,16 @@
                 [
                     {type: 'radio'}
                     , {field: 'username', title: '用户', sort: true, minWidth: 120, templet: '#sys-username-tpl'}
-                    , {field: 'mobile', title: '手机', sort: true, minWidth: 120}
+                    , {field: 'mobile', title: '手机', sort: true, minWidth: 130}
                     , {field: 'email', title: '邮箱', sort: true, minWidth: 180}
-                    , {field: 'sysAdmin', title: '管理员', sort: true, align: 'center', width: 95, templet: '#sys-admin-tpl'}
-                    , {field: 'disable', title: '状态', sort: true, align: 'center', width: 90, templet: '#sys-disable-tpl'}
-                    , {field: 'createUsername', title: '创建用户', sort: true, width: 110, hide: true}
-                    , {field: 'createTimestamp', title: '创建时间', sort: true, width: 110, hide: true}
-                    , {field: 'updateUsername', title: '修改用户', sort: true, width: 110, hide: true}
-                    , {field: 'updateTimestamp', title: '修改时间', sort: true, width: 110, hide: true}
+                    , {field: 'sysAdmin', title: '管理', sort: true, align: 'center', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-admin-tpl'}
+                    , {field: 'disable', title: '状态', sort: true, align: 'center', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-disable-tpl'}
+                    , {field: 'createUsername', title: '创建用户', sort: true, minWidth: 110, maxWidth: 110, width: 110, hide: true}
+                    , {field: 'createTimestamp', title: '创建时间', sort: true, minWidth: 120, maxWidth: 180, width: 180, hide: true}
+                    , {field: 'updateUsername', title: '修改用户', sort: true, minWidth: 110, maxWidth: 110, width: 110, hide: true}
+                    , {field: 'updateTimestamp', title: '修改时间', sort: true, minWidth: 120, maxWidth: 180, width: 180, hide: true}
                     , {field: 'remark', title: '备注', hide: true}
-                    , {title: '操作', align: 'center', toolbar: '#sys-user-tool', width: 90}
+                    , {title: '操作', align: 'center', toolbar: '#sys-user-tool', minWidth: 90, maxWidth: 90, width: 90}
                 ]
             ]
             , page: true
