@@ -50,23 +50,28 @@ layui.define(function (exports) {
             });
             return trees;
         }
-        , asCols: function (id, cols, sm, md) {
+        , asCols: function (id, fields, cols) {
+            let queries = 0.0;
             switch (layui.admin.screen()) {
                 case 0://低于768px的屏幕
-                    cols = cols.map(col => ({field: col, hide: true}));
+                    queries = cols && cols.xs && cols.xs >= 0 && cols.xs <= 1 ? cols.xs : 0;
                     break;
                 case 1://768px到992px之间的屏幕
-                    cols = cols.map((col, i) => ({field: col, hide: i >= Math.round(cols.length * (sm ? sm : 0.3))}));
+                    queries = cols && cols.sm && cols.sm >= 0 && cols.sm <= 1 ? cols.sm : 0.3;
                     break;
                 case 2://992px到1200px之间的屏幕
-                    cols = cols.map((col, i) => ({field: col, hide: i >= Math.round(cols.length * (md ? md : 0.7))}));
+                    queries = cols && cols.md && cols.md >= 0 && cols.md <= 1 ? cols.md : 0.7;
                     break;
                 case 3://高于1200px的屏幕
+                    queries = cols && cols.lg && cols.lg >= 0 && cols.lg <= 1 ? cols.lg : 1;
+                    break;
                 default:
-                    cols = cols.map(col => ({field: col, hide: false}));
+                    queries = cols && cols.xl && cols.xl >= 0 && cols.xl <= 1 ? cols.xl : 1;
                     break;
             }
-            layui.table.hideCol(id, cols);
+            layui.table.hideCol(id, fields.map(function (field, index) {
+                return {field: field, hide: index >= Math.round(fields.length * queries)};
+            }));
         }
     }
     exports('common', common);
