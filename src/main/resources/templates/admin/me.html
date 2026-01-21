@@ -173,22 +173,19 @@
 </script>
 <script type="text/html" id="sys-method-tpl">
     {{# if(d.method === 'GET'){ }}
-    <span class="layui-badge layui-bg-orange">{{ d.method }}</span>
+    <span lay-tips="{{ d.url }}" class="layui-badge layui-bg-orange">{{ d.method }}</span>
     {{# }else if(d.method === 'POST'){ }}
-    <span class="layui-badge layui-bg-green">{{ d.method }}</span>
+    <span lay-tips="{{ d.url }}" class="layui-badge layui-bg-green">{{ d.method }}</span>
     {{# }else if(d.method === 'PUT'){ }}
-    <span class="layui-badge layui-bg-blue">{{ d.method }}</span>
+    <span lay-tips="{{ d.url }}" class="layui-badge layui-bg-blue">{{ d.method }}</span>
     {{# }else if(d.method === 'DELETE'){ }}
-    <span class="layui-badge layui-bg-red">{{ d.method }}</span>
+    <span lay-tips="{{ d.url }}" class="layui-badge layui-bg-red">{{ d.method }}</span>
     {{# }else{ }}
-    <span class="layui-badge-rim">{{ d.method?d.method:'未知' }}</span>
+    <span lay-tips="{{ d.url }}" class="layui-badge-rim">{{ d.method?d.method:'未知' }}</span>
     {{# } }}
 </script>
 <script type="text/html" id="sys-ms-tpl">
     <span class="layui-badge layui-bg-orange">{{ d.ms/1000 }}</span>
-</script>
-<script type="text/html" id="sys-timestamp-tpl">
-    <span lay-tips="{{ d.timestamp }}">{{ d.timestamp }}</span>
 </script>
 <script type="text/html" id="sys-code-tpl">
     {{# if(d.params){ }}
@@ -259,13 +256,13 @@
                     {fixed: 'left', type: 'checkbox'}
                     , {field: 'username', title: '用户', minWidth: 80, width: 80}
                     , {field: 'name', title: '描述', minWidth: 100, templet: '#sys-name-tpl'}
-                    , {field: 'method', title: '请求', minWidth: 90, maxWidth: 90, width: 90, hide: true, templet: '#sys-method-tpl'}
+                    , {field: 'method', title: '请求', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-method-tpl'}
                     , {field: 'url', title: '地址', hide: true}
                     , {field: 'ip', title: 'IP', maxWidth: 150, width: 150}
-                    , {field: 'os', title: '系统', width: 110}
-                    , {field: 'browser', title: '浏览器', width: 100}
+                    , {field: 'os', title: '系统', width: 120, hide: true}
+                    , {field: 'browser', title: '浏览器', width: 120, hide: true}
                     , {field: 'ms', title: '耗时', align: 'right', minWidth: 80, maxWidth: 80, width: 80, templet: '#sys-ms-tpl'}
-                    , {field: 'timestamp', title: '创建时间', minWidth: 120, maxWidth: 180, width: 120, templet: '#sys-timestamp-tpl'}
+                    , {field: 'timestamp', title: '创建时间', minWidth: 120, maxWidth: 180, width: 180}
                     , {fixed: 'right', title: '操作', align: 'center', toolbar: '#sys-log-tool', minWidth: 60, maxWidth: 60, width: 60}
                 ]
             ]
@@ -279,7 +276,7 @@
         });
 
         layui.admin.resize(function () {
-            layui.common.asCols('sys-log-table', ['timestamp', 'ms', 'ip', 'os', 'browser']);
+            layui.common.asCols('sys-log-table', ['timestamp', 'ms', 'method', 'ip']);
         });
 
         layui.table.on('toolbar(sys-log-table)', function (data) {
