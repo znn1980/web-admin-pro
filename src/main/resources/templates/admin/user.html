@@ -134,7 +134,7 @@
             , toolbar: '#sys-user-toolbar'
             , cols: [
                 [
-                    {type: 'radio'}
+                    {fixed: 'left', type: 'checkbox'}
                     , {field: 'username', title: '用户', sort: true, minWidth: 120, templet: '#sys-username-tpl'}
                     , {field: 'mobile', title: '手机', sort: true, minWidth: 130}
                     , {field: 'email', title: '邮箱', sort: true, minWidth: 180}
@@ -145,7 +145,7 @@
                     , {field: 'updateUsername', title: '修改用户', sort: true, minWidth: 110, maxWidth: 110, width: 110, hide: true}
                     , {field: 'updateTimestamp', title: '修改时间', sort: true, minWidth: 120, maxWidth: 180, width: 180, hide: true}
                     , {field: 'remark', title: '备注', hide: true}
-                    , {title: '操作', align: 'center', toolbar: '#sys-user-tool', minWidth: 90, maxWidth: 90, width: 90}
+                    , {fixed: 'right', title: '操作', align: 'center', toolbar: '#sys-user-tool', minWidth: 90, maxWidth: 90, width: 90}
                 ]
             ]
             , page: true
@@ -155,14 +155,19 @@
             layui.common.asCols('sys-user-table', ['sysAdmin', 'disable', 'mobile', 'email']);
         });
 
+        layui.table.on('checkbox(sys-user-table)', function (data) {
+            layui.table.setRowChecked('sys-user-table', {index: 'all', checked: false});
+            data.setRowChecked();
+        });
+
         layui.table.on('sort(sys-user-table)', function (data) {
             layui.table.reload('sys-user-table', {
                 initSort: data, where: {sort: {field: data.field, order: data.type}}
             });
         });
 
-        layui.table.on('toolbar(sys-user-table)', function (e) {
-            if (e.event === 'sys-add-toolbar') {
+        layui.table.on('toolbar(sys-user-table)', function (data) {
+            if (data.event === 'sys-add-toolbar') {
                 layui.$('#id').val('');
                 layui.$('#sys-user-form')[0].reset();
                 layui.$('#sys-user').show();
@@ -171,12 +176,12 @@
                     save('创建用户', 'POST');
                 });
             }
-            if (e.event === 'sys-edit-toolbar' || e.event === 'sys-delete-toolbar' || e.event === 'sys-release-toolbar') {
+            if (data.event === 'sys-edit-toolbar' || data.event === 'sys-delete-toolbar' || data.event === 'sys-release-toolbar') {
                 const users = layui.table.checkStatus('sys-user-table').data;
                 if (users.length <= 0) {
                     layui.layer.msg("请选择一条纪录！");
                 } else {
-                    if (e.event === 'sys-edit-toolbar') {
+                    if (data.event === 'sys-edit-toolbar') {
                         users[0].disable = !users[0].disable;
                         layui.form.val('sys-user-form', users[0]);
                         layui.$('#sys-user').hide();
@@ -185,10 +190,10 @@
                             save('修改用户', 'PUT');
                         });
                     }
-                    if (e.event === 'sys-delete-toolbar') {
+                    if (data.event === 'sys-delete-toolbar') {
                         del(users[0]);
                     }
-                    if (e.event === 'sys-release-toolbar') {
+                    if (data.event === 'sys-release-toolbar') {
                         layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否重置【${users[0].username}】用户密码？`, {
                             title: '重置密码', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
                         }, function (index) {
@@ -202,23 +207,23 @@
                     }
                 }
             }
-            if (e.event === 'sys-refresh-toolbar') {
+            if (data.event === 'sys-refresh-toolbar') {
                 layui.table.reload('sys-user-table');
             }
         });
 
-        layui.table.on('tool(sys-user-table)', function (e) {
-            if (e.event === 'sys-edit-tool') {
-                e.data.disable = !e.data.disable;
-                layui.form.val('sys-user-form', e.data);
+        layui.table.on('tool(sys-user-table)', function (data) {
+            if (data.event === 'sys-edit-tool') {
+                data.data.disable = !data.data.disable;
+                layui.form.val('sys-user-form', data.data);
                 layui.$('#sys-user').hide();
                 load(function () {
-                    xmSelect.get('#sys-role', true).setValue(e.data.roles ? e.data.roles : []);
+                    xmSelect.get('#sys-role', true).setValue(data.data.roles ? data.data.roles : []);
                     save('修改用户', 'PUT');
                 });
             }
-            if (e.event === 'sys-delete-tool') {
-                del(e.data);
+            if (data.event === 'sys-delete-tool') {
+                del(data.data);
             }
         });
 

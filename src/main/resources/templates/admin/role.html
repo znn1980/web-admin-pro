@@ -101,7 +101,7 @@
             , toolbar: '#sys-role-toolbar'
             , cols: [
                 [
-                    {type: 'radio'}
+                    {fixed: 'left', type: 'checkbox'}
                     , {field: 'name', title: '名称', minWidth: 160, templet: '#sys-remark-tpl'}
                     , {field: 'disable', title: '状态', align: 'center', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-disable-tpl'}
                     , {field: 'createUsername', title: '创建用户', minWidth: 110, maxWidth: 110, width: 110, hide: true}
@@ -109,13 +109,18 @@
                     , {field: 'updateUsername', title: '修改用户', minWidth: 110, maxWidth: 110, width: 110, hide: true}
                     , {field: 'updateTimestamp', title: '修改时间', minWidth: 120, maxWidth: 180, width: 180, hide: true}
                     , {field: 'remark', title: '备注', hide: true}
-                    , {title: '操作', align: 'center', toolbar: '#sys-role-tool', minWidth: 120, maxWidth: 120, width: 120}
+                    , {fixed: 'right', title: '操作', align: 'center', toolbar: '#sys-role-tool', minWidth: 120, maxWidth: 120, width: 120}
                 ]
             ]
         });
 
         layui.admin.resize(function () {
             layui.common.asCols('sys-role-table', ['disable']);
+        });
+
+        layui.table.on('checkbox(sys-role-table)', function (data) {
+            layui.table.setRowChecked('sys-role-table', {index: 'all', checked: false});
+            data.setRowChecked();
         });
 
         layui.form.on('switch(sys-disable-switch)', function (data) {
@@ -138,8 +143,8 @@
             });
         });
 
-        layui.table.on('toolbar(sys-role-table)', function (e) {
-            if (e.event === 'sys-add-toolbar') {
+        layui.table.on('toolbar(sys-role-table)', function (data) {
+            if (data.event === 'sys-add-toolbar') {
                 layui.$('#id').val('');
                 layui.$('#sys-role-form')[0].reset();
                 load(function () {
@@ -147,12 +152,12 @@
                     save('创建角色', 'POST');
                 });
             }
-            if (e.event === 'sys-edit-toolbar' || e.event === 'sys-delete-toolbar') {
+            if (data.event === 'sys-edit-toolbar' || data.event === 'sys-delete-toolbar') {
                 const roles = layui.table.checkStatus('sys-role-table').data;
                 if (roles.length <= 0) {
                     layui.layer.msg("请选择一条纪录！");
                 } else {
-                    if (e.event === 'sys-edit-toolbar') {
+                    if (data.event === 'sys-edit-toolbar') {
                         roles[0].disable = !roles[0].disable;
                         layui.form.val('sys-role-form', roles[0]);
                         load(function () {
@@ -160,36 +165,37 @@
                             save('修改角色', 'PUT');
                         });
                     }
-                    if (e.event === 'sys-delete-toolbar') {
+                    if (data.event === 'sys-delete-toolbar') {
                         del(roles[0]);
                     }
                 }
             }
-            if (e.event === 'sys-refresh-toolbar') {
+            if (data.event === 'sys-refresh-toolbar') {
                 layui.table.reload('sys-role-table');
             }
         });
 
-        layui.table.on('tool(sys-role-table)', function (e) {
-            if (e.event === 'sys-edit-tool') {
-                e.data.disable = !e.data.disable;
-                layui.form.val('sys-role-form', e.data);
+        layui.table.on('tool(sys-role-table)', function (data) {
+            if (data.event === 'sys-edit-tool') {
+                data.data.disable = !data.data.disable;
+                layui.form.val('sys-role-form', data.data);
                 load(function () {
-                    xmSelect.get('#sys-menu', true).setValue(e.data.menus ? e.data.menus : []);
+                    xmSelect.get('#sys-menu', true).setValue(data.data.menus ? data.data.menus : []);
                     save('修改角色', 'PUT');
                 });
             }
-            if (e.event === 'sys-delete-tool') {
-                del(e.data);
+            if (data.event === 'sys-delete-tool') {
+                del(data.data);
             }
-            if (e.event === 'sys-more-tool') {
+            if (data.event === 'sys-more-tool') {
+                const id = data.data.id;
                 layui.dropdown.render({
                     elem: this, show: true
                     , data: [{id: 'UP', title: '上移'}, {id: 'DOWN', title: '下移'}]
                     , click: function (data) {
                         if (data.id === 'UP' || data.id === 'DOWN') {
                             layui.common.req(`${config.base}sys/role/move.json`, 'PUT', {
-                                id: e.data.id, move: data.id
+                                id: id, move: data.id
                             }, {
                                 done: function (data) {
                                     layui.layer.msg(data.msg);

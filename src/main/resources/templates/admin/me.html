@@ -256,17 +256,17 @@
             , toolbar: '#sys-log-toolbar'
             , cols: [
                 [
-                    {type: 'checkbox'}
+                    {fixed: 'left', type: 'checkbox'}
                     , {field: 'username', title: '用户', minWidth: 80, width: 80}
                     , {field: 'name', title: '描述', minWidth: 100, templet: '#sys-name-tpl'}
                     , {field: 'method', title: '请求', minWidth: 90, maxWidth: 90, width: 90, hide: true, templet: '#sys-method-tpl'}
                     , {field: 'url', title: '地址', hide: true}
-                    , {field: 'ip', title: 'IP', maxWidth: 150}
+                    , {field: 'ip', title: 'IP', maxWidth: 150, width: 150}
                     , {field: 'os', title: '系统', width: 110}
                     , {field: 'browser', title: '浏览器', width: 100}
                     , {field: 'ms', title: '耗时', align: 'right', minWidth: 80, maxWidth: 80, width: 80, templet: '#sys-ms-tpl'}
                     , {field: 'timestamp', title: '创建时间', minWidth: 120, maxWidth: 180, width: 120, templet: '#sys-timestamp-tpl'}
-                    , {title: '操作', align: 'center', toolbar: '#sys-log-tool', minWidth: 60, maxWidth: 60, width: 60}
+                    , {fixed: 'right', title: '操作', align: 'center', toolbar: '#sys-log-tool', minWidth: 60, maxWidth: 60, width: 60}
                 ]
             ]
             , page: true
@@ -282,8 +282,8 @@
             layui.common.asCols('sys-log-table', ['timestamp', 'ms', 'ip', 'os', 'browser']);
         });
 
-        layui.table.on('toolbar(sys-log-table)', function (e) {
-            if (e.event === 'sys-delete-toolbar') {
+        layui.table.on('toolbar(sys-log-table)', function (data) {
+            if (data.event === 'sys-delete-toolbar') {
                 const logs = layui.table.checkStatus('sys-log-table').data;
                 if (logs.length <= 0) {
                     layui.layer.msg("请选择一条纪录！");
@@ -293,7 +293,7 @@
                     }, function (index) {
                         layui.layer.close(index);
                         layui.common.req(`${config.base}sys/log/delete.json`, 'DELETE', logs.map(log => log.id), {
-                            done: function () {
+                            done: function (data) {
                                 layui.layer.msg(data.msg);
                                 layui.table.reload('sys-log-table');
                             }
@@ -301,17 +301,17 @@
                     });
                 }
             }
-            if (e.event === 'sys-refresh-toolbar') {
+            if (data.event === 'sys-refresh-toolbar') {
                 layui.table.reload('sys-log-table');
             }
         });
 
-        layui.table.on('tool(sys-log-table)', function (e) {
-            if (e.event === 'sys-search-tool') {
-                layui.laytpl(layui.$('#sys-code-tpl').html()).render(e.data, function (html) {
+        layui.table.on('tool(sys-log-table)', function (data) {
+            if (data.event === 'sys-search-tool') {
+                layui.laytpl(layui.$('#sys-code-tpl').html()).render(data.data, function (html) {
                     layui.admin.popup({
-                        type: 1, title: `${e.data.name}（${e.data.method}:${e.data.url}）`, area: 'auto'
-                        , content: html
+                        type: 1, area: 'auto'
+                        , title: `${data.data.name}（${data.data.method}:${data.data.url}）`, content: html
                         , success: function () {
                             layui.code({elem: '.layui-code', theme: 'dark', header: true});
                         }

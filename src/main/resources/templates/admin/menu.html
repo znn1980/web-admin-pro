@@ -189,7 +189,7 @@
             }
             , cols: [
                 [
-                    {type: 'radio'}
+                    {fixed: 'left', type: 'checkbox'}
                     , {field: 'title', title: '标题', minWidth: 160, templet: '#sys-title-tpl'}
                     , {field: 'method', title: '请求', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-method-tpl'}
                     , {field: 'url', title: '地址', minWidth: 180}
@@ -200,7 +200,7 @@
                     , {field: 'updateUsername', title: '修改用户', minWidth: 110, maxWidth: 110, width: 110, hide: true}
                     , {field: 'updateTimestamp', title: '修改时间', minWidth: 120, maxWidth: 180, width: 180, hide: true}
                     , {field: 'remark', title: '备注', hide: true}
-                    , {title: '操作', align: 'center', toolbar: '#sys-menu-tool', minWidth: 120, maxWidth: 120, width: 120}
+                    , {fixed: 'right', title: '操作', align: 'center', toolbar: '#sys-menu-tool', minWidth: 120, maxWidth: 120, width: 120}
                 ]
             ]
             , done: function () {
@@ -212,8 +212,18 @@
             layui.common.asCols('sys-menu-table', ['sysMenu', 'disable', 'method', 'url']);
         });
 
-        layui.table.on('toolbar(sys-menu-table)', function (e) {
-            if (e.event === 'sys-add-toolbar') {
+        layui.table.on('checkbox(sys-menu-table)', function (data) {
+            layui.treeTable.checkAllNodes('sys-menu-table', false);
+            if (data.dataIndex) {
+                layui.treeTable.setRowChecked('sys-menu-table', {index: data.dataIndex, checked: true, callbackFlag: true});
+                layui.$(data.tr).addClass('layui-table-checked');
+                data.dataCache.LAY_CHECKED = true;
+                data.data.LAY_CHECKED = true;
+            }
+        });
+
+        layui.table.on('toolbar(sys-menu-table)', function (data) {
+            if (data.event === 'sys-add-toolbar') {
                 layui.$('#id').val('');
                 layui.$('#sys-menu-form')[0].reset();
                 layui.$('#icon-suffix').attr('class', 'layui-icon layui-icon-search');
@@ -222,12 +232,12 @@
                     save('创建菜单', 'POST');
                 });
             }
-            if (e.event === 'sys-edit-toolbar' || e.event === 'sys-delete-toolbar') {
+            if (data.event === 'sys-edit-toolbar' || data.event === 'sys-delete-toolbar') {
                 const menus = layui.treeTable.checkStatus('sys-menu-table').data;
                 if (menus.length <= 0) {
                     layui.layer.msg("请选择一条纪录！");
                 } else {
-                    if (e.event === 'sys-edit-toolbar') {
+                    if (data.event === 'sys-edit-toolbar') {
                         menus[0].disable = !menus[0].disable;
                         layui.form.val('sys-menu-form', menus[0]);
                         layui.$('#icon-suffix').attr('class', `${menus[0].icon ? menus[0].icon : 'layui-icon layui-icon-search'}`);
@@ -236,37 +246,38 @@
                             save('修改菜单', 'PUT');
                         });
                     }
-                    if (e.event === 'sys-delete-toolbar') {
+                    if (data.event === 'sys-delete-toolbar') {
                         del(menus[0]);
                     }
                 }
             }
-            if (e.event === 'sys-refresh-toolbar') {
+            if (data.event === 'sys-refresh-toolbar') {
                 layui.table.reload('sys-menu-table');
             }
         });
 
-        layui.table.on('tool(sys-menu-table)', function (e) {
-            if (e.event === 'sys-edit-tool') {
-                e.data.disable = !e.data.disable;
-                layui.form.val('sys-menu-form', e.data);
-                layui.$('#icon-suffix').attr('class', `${e.data.icon ? e.data.icon : 'layui-icon layui-icon-search'}`);
+        layui.table.on('tool(sys-menu-table)', function (data) {
+            if (data.event === 'sys-edit-tool') {
+                data.data.disable = !data.data.disable;
+                layui.form.val('sys-menu-form', data.data);
+                layui.$('#icon-suffix').attr('class', `${data.data.icon ? data.data.icon : 'layui-icon layui-icon-search'}`);
                 load(function () {
-                    xmSelect.get('#sys-menu', true).setValue(e.data.pid ? [e.data.pid] : []);
+                    xmSelect.get('#sys-menu', true).setValue(data.data.pid ? [data.data.pid] : []);
                     save('修改菜单', 'PUT');
                 });
             }
-            if (e.event === 'sys-delete-tool') {
-                del(e.data);
+            if (data.event === 'sys-delete-tool') {
+                del(data.data);
             }
-            if (e.event === 'sys-more-tool') {
+            if (data.event === 'sys-more-tool') {
+                const id = data.data.id;
                 layui.dropdown.render({
                     elem: this, show: true
                     , data: [{id: 'UP', title: '上移'}, {id: 'DOWN', title: '下移'}]
                     , click: function (data) {
                         if (data.id === 'UP' || data.id === 'DOWN') {
                             layui.common.req(`${config.base}sys/menu/move.json`, 'PUT', {
-                                id: e.data.id, move: data.id
+                                id: id, move: data.id
                             }, {
                                 done: function (data) {
                                     layui.layer.msg(data.msg);

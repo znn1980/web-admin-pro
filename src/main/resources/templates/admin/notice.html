@@ -135,14 +135,14 @@
             , toolbar: '#sys-notice-toolbar'
             , cols: [
                 [
-                    {type: 'radio'}
+                    {fixed: 'left', type: 'checkbox'}
                     , {field: 'title', title: '标题', minWidth: 200, templet: '#sys-title-tpl'}
                     , {field: 'disable', title: '状态', sort: true, align: 'center', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-disable-tpl'}
                     , {field: 'createUsername', title: '发布用户', sort: true, minWidth: 110, maxWidth: 110, width: 110}
                     , {field: 'createTimestamp', title: '发布时间', sort: true, minWidth: 120, maxWidth: 180, width: 180}
                     , {field: 'updateUsername', title: '修改用户', sort: true, minWidth: 110, maxWidth: 110, width: 110, hide: true}
                     , {field: 'updateTimestamp', title: '修改时间', sort: true, minWidth: 120, maxWidth: 180, width: 180, hide: true}
-                    , {title: '操作', align: 'center', toolbar: '#sys-notice-tool', minWidth: 60, maxWidth: 60, width: 60}
+                    , {fixed: 'right', title: '操作', align: 'center', toolbar: '#sys-notice-tool', minWidth: 60, maxWidth: 60, width: 60}
                 ]
             ]
             , page: true
@@ -162,6 +162,11 @@
             layui.common.asCols('sys-notice-table', ['createTimestamp', 'createUsername', 'disable']);
         });
 
+        layui.table.on('checkbox(sys-notice-table)', function (data) {
+            layui.table.setRowChecked('sys-notice-table', {index: 'all', checked: false});
+            data.setRowChecked();
+        });
+
         layui.table.on('sort(sys-notice-table)', function (data) {
             layui.table.reload('sys-notice-table', {
                 where: {state: data.config.where.state, sort: {field: data.field, order: data.type}}
@@ -169,27 +174,27 @@
             });
         });
 
-        layui.table.on('toolbar(sys-notice-table)', function (e) {
-            if (e.event === 'sys-add-toolbar') {
+        layui.table.on('toolbar(sys-notice-table)', function (data) {
+            if (data.event === 'sys-add-toolbar') {
                 layui.$('#id').val('');
                 layui.$('#sys-notice-form')[0].reset();
                 save('创建通知公告', 'POST');
             }
-            if (e.event === 'sys-edit-toolbar' || e.event === 'sys-delete-toolbar') {
+            if (data.event === 'sys-edit-toolbar' || data.event === 'sys-delete-toolbar') {
                 const notices = layui.table.checkStatus('sys-notice-table').data;
                 if (notices.length <= 0) {
                     layui.layer.msg("请选择一条纪录！");
                 } else {
-                    if (e.event === 'sys-edit-toolbar') {
+                    if (data.event === 'sys-edit-toolbar') {
                         layui.form.val('sys-notice-form', notices[0]);
                         save('修改通知公告', 'PUT');
                     }
-                    if (e.event === 'sys-delete-toolbar') {
+                    if (data.event === 'sys-delete-toolbar') {
                         del(notices[0]);
                     }
                 }
             }
-            if (e.event === 'sys-refresh-toolbar') {
+            if (data.event === 'sys-refresh-toolbar') {
                 layui.table.reload('sys-notice-table', {
                     done: function (data) {
                         load(data);
@@ -198,9 +203,9 @@
             }
         });
 
-        layui.table.on('tool(sys-notice-table)', function (e) {
-            if (e.event === 'sys-search-tool') {
-                layui.common.req(`${config.base}sys/notice/show.json`, 'POST', e.data.id, {
+        layui.table.on('tool(sys-notice-table)', function (data) {
+            if (data.event === 'sys-search-tool') {
+                layui.common.req(`${config.base}sys/notice/show.json`, 'POST', data.data.id, {
                     done: function (data) {
                         layui.laytpl(layui.$('#sys-notice-tpl').html()).render(data.data, function (html) {
                             layui.$('#sys-notice-show').html(html).show();
@@ -244,14 +249,14 @@
             });
         });
 
-        layui.tabs.on('afterChange(sys-notice-tabs)', function (e) {
+        layui.tabs.on('afterChange(sys-notice-tabs)', function (data) {
             layui.table.reload('sys-notice-table', {
                 page: {curr: 1}
                 , where: {
-                    state: e.index === 0 ? 'UNREAD' :
-                        e.index === 1 ? 'READ' :
-                            e.index === 2 ? 'ME' :
-                                e.index === 3 ? 'ALL' : 'ALL'
+                    state: data.index === 0 ? 'UNREAD' :
+                        data.index === 1 ? 'READ' :
+                            data.index === 2 ? 'ME' :
+                                data.index === 3 ? 'ALL' : 'ALL'
                     , sort: {field: 'createTimestamp', order: 'desc'}
                 }
                 , initSort: layui.table.getOptions('sys-notice-table').initSort
