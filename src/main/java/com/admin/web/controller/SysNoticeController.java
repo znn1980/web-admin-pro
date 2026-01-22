@@ -60,4 +60,11 @@ public class SysNoticeController extends BaseController {
         this.sysNoticeService.delete(id, super.getSysUser());
         return ServerResponse.ok();
     }
+
+    @SysPermissions(SysLogin.class)
+    @GetMapping("/unRead.json")
+    public ServerResponse<Long> unRead() {
+        Long unRead = this.sysNoticeService.unRead(super.getSysUser().getId());
+        return ServerResponse.ok(unRead, unRead);
+    }
 }

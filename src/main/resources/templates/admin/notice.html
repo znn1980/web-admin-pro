@@ -268,13 +268,23 @@
 
         function load(data) {
             if ('UNREAD' === layui.table.getOptions('sys-notice-table').where.state) {
-                layui.$('#sys-notice-unread')
-                    .attr('class', `${data.count > 0 ? 'layui-badge' : ''}`)
-                    .text(`${data.count > 0 ? data.count > 99 ? '99+' : data.count : ''}`);
-                parent.layui.$('#sys-notice-unread')
-                    .attr('class', `${data.count > 0 ? 'layui-badge' : ''}`)
-                    .text(`${data.count > 0 ? data.count > 99 ? '99+' : data.count : ''}`);
+                unRead(data.count);
+            } else {
+                layui.common.req(`${config.base}sys/notice/unRead.json`, 'GET', null, {
+                    done: function (data) {
+                        unRead(data.data);
+                    }
+                });
             }
+        }
+
+        function unRead(count) {
+            layui.$('#sys-notice-unread')
+                .attr('class', `${count > 0 ? 'layui-badge' : ''}`)
+                .text(`${count > 0 ? count > 99 ? '99+' : count : ''}`);
+            parent.layui.$('#sys-notice-unread')
+                .attr('class', `${count > 0 ? 'layui-badge' : ''}`)
+                .text(`${count > 0 ? count > 99 ? '99+' : count : ''}`);
         }
 
         function save(title, type) {

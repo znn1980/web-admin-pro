@@ -4,7 +4,6 @@ import com.admin.web.annotation.*;
 import com.admin.web.model.ServerResponse;
 import com.admin.web.model.SysUser;
 import com.admin.web.model.vo.*;
-import com.admin.web.service.SysNoticeService;
 import com.admin.web.service.SysUserService;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
@@ -19,11 +18,9 @@ import java.util.List;
 @RequestMapping("/sys/user")
 public class SysUserController extends BaseController {
     private final SysUserService sysUserService;
-    private final SysNoticeService sysNoticeService;
 
-    public SysUserController(SysUserService sysUserService, SysNoticeService sysNoticeService) {
+    public SysUserController(SysUserService sysUserService) {
         this.sysUserService = sysUserService;
-        this.sysNoticeService = sysNoticeService;
     }
 
     @SysLog("用户登录")
@@ -54,8 +51,7 @@ public class SysUserController extends BaseController {
     @GetMapping("/me.json")
     public ServerResponse<SysUser> me() {
         SysUser sysUser = this.sysUserService.show(super.getSysUser().getId());
-        Long unRead = this.sysNoticeService.unRead(super.getSysUser().getId());
-        return ServerResponse.ok(unRead, sysUser);
+        return ServerResponse.ok(sysUser);
     }
 
     @SysPermissions

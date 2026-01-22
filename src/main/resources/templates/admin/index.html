@@ -175,10 +175,8 @@
 
         layui.common.req(`${config.base}sys/user/me.json`, 'GET', null, {
             done: function (data) {
-                load(data.data);
-                layui.$('#sys-notice-unread')
-                    .attr('class', `${data.count > 0 ? 'layui-badge' : ''}`)
-                    .text(`${data.count > 0 ? data.count > 99 ? '99+' : data.count : ''}`);
+                if (data.data.avatar) layui.$('#sys-avatar').attr('src', data.data.avatar);
+                layui.$('#sys-user').html(data.data.username);
             }
         });
 
@@ -189,10 +187,13 @@
             }
         });
 
-        function load(data) {
-            if (data.avatar) layui.$('#sys-avatar').attr('src', data.avatar);
-            layui.$('#sys-user').html(data.username);
-        }
+        layui.common.req(`${config.base}sys/notice/unRead.json`, 'GET', null, {
+            done: function (data) {
+                layui.$('#sys-notice-unread')
+                    .attr('class', `${data.data > 0 ? 'layui-badge' : ''}`)
+                    .text(`${data.data > 0 ? data.data > 99 ? '99+' : data.data : ''}`);
+            }
+        });
 
         function nav(id, menus) {
             const menu = [], child = [];
