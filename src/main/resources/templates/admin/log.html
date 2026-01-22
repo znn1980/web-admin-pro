@@ -31,20 +31,18 @@
                 </div>
             </div>
             <div class="layui-inline">
-                <div class="layui-btn-group">
-                    <button layadmin-event="search" class="layui-btn layui-btn-sm">
-                        <i class="layui-icon layui-icon-search"></i>查询
-                    </button>
-                    <button layadmin-event="refresh" class="layui-btn layui-btn-sm layui-bg-orange">
-                        <i class="layui-icon layui-icon-refresh"></i>重置
-                    </button>
-                    <button name="sys-query-more" class="layui-btn layui-btn-sm layui-bg-blue sys-query-more">
-                        <i class="layui-icon layui-icon-down"></i>展开
-                    </button>
-                    <button name="sys-query-more" class="layui-btn layui-btn-sm layui-bg-blue sys-query-more" style="display: none;">
-                        <i class="layui-icon layui-icon-up"></i>收起
-                    </button>
-                </div>
+                <button layadmin-event="search" class="layui-btn layui-btn-radius layui-btn-sm">
+                    <i class="layui-icon layui-icon-search"></i>查询
+                </button>
+                <button layadmin-event="refresh" class="layui-btn layui-btn-radius layui-btn-sm layui-bg-orange">
+                    <i class="layui-icon layui-icon-refresh"></i>重置
+                </button>
+                <button name="sys-query-more" class="layui-btn layui-btn-primary layui-btn-xs sys-query-more">
+                    <i class="layui-icon layui-icon-down"></i>展开筛选项
+                </button>
+                <button name="sys-query-more" class="layui-btn layui-btn-primary layui-btn-xs  sys-query-more" style="display: none;">
+                    <i class="layui-icon layui-icon-up"></i>收起筛选项
+                </button>
             </div>
         </div>
         <table class="layui-hide" id="sys-log-table" lay-filter="sys-log-table"></table>
