@@ -149,10 +149,9 @@
                 ]
             ]
             , page: true
-        });
-
-        layui.admin.resize(function () {
-            layui.common.asCols('sys-user-table', ['sysAdmin', 'disable', 'mobile', 'email']);
+            , done: function () {
+                layui.common.asCols(this);
+            }
         });
 
         layui.table.on('checkbox(sys-user-table)', function (data) {

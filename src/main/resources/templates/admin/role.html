@@ -112,10 +112,9 @@
                     , {fixed: 'right', title: '操作', align: 'center', toolbar: '#sys-role-tool', minWidth: 120, maxWidth: 120, width: 120}
                 ]
             ]
-        });
-
-        layui.admin.resize(function () {
-            //layui.common.asCols('sys-role-table', ['disable']);
+            , done: function () {
+                layui.common.asCols(this);
+            }
         });
 
         layui.table.on('checkbox(sys-role-table)', function (data) {

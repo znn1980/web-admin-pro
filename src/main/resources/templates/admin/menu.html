@@ -204,12 +204,9 @@
                 ]
             ]
             , done: function () {
+                layui.common.asCols(this);
                 layui.treeTable.expandNode('sys-menu-table', {index: 0, expandFlag: true});
             }
-        });
-
-        layui.admin.resize(function () {
-            layui.common.asCols('sys-menu-table', ['sysMenu', 'disable', 'method', 'url']);
         });
 
         layui.table.on('checkbox(sys-menu-table)', function (data) {

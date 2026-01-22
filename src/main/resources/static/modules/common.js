@@ -50,7 +50,19 @@ layui.define(function (exports) {
             });
             return trees;
         }
-        , asCols: function (id, fields, cols) {
+        , asCols: function (that, id) {
+            const fields = layui.data(id || that.id);
+            that.cols[0].forEach(function (col) {
+                if (col.field in fields) {
+                    layui.table.hideCol(that.id, {field: col.field, hide: fields[col.field]});
+                }
+            });
+            that.elem.next().on('mousedown', 'input[lay-filter="LAY_TABLE_TOOL_COLS"]+', function () {
+                const field = layui.$(this).prev()[0];
+                layui.data(id || that.id, {key: field.name, value: field.checked});
+            });
+        }
+        , _asCols: function (id, fields, cols) {
             let queries = 0.0;
             switch (layui.admin.screen()) {
                 case 0://低于768px的屏幕

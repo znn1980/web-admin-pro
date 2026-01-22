@@ -149,17 +149,14 @@
             , where: {state: 'UNREAD', sort: {field: 'createTimestamp', order: 'desc'}}
             , initSort: {field: 'createTimestamp', type: 'desc'}
             , done: function (data) {
+                layui.common.asCols(this);
+                load(data);
                 if ('UNREAD' === layui.table.getOptions('sys-notice-table').where.state) {
                     if (data.count === 0) {
                         layui.tabs.change('sys-notice-tabs', 'all');
                     }
                 }
-                load(data);
             }
-        });
-
-        layui.admin.resize(function () {
-            layui.common.asCols('sys-notice-table', ['createTimestamp', 'createUsername', 'disable']);
         });
 
         layui.table.on('checkbox(sys-notice-table)', function (data) {
