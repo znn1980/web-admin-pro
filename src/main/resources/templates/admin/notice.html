@@ -71,22 +71,22 @@
 <script type="text/html" id="sys-notice-toolbar">
     <div class="layui-btn-group">
         <button class="layui-btn layui-btn-sm" lay-event="sys-add-toolbar">
-            <i class="layui-icon layui-icon-add-1"></i>创建
+            <i class="layui-icon layui-icon-add-1" lay-tips="创建"></i>
         </button>
         <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="sys-edit-toolbar">
-            <i class="layui-icon layui-icon-edit"></i>修改
+            <i class="layui-icon layui-icon-edit" lay-tips="修改"></i>
         </button>
         <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="sys-delete-toolbar">
-            <i class="layui-icon layui-icon-delete"></i>删除
+            <i class="layui-icon layui-icon-delete" lay-tips="删除"></i>
         </button>
-        <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="sys-refresh-toolbar">
-            <i class="layui-icon layui-icon-refresh"></i>刷新
-        </button>
+        <!--button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="sys-refresh-toolbar">
+            <i class="layui-icon layui-icon-refresh" lay-tips="刷新"></i>
+        </button-->
     </div>
 </script>
 <script type="text/html" id="sys-notice-tool">
     <button class="layui-btn layui-btn-xs layui-bg-blue" lay-event="sys-search-tool">
-        <i class="layui-icon layui-icon-search"></i>
+        <i class="layui-icon layui-icon-search" lay-tips="查看"></i>
     </button>
 </script>
 <script type="text/html" id="sys-title-tpl">
@@ -182,16 +182,13 @@
             }
             if (data.event === 'sys-edit-toolbar' || data.event === 'sys-delete-toolbar') {
                 const notices = layui.table.checkStatus('sys-notice-table').data;
-                if (notices.length <= 0) {
-                    layui.layer.msg("请选择一条纪录！");
-                } else {
-                    if (data.event === 'sys-edit-toolbar') {
-                        layui.form.val('sys-notice-form', notices[0]);
-                        save('修改通知公告', 'PUT');
-                    }
-                    if (data.event === 'sys-delete-toolbar') {
-                        del(notices[0]);
-                    }
+                if (notices.length <= 0) return layui.layer.msg("请选择一条纪录！");
+                if (data.event === 'sys-edit-toolbar') {
+                    layui.form.val('sys-notice-form', notices[0]);
+                    save('修改通知公告', 'PUT');
+                }
+                if (data.event === 'sys-delete-toolbar') {
+                    del(notices[0]);
                 }
             }
             if (data.event === 'sys-refresh-toolbar') {

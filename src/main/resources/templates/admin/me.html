@@ -199,18 +199,13 @@
     {{# } }}
 </script>
 <script type="text/html" id="sys-log-toolbar">
-    <div class="layui-btn-group">
-        <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="sys-delete-toolbar">
-            <i class="layui-icon layui-icon-delete"></i>删除
-        </button>
-        <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="sys-refresh-toolbar">
-            <i class="layui-icon layui-icon-refresh"></i>刷新
-        </button>
-    </div>
+    <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="sys-delete-toolbar">
+        <i class="layui-icon layui-icon-delete" lay-tips="删除"></i>
+    </button>
 </script>
 <script type="text/html" id="sys-log-tool">
     <button class="layui-btn layui-btn-xs layui-bg-blue" lay-event="sys-search-tool">
-        <i class="layui-icon layui-icon-search"></i>
+        <i class="layui-icon layui-icon-search" lay-tips="查看"></i>
     </button>
 </script>
 <script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
@@ -282,21 +277,31 @@
         layui.table.on('toolbar(sys-log-table)', function (data) {
             if (data.event === 'sys-delete-toolbar') {
                 const logs = layui.table.checkStatus('sys-log-table').data;
-                if (logs.length <= 0) {
-                    layui.layer.msg("请选择一条纪录！");
-                } else {
-                    layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否删除【${logs.length}】条日志？`, {
-                        title: '删除', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
-                    }, function (index) {
-                        layui.layer.close(index);
-                        layui.common.req(`${config.base}sys/log/delete.json`, 'DELETE', logs.map(log => log.id), {
-                            done: function (data) {
-                                layui.layer.msg(data.msg);
-                                layui.table.reload('sys-log-table');
+                if (logs.length <= 0) return layui.layer.msg("请选择一条纪录！");
+                layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否删除【${logs.length}】条日志？`, {
+                    title: '删除', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
+                }, function (index) {
+                    layui.layer.close(index);
+                    layui.layer.prompt({
+                        title: '请输入登录密码', closeBtn: 0, formType: 1, skin: 'layui-layer-admin'
+                        , success: function (layero) {
+                            layui.$(layero).find('input[type="password"]').addClass('layui-input');
+                        }
+                    }, function (value, index, elem) {
+                        if (value === '') return elem.focus();
+                        layer.close(index);
+                        layui.common.req(`${config.base}sys/user/unlock.json`, 'POST', {password: value}, {
+                            done: function () {
+                                layui.common.req(`${config.base}sys/log/delete.json`, 'DELETE', logs.map(log => log.id), {
+                                    done: function (data) {
+                                        layui.layer.msg(data.msg);
+                                        layui.table.reload('sys-log-table');
+                                    }
+                                });
                             }
                         });
                     });
-                }
+                });
             }
             if (data.event === 'sys-refresh-toolbar') {
                 layui.table.reload('sys-log-table');

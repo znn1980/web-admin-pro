@@ -42,29 +42,29 @@
 <script type="text/html" id="sys-user-toolbar">
     <div class="layui-btn-group">
         <button class="layui-btn layui-btn-sm" lay-event="sys-add-toolbar">
-            <i class="layui-icon layui-icon-add-1"></i>创建
+            <i class="layui-icon layui-icon-add-1" lay-tips="创建"></i>
         </button>
         <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="sys-edit-toolbar">
-            <i class="layui-icon layui-icon-edit"></i>修改
+            <i class="layui-icon layui-icon-edit" lay-tips="修改"></i>
         </button>
         <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="sys-delete-toolbar">
-            <i class="layui-icon layui-icon-delete"></i>删除
+            <i class="layui-icon layui-icon-delete" lay-tips="删除"></i>
         </button>
-        <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="sys-refresh-toolbar">
-            <i class="layui-icon layui-icon-refresh"></i>刷新
-        </button>
+        <!--button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="sys-refresh-toolbar">
+            <i class="layui-icon layui-icon-refresh" lay-tips="刷新"></i>
+        </button-->
     </div>
-    <button class="layui-btn layui-btn-sm layui-bg-black" lay-event="sys-release-toolbar">
-        <i class="layui-icon layui-icon-password"></i>重置密码
+    <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="sys-release-toolbar">
+        <i class="layui-icon layui-icon-password" lay-tips="重置密码"></i>
     </button>
 </script>
 <script type="text/html" id="sys-user-tool">
     <div class="layui-btn-group">
         <button class="layui-btn layui-btn-xs layui-bg-blue" lay-event="sys-edit-tool">
-            <i class="layui-icon layui-icon-edit"></i>
+            <i class="layui-icon layui-icon-edit" lay-tips="修改"></i>
         </button>
         <button class="layui-btn layui-btn-xs layui-bg-red" lay-event="sys-delete-tool">
-            <i class="layui-icon layui-icon-delete"></i>
+            <i class="layui-icon layui-icon-delete" lay-tips="删除"></i>
         </button>
     </div>
 </script>
@@ -178,33 +178,30 @@
             }
             if (data.event === 'sys-edit-toolbar' || data.event === 'sys-delete-toolbar' || data.event === 'sys-release-toolbar') {
                 const users = layui.table.checkStatus('sys-user-table').data;
-                if (users.length <= 0) {
-                    layui.layer.msg("请选择一条纪录！");
-                } else {
-                    if (data.event === 'sys-edit-toolbar') {
-                        users[0].disable = !users[0].disable;
-                        layui.form.val('sys-user-form', users[0]);
-                        layui.$('#sys-user').hide();
-                        load(function () {
-                            xmSelect.get('#sys-role', true).setValue(users[0].roles ? users[0].roles : []);
-                            save('修改用户', 'PUT');
+                if (users.length <= 0) return layui.layer.msg("请选择一条纪录！");
+                if (data.event === 'sys-edit-toolbar') {
+                    users[0].disable = !users[0].disable;
+                    layui.form.val('sys-user-form', users[0]);
+                    layui.$('#sys-user').hide();
+                    load(function () {
+                        xmSelect.get('#sys-role', true).setValue(users[0].roles ? users[0].roles : []);
+                        save('修改用户', 'PUT');
+                    });
+                }
+                if (data.event === 'sys-delete-toolbar') {
+                    del(users[0]);
+                }
+                if (data.event === 'sys-release-toolbar') {
+                    layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否重置【${users[0].username}】用户密码？`, {
+                        title: '重置密码', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
+                    }, function (index) {
+                        layui.layer.close(index);
+                        layui.common.req(`${config.base}sys/user/reset.json`, 'PUT', users[0].id, {
+                            done: function (data) {
+                                layui.layer.msg(data.msg);
+                            }
                         });
-                    }
-                    if (data.event === 'sys-delete-toolbar') {
-                        del(users[0]);
-                    }
-                    if (data.event === 'sys-release-toolbar') {
-                        layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否重置【${users[0].username}】用户密码？`, {
-                            title: '重置密码', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
-                        }, function (index) {
-                            layui.layer.close(index);
-                            layui.common.req(`${config.base}sys/user/reset.json`, 'PUT', users[0].id, {
-                                done: function (data) {
-                                    layui.layer.msg(data.msg);
-                                }
-                            });
-                        });
-                    }
+                    });
                 }
             }
             if (data.event === 'sys-refresh-toolbar') {

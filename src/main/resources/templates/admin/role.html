@@ -30,29 +30,29 @@
 <script type="text/html" id="sys-role-toolbar">
     <div class="layui-btn-group">
         <button class="layui-btn layui-btn-sm" lay-event="sys-add-toolbar">
-            <i class="layui-icon layui-icon-add-1"></i>创建
+            <i class="layui-icon layui-icon-add-1" lay-tips="创建"></i>
         </button>
         <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="sys-edit-toolbar">
-            <i class="layui-icon layui-icon-edit"></i>修改
+            <i class="layui-icon layui-icon-edit" lay-tips="修改"></i>
         </button>
         <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="sys-delete-toolbar">
-            <i class="layui-icon layui-icon-delete"></i>删除
+            <i class="layui-icon layui-icon-delete" lay-tips="删除"></i>
         </button>
-        <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="sys-refresh-toolbar">
-            <i class="layui-icon layui-icon-refresh"></i>刷新
-        </button>
+        <!--button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="sys-refresh-toolbar">
+            <i class="layui-icon layui-icon-refresh" lay-tips="刷新"></i>
+        </button-->
     </div>
 </script>
 <script type="text/html" id="sys-role-tool">
     <div class="layui-btn-group">
         <button class="layui-btn layui-btn-xs layui-bg-blue" lay-event="sys-edit-tool">
-            <i class="layui-icon layui-icon-edit"></i>
+            <i class="layui-icon layui-icon-edit" lay-tips="修改"></i>
         </button>
         <button class="layui-btn layui-btn-xs layui-bg-red" lay-event="sys-delete-tool">
-            <i class="layui-icon layui-icon-delete"></i>
+            <i class="layui-icon layui-icon-delete" lay-tips="删除"></i>
         </button>
         <button class="layui-btn layui-btn-xs" lay-event="sys-more-tool">
-            <i class="layui-icon layui-icon-more-vertical"></i>
+            <i class="layui-icon layui-icon-more-vertical" lay-tips="更多"></i>
         </button>
     </div>
 </script>
@@ -115,7 +115,7 @@
         });
 
         layui.admin.resize(function () {
-            layui.common.asCols('sys-role-table', ['disable']);
+            //layui.common.asCols('sys-role-table', ['disable']);
         });
 
         layui.table.on('checkbox(sys-role-table)', function (data) {
@@ -154,20 +154,17 @@
             }
             if (data.event === 'sys-edit-toolbar' || data.event === 'sys-delete-toolbar') {
                 const roles = layui.table.checkStatus('sys-role-table').data;
-                if (roles.length <= 0) {
-                    layui.layer.msg("请选择一条纪录！");
-                } else {
-                    if (data.event === 'sys-edit-toolbar') {
-                        roles[0].disable = !roles[0].disable;
-                        layui.form.val('sys-role-form', roles[0]);
-                        load(function () {
-                            xmSelect.get('#sys-menu', true).setValue(roles[0].menus ? roles[0].menus : []);
-                            save('修改角色', 'PUT');
-                        });
-                    }
-                    if (data.event === 'sys-delete-toolbar') {
-                        del(roles[0]);
-                    }
+                if (roles.length <= 0) return layui.layer.msg("请选择一条纪录！");
+                if (data.event === 'sys-edit-toolbar') {
+                    roles[0].disable = !roles[0].disable;
+                    layui.form.val('sys-role-form', roles[0]);
+                    load(function () {
+                        xmSelect.get('#sys-menu', true).setValue(roles[0].menus ? roles[0].menus : []);
+                        save('修改角色', 'PUT');
+                    });
+                }
+                if (data.event === 'sys-delete-toolbar') {
+                    del(roles[0]);
                 }
             }
             if (data.event === 'sys-refresh-toolbar') {
