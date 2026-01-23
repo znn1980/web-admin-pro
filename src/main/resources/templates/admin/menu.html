@@ -212,10 +212,9 @@
         layui.table.on('checkbox(sys-menu-table)', function (data) {
             layui.treeTable.checkAllNodes('sys-menu-table', false);
             if (data.dataIndex) {
-                layui.treeTable.setRowChecked('sys-menu-table', {index: data.dataIndex, checked: true, callbackFlag: true});
-                layui.$(data.tr).addClass('layui-table-checked');
                 data.dataCache.LAY_CHECKED = true;
-                data.data.LAY_CHECKED = true;
+                layui.treeTable.setRowChecked('sys-menu-table', {index: data.dataIndex, checked: true, callbackFlag: true});
+                layui.treeTable.renderData('sys-menu-table');
             }
         });
 
