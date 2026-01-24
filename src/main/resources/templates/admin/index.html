@@ -196,19 +196,16 @@
         });
 
         function nav(items) {
-            const menu = []
-            items.forEach(function (item) {
-                menu.push(`${item.pid === null ? '<li' : '<dd'} data-name="nav-item-${item.id}"`);
-                menu.push(`${item.pid === null ? ' class="layui-nav-item layui-nav-itemed"' : ' '}>`);
-                menu.push(`${item.url ? `<a lay-href="${item.url}"` : '<a href="javascript:"'}`);
-                menu.push(`${item.pid === null ? ` lay-tips="${item.title}"` : ''}>`);
-                menu.push(`${item.icon ? `<i class="${item.icon}"></i>` : ''}<cite>${item.title}</cite></a>`);
-                if (item.children.length > 0) {
-                    menu.push(`<dl class="layui-nav-child">${nav(item.children)}</dl>`);
-                }
-                menu.push(`${item.pid === null ? '</li>' : '</dd>'}`);
-            });
-            return menu.join('');
+            return items.map(function (item) {
+                return `
+                <${item.pid === null ? 'li' : 'dd'} data-name="nav-item-${item.id}"${item.pid === null ? ' class="layui-nav-item layui-nav-itemed"' : ''}>
+                  <a${item.url ? ` lay-href="${item.url}"` : ' href="javascript:"'}${item.pid === null ? ` lay-tips="${item.title}"` : ''}>
+                    ${item.icon ? `<i class="${item.icon}"></i>` : ''}<cite>${item.title}</cite>
+                  </a>
+                  ${item.children.length > 0 ? `<dl class="layui-nav-child">${nav(item.children)}</dl>` : ''}
+                </${item.pid === null ? 'li' : 'dd'}>
+                `;
+            }).join('');
         }
 
         function lock() {
