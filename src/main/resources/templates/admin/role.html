@@ -67,7 +67,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label" for="remark">角色备注</label>
         <div class="layui-input-block">
-            <textarea class="layui-textarea" id="remark" name="remark" placeholder="角色备注"></textarea>
+            <textarea class="layui-textarea" id="remark" name="remark" placeholder="角色备注" lay-affix="clear"></textarea>
         </div>
     </div>
     <div class="layui-form-item">
@@ -209,7 +209,7 @@
                 done: function (data) {
                     xmSelect.render({
                         el: '#sys-menu', direction: 'up', autoRow: false
-                        , data: layui.common.asTree(null, data.data)
+                        , data: lay.flatToTree(data.data, {parentKey: 'pid'})
                         , tree: {show: true, strict: false}
                         , prop: {name: 'title', value: 'id',}
                         , model: {label: {type: 'block', block: {showCount: 1}}}

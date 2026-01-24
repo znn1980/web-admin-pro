@@ -22,15 +22,15 @@
 </script>
 <script type="text/html" id="sys-method-tpl">
     {{# if(d.method === 'GET'){ }}
-    <span class="layui-badge layui-bg-orange">{{ d.method }}</span>
+    <span class="layui-badge layui-bg-orange" lay-tips="{{ d.url?d.url:'目录' }}">{{ d.method }}</span>
     {{# }else if(d.method === 'POST'){ }}
-    <span class="layui-badge layui-bg-green">{{ d.method }}</span>
+    <span class="layui-badge layui-bg-green" lay-tips="{{ d.url?d.url:'目录' }}">{{ d.method }}</span>
     {{# }else if(d.method === 'PUT'){ }}
-    <span class="layui-badge layui-bg-blue">{{ d.method }}</span>
+    <span class="layui-badge layui-bg-blue" lay-tips="{{ d.url?d.url:'目录' }}">{{ d.method }}</span>
     {{# }else if(d.method === 'DELETE'){ }}
-    <span class="layui-badge layui-bg-red">{{ d.method }}</span>
+    <span class="layui-badge layui-bg-red" lay-tips="{{ d.url?d.url:'目录' }}">{{ d.method }}</span>
     {{# }else{ }}
-    <span class="layui-badge-rim">{{ d.method?d.method:'目录' }}</span>
+    <span class="layui-badge-rim" lay-tips="{{ d.url?d.url:'目录' }}">{{ d.method?d.method:'目录' }}</span>
     {{# } }}
 </script>
 <script type="text/html" id="sys-menu-tpl">
@@ -127,7 +127,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label" for="remark">菜单备注</label>
         <div class="layui-input-block">
-            <textarea class="layui-textarea" id="remark" name="remark" placeholder="菜单备注"></textarea>
+            <textarea class="layui-textarea" id="remark" name="remark" placeholder="菜单备注" lay-affix="clear"></textarea>
         </div>
     </div>
     <div class="layui-form-item">
@@ -328,7 +328,7 @@
                 done: function (data) {
                     xmSelect.render({
                         el: '#sys-menu', direction: 'down'
-                        , data: layui.common.asTree(null, data.data)
+                        , data: lay.flatToTree(data.data, {parentKey: 'pid'})
                         , tree: {show: true, strict: false}
                         , prop: {name: 'title', value: 'id',}
                         , model: {label: {type: 'text'}}
