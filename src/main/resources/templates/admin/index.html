@@ -217,23 +217,19 @@
                 , success: function (layero, index) {
                     layui.data('lock-screen', {key: 'lock', value: true});
                     layui.$('#lock-form')[0].reset();
-                    layui.$('#sys-pin')[0].focus();
                     layui.$('#sys-unlock').on('click', function () {
                         layui.common.req(`${config.base}sys/user/unlock.json`, 'POST', {
-                            password: layui.$.trim(layui.$('#sys-pin').val())
+                            password: layui.$('#sys-pin').val()
                         }, {
                             done: function () {
                                 layui.layer.close(index);
                                 layui.data('lock-screen', {key: 'lock', value: false});
                             }
-                            , complete: function () {
-                                layui.$('#sys-pin')[0].focus();
-                            }
                         });
                     });
                     layui.$('#sys-pin').on('keyup', function (e) {
                         if (e.keyCode === 13) layui.$('#sys-unlock').trigger('click');
-                    });
+                    }).focus();
                 }
             });
         }
