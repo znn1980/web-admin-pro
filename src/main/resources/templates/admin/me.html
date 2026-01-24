@@ -282,7 +282,10 @@
                     layui.layer.prompt({
                         title: '请输入登录密码', closeBtn: 0, formType: 1, skin: 'layui-layer-admin'
                         , success: function (layero) {
-                            layui.$(layero).find('input[type="password"]').addClass('layui-input');
+                            layui.$(layero).addClass('layui-form').find('input[type="password"]')
+                                .addClass('layui-input').attr('lay-affix', 'eye');
+                            layui.form.render();
+                            layui.$(layero).find('input[type="password"]').focus();
                         }
                     }, function (value, index, elem) {
                         if (value === '') return elem.focus();
