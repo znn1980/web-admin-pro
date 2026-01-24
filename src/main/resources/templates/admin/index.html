@@ -126,17 +126,6 @@
         <div class="layadmin-body-shade" layadmin-event="shade"></div>
     </div>
 </div>
-<!-- 锁屏 -->
-<form class="layui-form" id="lock-form" lay-filter="lock-form" onsubmit="return false;" style="display: none;">
-    <div class="layui-input-wrap">
-        <label for="sys-pin"></label>
-        <input id="sys-pin" type="password" class="lock-screen-pin" lay-affix="eye">
-        <div class="layui-input-suffix">
-            <i class="layui-icon layui-icon-right" id="sys-unlock"></i>
-        </div>
-    </div>
-    <div>请输入登陆密码，即可退出锁屏。</div>
-</form>
 <script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
 <script th:inline="javascript">
     const config = {
@@ -197,13 +186,14 @@
 
         function nav(items) {
             return items.map(function (item) {
+                const isRoot = item.pid === null;
                 return `
-                <${item.pid === null ? 'li' : 'dd'} data-name="nav-item-${item.id}"${item.pid === null ? ' class="layui-nav-item layui-nav-itemed"' : ''}>
-                  <a${item.url ? ` lay-href="${item.url}"` : ' href="javascript:"'}${item.pid === null ? ` lay-tips="${item.title}"` : ''}>
+                <${isRoot ? 'li' : 'dd'} data-name="nav-item-${item.id}"${isRoot ? ' class="layui-nav-item layui-nav-itemed"' : ''}>
+                  <a${item.url ? ` lay-href="${item.url}"` : ' href="javascript:"'}${isRoot ? ` lay-tips="${item.title}"` : ''}>
                     ${item.icon ? `<i class="${item.icon}"></i>` : ''}<cite>${item.title}</cite>
                   </a>
                   ${item.children.length > 0 ? `<dl class="layui-nav-child">${nav(item.children)}</dl>` : ''}
-                </${item.pid === null ? 'li' : 'dd'}>
+                </${isRoot ? 'li' : 'dd'}>
                 `;
             }).join('');
         }
@@ -213,13 +203,17 @@
                 id: 'sys-lock', skin: 'lock-screen'
                 , type: 1, title: false, closeBtn: false, area: ['100%', '100%']
                 , scrollbar: false, anim: -1, isOutAnim: false, resize: false
-                , content: layui.$('#lock-form')
+                , content: ['<form class="layui-form" onsubmit="return false;"><div class="layui-input-wrap">',
+                    '<input type="password" class="lock-screen-pin" autocomplete="off" lay-affix="eye">',
+                    '<div class="layui-input-suffix"><i class="layui-icon layui-icon-right"></i></div>',
+                    '</div><div>请输入登陆密码，即可退出锁屏。</div></form>'].join('')
                 , success: function (layero, index) {
                     layui.data('lock-screen', {key: 'lock', value: true});
-                    layui.$('#lock-form')[0].reset();
-                    layui.$('#sys-unlock').on('click', function () {
+                    layui.form.render();
+                    layero.find('.layui-icon-right').on('click', function () {
+                        if (layero.find('input').val() === '') return layero.find('input').focus();
                         layui.common.req(`${config.base}sys/user/unlock.json`, 'POST', {
-                            password: layui.$('#sys-pin').val()
+                            password: layero.find('input').val()
                         }, {
                             done: function () {
                                 layui.layer.close(index);
@@ -227,8 +221,8 @@
                             }
                         });
                     });
-                    layui.$('#sys-pin').on('keyup', function (e) {
-                        if (e.keyCode === 13) layui.$('#sys-unlock').trigger('click');
+                    layero.find('input').on('keyup', function (e) {
+                        if (e.keyCode === 13) layero.find('.layui-icon-right').trigger('click');
                     }).focus();
                 }
             });
