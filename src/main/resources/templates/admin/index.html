@@ -171,7 +171,7 @@
 
         layui.common.req(`${config.base}sys/menu/me.json`, 'GET', null, {
             done: function (data) {
-                layui.$('#LAY-system-side-menu').html(nav(lay.flatToTree(data.data, {parentKey: 'pid'})));
+                layui.$('#LAY-system-side-menu').html(nav(layui.lay.flatToTree(data.data, {parentKey: 'pid'})));
                 layui.element.render('nav', 'layadmin-system-side-menu');
             }
         });

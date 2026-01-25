@@ -328,7 +328,7 @@
                 done: function (data) {
                     xmSelect.render({
                         el: '#sys-menu', direction: 'down'
-                        , data: lay.flatToTree(data.data, {parentKey: 'pid'})
+                        , data: layui.lay.flatToTree(data.data, {parentKey: 'pid'})
                         , tree: {show: true, strict: false}
                         , prop: {name: 'title', value: 'id',}
                         , model: {label: {type: 'text'}}
