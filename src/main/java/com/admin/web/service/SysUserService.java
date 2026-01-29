@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author znn
@@ -174,15 +175,15 @@ public class SysUserService {
                 && !Arrays.asList(sysPermissions.value()).contains(SysLogin.class)) {
             if (!this.hasPermissions(this.sysUserDao.findById(sysUser.getId()).orElseThrow(() -> {
                 throw new ServerResponseException(ResponseCode.NOT_FOUND);
-            }))) {
+            }).getRoles())) {
                 throw new ServerResponseException(ResponseCode.DENIED);
             }
         }
     }
 
-    private boolean hasPermissions(SysUser sysUser) {
+    private boolean hasPermissions(Set<SysRole> sysRoles) {
         PathMatcher matcher = new AntPathMatcher();
-        for (SysRole sysRole : sysUser.getRoles()) {
+        for (SysRole sysRole : sysRoles) {
             for (SysMenu sysMenu : sysRole.getMenus()) {
                 log.info("SYS-PERMISSIONS => {}:{} => {}:{}", sysMenu.getMethod(), sysMenu.getUrl()
                         , WebUtils.getRequest().getMethod(), WebUtils.getRequest().getRequestURI());

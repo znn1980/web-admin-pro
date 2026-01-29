@@ -22,7 +22,7 @@ spring:
       ddl-auto: update
   session:
     jdbc:
-      initialize-schema: ALWAYS
+      initialize-schema: always
   web:
     resources:
       chain:
