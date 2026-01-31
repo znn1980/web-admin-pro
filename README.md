@@ -1,12 +1,11 @@
 <h1 style="text-align: center">WEB-ADMIN-PRO 后台管理系统</h1>
+<h4 style="text-align: center">基于 Java 21、Spring Boot 3.5.x、Spring Data JPA、Spring Session、Thymeleaf 的后台管理系统。</h4>
+<p style="text-align: center"><img src="demo.png" alt=""></p>
 
-#### 项目简介
-一个基于 Java 21、Spring Boot 3.5.x、Spring Data JPA、Spring Session、Thymeleaf 的后台管理系统。
-
-#### 前端框架
+## 前端框架
 最新版《[AdminUI](https://gitee.com/znn1980/admin-ui-pro)》主题。（注：iframe版不涉及最新的前端技术，对服务端程序员来说非常友好）
 
-####  系统功能
+## 系统功能
 - 用户管理：提供用户的相关配置，新增用户后，默认密码为手机号码后六位。
 - 角色管理：对角色菜单权限分配。
 - 菜单管理：实现访问地址级的菜单配置，操作权限，支持多级菜单。
@@ -15,7 +14,7 @@
 - 通知公告：系统通知公告信息发布维护。
 - 服务监控：监视当前系统、内存、磁盘等相关信息。
 
-#### 许可证
+## 许可证
 系统启动后会生成《key.txt》文件，使用如下方法生成《key.lic》文件。
 ```
 //读取许可证编号
@@ -27,4 +26,41 @@ Files.write(Paths.get("key.lic")
         , LocalDate.now(), LocalDate.of(2037, 1, 1))));
 ```
 
-![DEMO](demo.png)
+## 演示
+<table>
+    <tr>
+        <td><img src="demo/登录.png" alt=""/></td>
+        <td><img src="demo/首页.png" alt=""/></td>
+        <td><img src="demo/版本.png" alt=""/></td>
+    </tr>
+    <tr>
+        <td><img src="demo/用户1.png" alt=""/></td>
+        <td><img src="demo/用户2.png" alt=""/></td>
+    </tr>
+    <tr>
+        <td><img src="demo/角色1.png" alt=""/></td>
+        <td><img src="demo/角色2.png" alt=""/></td>
+    </tr>
+    <tr>
+        <td><img src="demo/菜单1.png" alt=""/></td>
+        <td><img src="demo/菜单2.png" alt=""/></td>
+    </tr>
+    <tr>
+        <td><img src="demo/日志1.png" alt=""/></td>
+        <td><img src="demo/日志2.png" alt=""/></td>
+    </tr>
+    <tr>
+        <td><img src="demo/个人中心1.png" alt=""/></td>
+        <td><img src="demo/个人中心2.png" alt=""/></td>
+    </tr>
+    <tr>
+        <td><img src="demo/通知公告1.png" alt=""/></td>
+        <td><img src="demo/通知公告2.png" alt=""/></td>
+        <td><img src="demo/通知公告3.png" alt=""/></td>
+    </tr>
+    <tr>
+        <td><img src="demo/403.png" alt=""/></td>
+        <td><img src="demo/404.png" alt=""/></td>
+        <td><img src="demo/500.png" alt=""/></td>
+    </tr>
+</table>
