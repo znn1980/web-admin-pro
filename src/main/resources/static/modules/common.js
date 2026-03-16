@@ -15,7 +15,7 @@ layui.define(function (exports) {
                 url: url, type: type, data: data ? JSON.stringify(data) : {}
                 , contentType: "application/json;charset=UTF-8"
                 , beforeSend: function () {
-                    loading = layui.layer.load();
+                    loading = layui.layer.load(2);
                 }
                 , complete: function () {
                     loading ? layui.layer.close(loading) : layui.layer.closeAll('loading');
