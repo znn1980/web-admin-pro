@@ -2,5 +2,5 @@
  \ \    / /__| |__    /_\  __| |_ __ (_)_ _   | _ \_ _ ___
   \ \/\/ / -_) '_ \  / _ \/ _` | '  \| | ' \  |  _/ '_/ _ \
    \_/\_/\___|_.__/ /_/ \_\__,_|_|_|_|_|_||_| |_| |_| \___/
-Application Version: v${config.version}
+Application Version: v${spring.application.version}
 Spring Boot Version: v${spring-boot.version}
