@@ -128,7 +128,7 @@
     }).use(['index', 'common'], function () {
 
         layui.table.render({
-            elem: '#sys-user-table', skin: 'line'
+            elem: '#sys-user-table', page: true
             , url: `${config.base}sys/user/all.json`
             , method: 'POST', contentType: "application/json;charset=UTF-8"
             , toolbar: '#sys-user-toolbar'
@@ -148,7 +148,6 @@
                     , {fixed: 'right', title: '操作', align: 'center', toolbar: '#sys-user-tool', minWidth: 90, maxWidth: 90, width: 90}
                 ]
             ]
-            , page: true
             , done: function () {
                 layui.common.asCols(this);
             }

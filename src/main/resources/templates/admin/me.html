@@ -240,7 +240,7 @@
         });
 
         layui.table.render({
-            elem: '#sys-log-table', skin: 'line'
+            elem: '#sys-log-table', page: true
             , url: `${config.base}sys/log/me.json`
             , method: 'POST', contentType: "application/json;charset=UTF-8"
             , toolbar: '#sys-log-toolbar'
@@ -259,7 +259,6 @@
                     , {fixed: 'right', title: '操作', align: 'center', toolbar: '#sys-log-tool', minWidth: 60, maxWidth: 60, width: 60}
                 ]
             ]
-            , page: true
             , where: {
                 startTimestamp: (layui.$('#timestamp').val().split(":")[0]
                     || layui.common.asDay()).trim() + ' 00:00:00'

@@ -4,11 +4,13 @@
 
 layui.define(function (exports) {
 
+    layui.table.set({skin: 'line', loading: true});
+
     layui.$('button[name="sys-query-more"]').on('click', function () {
         layui.$(".sys-query-more").toggle();
     });
 
-    const common = {
+    exports('common', {
         req: function (url, type, data, options) {
             let loading;
             layui.admin.req({
@@ -49,6 +51,5 @@ layui.define(function (exports) {
                 layui.data(id || that.id, {key: field.name, value: field.checked});
             });
         }
-    }
-    exports('common', common);
+    });
 });

@@ -41,8 +41,9 @@
         <div class="layui-card-header">
             <h1>{{ d.title }}</h1>
             <p>
-                <span lay-tips="{{ d.createTimestamp }}">发布时间：{{ layui.util.timeAgo(d.createTimestamp) }}</span>
-                &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<span>发布用户：{{ d.createUsername }}</span>
+                发布：
+                <span class="layui-badge-rim">&nbsp;&nbsp;{{ d.createUsername }}</span>
+                <span class="layui-badge-rim" lay-tips="{{ d.createTimestamp }}">{{ layui.util.timeAgo(d.createTimestamp) }}</span>
             </p>
         </div>
         <div class="layui-card-body layui-text">
@@ -53,15 +54,15 @@
                 {{- d.content }}
                 <hr>
                 <blockquote class="layui-elem-quote">
-                    <span lay-tips="{{ d.updateTimestamp||d.createTimestamp }}">修改时间：{{ layui.util.timeAgo(d.updateTime||d.createTimestamp) }}</span>
-                    &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<span>修改用户：{{ d.updateUsername||d.createUsername }}</span>
+                    修改：
+                    <span class="layui-badge-rim">{{ d.updateUsername||d.createUsername }}</span>
+                    <span class="layui-badge-rim" lay-tips="{{ d.updateTimestamp||d.createTimestamp }}">{{ layui.util.timeAgo(d.updateTime||d.createTimestamp) }}</span>
                     {{# if(d.users.length>0){ }}
                     <hr>
-                    <span>
-                        {{# layui.each(d.users, function(index, item){ }}
-                        <span class="layui-badge layui-bg-green">{{ item.username }}</span>
-                        {{# }); }}
-                    </span>
+                    已读：
+                    {{# layui.each(d.users, function(index, item){ }}
+                    <span class="layui-badge layui-bg-green">{{ item.username }}</span>
+                    {{# }); }}
                     {{# } }}
                 </blockquote>
             </div>
@@ -129,7 +130,7 @@
         layui.util.fixbar();
 
         layui.table.render({
-            elem: '#sys-notice-table', skin: 'line'
+            elem: '#sys-notice-table', page: true
             , url: `${config.base}sys/notice/all.json`
             , method: 'POST', contentType: "application/json;charset=UTF-8"
             , toolbar: '#sys-notice-toolbar'
@@ -145,7 +146,6 @@
                     , {fixed: 'right', title: '操作', align: 'center', toolbar: '#sys-notice-tool', minWidth: 60, maxWidth: 60, width: 60}
                 ]
             ]
-            , page: true
             , where: {state: 'UNREAD', sort: {field: 'createTimestamp', order: 'desc'}}
             , initSort: {field: 'createTimestamp', type: 'desc'}
             , done: function (data) {
