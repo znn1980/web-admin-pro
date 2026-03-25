@@ -17,7 +17,7 @@
         <table class="layui-hide" id="sys-user-table" lay-filter="sys-user-table"></table>
     </div>
 </div>
-<script type="text/html" id="sys-username-tpl">
+<script type="text/html" id="sys-user-username">
     {{# if(d.avatar){ }}
     <img class="layui-nav-img" src="{{ d.avatar }}" lay-tips="{{ d.remark?d.remark:d.username }}" alt="">
     {{# }else{ }}
@@ -25,14 +25,14 @@
     {{# } }}
     {{ d.username }}
 </script>
-<script type="text/html" id="sys-admin-tpl">
+<script type="text/html" id="sys-user-admin">
     {{# if(d.sysAdmin){ }}
     <input type="checkbox" checked value="{{ d.id }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" title="是|否" lay-skin="switch" lay-filter="sys-admin-switch">
     {{# }else{ }}
     <input type="checkbox" value="{{ d.id }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" title="是|否" lay-skin="switch" lay-filter="sys-admin-switch">
     {{# } }}
 </script>
-<script type="text/html" id="sys-disable-tpl">
+<script type="text/html" id="sys-user-disable">
     {{# if(d.disable){ }}
     <input type="checkbox" value="{{ d.id }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" title="启用|禁用" lay-skin="switch" lay-filter="sys-disable-switch">
     {{# }else{ }}
@@ -135,11 +135,11 @@
             , cols: [
                 [
                     {fixed: 'left', type: 'checkbox'}
-                    , {field: 'username', title: '用户', sort: true, minWidth: 120, templet: '#sys-username-tpl'}
+                    , {field: 'username', title: '用户', sort: true, minWidth: 120, templet: '#sys-user-username'}
                     , {field: 'mobile', title: '手机', sort: true, minWidth: 130}
                     , {field: 'email', title: '邮箱', sort: true, minWidth: 180}
-                    , {field: 'sysAdmin', title: '管理', sort: true, align: 'center', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-admin-tpl'}
-                    , {field: 'disable', title: '状态', sort: true, align: 'center', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-disable-tpl'}
+                    , {field: 'sysAdmin', title: '管理', sort: true, align: 'center', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-user-admin'}
+                    , {field: 'disable', title: '状态', sort: true, align: 'center', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-user-disable'}
                     , {field: 'createUsername', title: '创建用户', sort: true, minWidth: 110, maxWidth: 110, width: 110, hide: true}
                     , {field: 'createTimestamp', title: '创建时间', sort: true, minWidth: 120, maxWidth: 180, width: 180, hide: true}
                     , {field: 'updateUsername', title: '修改用户', sort: true, minWidth: 110, maxWidth: 110, width: 110, hide: true}

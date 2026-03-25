@@ -17,7 +17,7 @@
             <div class="layui-card-header layui-icon layui-icon-windows">
                 服务器信息
             </div>
-            <div class="layui-card-body" id="os"></div>
+            <div class="layui-card-body" id="os-info"></div>
         </div>
     </div>
 </div>
@@ -63,7 +63,7 @@
         </div>
     </div>
 </div>
-<script type="text/html" id="os-tpl">
+<script type="text/html" id="os-table">
     <table class="layui-table" lay-skin="line">
         <colgroup>
             <col style="width: 150px;">
@@ -140,8 +140,8 @@
                     data.data.osJvm.uptime = layui.common.asAgo(data.data.osJvm.uptime);
                     data.data.osJvm.startTime = layui.util.toDateString(data.data.osJvm.startTime, 'yyyy-MM-dd HH:mm:ss');
 
-                    layui.laytpl(layui.$('#os-tpl').html()).render(data.data, function (html) {
-                        layui.$('#os').html(html)
+                    layui.laytpl(layui.$('#os-table').html()).render(data.data, function (html) {
+                        layui.$('#os-info').html(html)
                     });
                     layui.$('#os-sys').attr('lay-tips', data.data.osSys.tips.replaceAll(',', '<br>'));
                     layui.$('#os-sys-mem').attr('lay-tips', data.data.osSysMem.tips.replaceAll(',', '<br>'));

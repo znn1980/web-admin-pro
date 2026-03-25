@@ -17,10 +17,10 @@
         <table class="layui-hide" id="sys-role-table" lay-filter="sys-role-table"></table>
     </div>
 </div>
-<script type="text/html" id="sys-remark-tpl">
+<script type="text/html" id="sys-role-remark">
     <span lay-tips="{{d.remark?d.remark:d.name}}">{{d.name}}</span>
 </script>
-<script type="text/html" id="sys-disable-tpl">
+<script type="text/html" id="sys-role-disable">
     {{# if(d.disable){ }}
     <input type="checkbox" value="{{ d.id }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" title="启用|禁用" lay-skin="switch" lay-filter="sys-disable-switch">
     {{# }else{ }}
@@ -102,8 +102,8 @@
             , cols: [
                 [
                     {fixed: 'left', type: 'checkbox'}
-                    , {field: 'name', title: '名称', minWidth: 160, templet: '#sys-remark-tpl'}
-                    , {field: 'disable', title: '状态', align: 'center', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-disable-tpl'}
+                    , {field: 'name', title: '名称', minWidth: 160, templet: '#sys-role-remark'}
+                    , {field: 'disable', title: '状态', align: 'center', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-role-disable'}
                     , {field: 'createUsername', title: '创建用户', minWidth: 110, maxWidth: 110, width: 110, hide: true}
                     , {field: 'createTimestamp', title: '创建时间', minWidth: 120, maxWidth: 180, width: 180, hide: true}
                     , {field: 'updateUsername', title: '修改用户', minWidth: 110, maxWidth: 110, width: 110, hide: true}

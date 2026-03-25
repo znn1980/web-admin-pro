@@ -36,7 +36,7 @@
     </div>
 </div>
 <div id="sys-notice-show"></div>
-<script id="sys-notice-tpl" type="text/html">
+<script id="sys-notice-content" type="text/html">
     <div class="layui-card layuiAdmin-msg-detail">
         <div class="layui-card-header">
             <h1>{{ d.title }}</h1>
@@ -90,10 +90,10 @@
         <i class="layui-icon layui-icon-search" lay-tips="查看"></i>
     </button>
 </script>
-<script type="text/html" id="sys-title-tpl">
+<script type="text/html" id="sys-notice-title">
     <span lay-tips="{{ d.title }}">{{ d.title }}</span>
 </script>
-<script type="text/html" id="sys-disable-tpl">
+<script type="text/html" id="sys-notice-disable">
     {{# if(d.disable){ }}
     <input type="checkbox" value="{{ d.id }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" title="启用|禁用" lay-skin="switch" lay-filter="sys-disable-switch">
     {{# }else{ }}
@@ -137,8 +137,8 @@
             , cols: [
                 [
                     {fixed: 'left', type: 'checkbox'}
-                    , {field: 'title', title: '标题', minWidth: 200, templet: '#sys-title-tpl'}
-                    , {field: 'disable', title: '状态', sort: true, align: 'center', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-disable-tpl'}
+                    , {field: 'title', title: '标题', minWidth: 200, templet: '#sys-notice-title'}
+                    , {field: 'disable', title: '状态', sort: true, align: 'center', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-notice-disable'}
                     , {field: 'createUsername', title: '发布用户', sort: true, minWidth: 110, maxWidth: 110, width: 110}
                     , {field: 'createTimestamp', title: '发布时间', sort: true, minWidth: 120, maxWidth: 180, width: 180}
                     , {field: 'updateUsername', title: '修改用户', sort: true, minWidth: 110, maxWidth: 110, width: 110, hide: true}
@@ -201,7 +201,7 @@
             if (data.event === 'sys-search-tool') {
                 layui.common.req(`${config.base}sys/notice/show.json`, 'POST', data.data.id, {
                     done: function (data) {
-                        layui.laytpl(layui.$('#sys-notice-tpl').html()).render(data.data, function (html) {
+                        layui.laytpl(layui.$('#sys-notice-content').html()).render(data.data, function (html) {
                             layui.$('#sys-notice-show').html(html).show();
                             layui.$('#sys-notice-list').hide();
                             layui.$('#sys-notice-back').on('click', function () {
