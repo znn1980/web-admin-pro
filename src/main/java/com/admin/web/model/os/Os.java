@@ -12,15 +12,15 @@ public class Os implements Serializable {
     }
 
     public static String asBytes(long bytes) {
-        long k = 1024L, m = k * k, g = m * k, t = g * k;
+        double k = 1024.00, m = k * k, g = m * k, t = g * k;
         if (bytes >= t) {
-            return String.format("%.2fTB", (double) bytes / t);
+            return String.format("%.2fTB", bytes / t);
         } else if (bytes >= g) {
-            return String.format("%.2fGB", (double) bytes / g);
+            return String.format("%.2fGB", bytes / g);
         } else if (bytes >= m) {
-            return String.format("%.2fMB", (double) bytes / m);
+            return String.format("%.2fMB", bytes / m);
         } else if (bytes >= k) {
-            return String.format("%.2fKB", (double) bytes / k);
+            return String.format("%.2fKB", bytes / k);
         } else {
             return String.format("%dB", bytes);
         }

@@ -26,7 +26,7 @@ public class SysLicenseAspect {
     @Before("login()")
     public void doBefore() {
         try {
-            byte[] bytes = SysLicense.readSysLicense(Paths.get("key.lic"));
+            byte[] bytes = SysLicense.readSysLicense(Paths.get("license.dat"));
             SysLicense license = SysLicense.asSysLicense(bytes);
             log.info("SYS-ASPECT => {}", license);
             SysLicense.hasSysLicense(license);
@@ -43,7 +43,7 @@ public class SysLicenseAspect {
     public ApplicationRunner runner() {
         String licenseNumber = SysLicense.asSysLicenseNumber();
         log.info("许可证编号 => {}", licenseNumber);
-        return args -> Files.write(Paths.get("key.txt"), licenseNumber.getBytes());
+        return args -> Files.write(Paths.get("license.key"), licenseNumber.getBytes());
     }
 
 }

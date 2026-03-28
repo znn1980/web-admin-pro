@@ -33,6 +33,15 @@ spring:
     multipart:
       max-file-size: 1MB
       max-request-size: 10MB
+      location: uploads
+  ai:
+    openai:
+      api-key:
+      base-url: https://dashscope.aliyuncs.com/compatible-mode
+      chat:
+        completions-path: /v1/chat/completions
+        options:
+          model: qwen-plus
 
 logging:
   level:

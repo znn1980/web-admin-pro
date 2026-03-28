@@ -7,11 +7,11 @@ import com.admin.web.model.ServerResponse;
 import com.admin.web.model.SysUpload;
 import com.google.code.kaptcha.Producer;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -32,7 +31,8 @@ import java.time.format.DateTimeFormatter;
  */
 @RestController
 public class SysUploadController extends BaseController {
-    private static final Path UPLOAD_ROOT = Paths.get("uploads");
+    @Value("${spring.servlet.multipart.location}")
+    private String location;
     private static final DateTimeFormatter UPLOAD_PATH = DateTimeFormatter.ofPattern("yyyy/MM/dd");
     private static final DateTimeFormatter UPLOAD_NAME = DateTimeFormatter.ofPattern("HHmmssSSS");
     private final Producer producer;
@@ -49,8 +49,8 @@ public class SysUploadController extends BaseController {
                 , LocalDate.now().format(UPLOAD_PATH)
                 , LocalTime.now().format(UPLOAD_NAME)
                 , file.getOriginalFilename());
-        Files.createDirectories(UPLOAD_ROOT.resolve(fileName).getParent());
-        file.transferTo(UPLOAD_ROOT.resolve(fileName));
+        Files.createDirectories(Paths.get(this.location, fileName).getParent());
+        file.transferTo(Paths.get(this.location, fileName));
         SysUpload sysUpload = new SysUpload();
         sysUpload.setSrc(String.format("%s/sys/download/%s", super.getRequest().getContextPath(), fileName));
         sysUpload.setTitle(file.getOriginalFilename());
@@ -64,7 +64,7 @@ public class SysUploadController extends BaseController {
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;fileName=%s"
                 , URLEncoder.encode(fileName, StandardCharsets.UTF_8)));
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-        Files.copy(UPLOAD_ROOT.resolve(fileName), response.getOutputStream());
+        Files.copy(Paths.get(this.location, fileName), response.getOutputStream());
     }
 
     @GetMapping("/sys/code.jpg")

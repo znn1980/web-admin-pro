@@ -46,6 +46,11 @@
                     </a>
                 </li>
                 <li class="layui-nav-item layui-hide-xs" lay-unselect>
+                    <a href="javascript:" layadmin-event="ai">
+                        <i class="layui-icon layui-icon-bot"></i>
+                    </a>
+                </li>
+                <li class="layui-nav-item layui-hide-xs" lay-unselect>
                     <a href="javascript:" layadmin-event="note">
                         <i class="layui-icon layui-icon-note"></i>
                     </a>
@@ -127,6 +132,8 @@
     </div>
 </div>
 <script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
+<script th:src="@{/modules/markdown-it.min.js}" src="../../static/modules/markdown-it.min.js"></script>
+<script th:src="@{/modules/fetch-event-source.js}" src="../../static/modules/fetch-event-source.js"></script>
 <script th:inline="javascript">
     const config = {
         base: /*[[@{/}]]*/ '../../static/'
@@ -137,7 +144,9 @@
 
     layui.config({
         base: config.base, version: true
-    }).use(['index', 'common'], function () {
+        , layimPath: config.base + 'modules/layim/'
+        , layimResPath: config.base + 'modules/layim/res/'
+    }).use(['index', 'layim', 'common', 'ai-chat'], function () {
 
         layui.admin.events.logout = function () {
             layer.confirm('&ensp;&ensp;&ensp;&ensp;是否退出系统？', {
@@ -166,6 +175,14 @@
             done: function (data) {
                 if (data.data.avatar) layui.$('#sys-avatar').attr('src', data.data.avatar);
                 layui.$('#sys-user').html(data.data.username);
+                layui.layim.config({
+                    contactsPanel: false, init: {
+                        user: {
+                            id: data.data.username, username: data.data.username
+                            , avatar: data.data.avatar ? data.data.avatar : `${config.base}style/imgs/logo.jpg`
+                        }
+                    }
+                });
             }
         });
 

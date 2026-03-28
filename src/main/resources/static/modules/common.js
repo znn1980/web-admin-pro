@@ -12,19 +12,16 @@ layui.define(function (exports) {
 
     exports('common', {
         req: function (url, type, data, options) {
-            let loading;
+            const loading = layui.layer.load(2);
             layui.admin.req({
                 url: url, type: type, data: data ? JSON.stringify(data) : {}
                 , contentType: "application/json;charset=UTF-8"
-                , beforeSend: function () {
-                    loading = layui.layer.load(2);
-                }
                 , complete: function () {
-                    loading ? layui.layer.close(loading) : layui.layer.closeAll('loading');
-                    typeof options.complete === 'function' && options.complete();
+                    layui.layer.close(loading)
+                    options && typeof options.complete === 'function' && options.complete();
                 }
                 , done: function (data) {
-                    typeof options.done === 'function' && options.done(data);
+                    options && typeof options.done === 'function' && options.done(data);
                 }
             });
         }
@@ -50,6 +47,12 @@ layui.define(function (exports) {
                 const field = layui.$(this).prev()[0];
                 layui.data(id || that.id, {key: field.name, value: field.checked});
             });
+        }
+        , asUuid: function () {
+            if (crypto.randomUUID) return crypto.randomUUID();
+            return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+                (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+            );
         }
     });
 });
