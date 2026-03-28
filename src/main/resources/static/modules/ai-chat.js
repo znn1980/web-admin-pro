@@ -26,7 +26,7 @@ layui.define(['layim', 'common'], function (exports) {
                     const data = JSON.parse(msg.data);
                     data?.result?.output?.text && messages.push(data.result.output.text);
                     if (layui.$.trim(messages.join(''))) {
-                        layui.layim.getMessage({...receiver, content: messages.join(''), finished: false});
+                        layui.layim.getMessage({...receiver, content: `${messages.join('')} _`, finished: false});
                     }
                 }
                 , onerror: function (error) {
