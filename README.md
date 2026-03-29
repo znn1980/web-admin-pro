@@ -1,6 +1,6 @@
 <h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">WEB-ADMIN-PRO 后台管理系统</h1>
 <h4 align="center">基于 Java 21、Spring AI 1.1.x、Spring Boot 3.5.x、Spring Data JPA、Spring Session、Thymeleaf 的后台管理系统。</h4>
-<p align="center"><img src="demo/版本.png" alt=""></p>
+<p align="center"><img src="demo/智能助手.png" alt=""></p>
 
 ## 前端框架
 

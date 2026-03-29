@@ -11,11 +11,6 @@ layui.define(['layim', 'common'], function (exports) {
         }
     });
 
-    const md = markdownit({typographer: true, linkify: true, breaks: true});
-    layui.layim.callback('contentParser', function (data) {
-        return md.render(data).replaceAll('<table>', '<table class="layui-table" lay-size="sm">');
-    });
-
     exports('chat', {
         abortController: null
         , conversationId: layui.common.asUuid()
@@ -33,6 +28,15 @@ layui.define(['layim', 'common'], function (exports) {
                         this.asReload();
                     }
                 });
+            });
+        }
+        , asChatInit: function (data) {
+            layui.layim.getMessage({
+                system: true
+                , id: data.data.id
+                , type: data.data.type
+                , content: data.data.username
+                , saveLocalChatlog: false
             });
         }
         , asSendMessage: function (data) {

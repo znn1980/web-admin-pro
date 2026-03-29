@@ -29,14 +29,6 @@
         , layimResPath: config.base + 'modules/layim/res/'
     }).use(['index', 'layim', 'common', 'chat'], function () {
 
-        layui.layim.on('sendMessage', function (data) {
-            layui.chat.asSendMessage(data);
-        });
-
-        layui.layim.callback('chatlog', function (data) {
-            return layui.chat.asChatlog(data);
-        });
-
         layui.util.fixbar({
             default: false
             , bars: [{
@@ -56,6 +48,24 @@
                 load(page, next)
             }
         });
+
+        layui.layim.callback('contentParser', function (data) {
+            const md = markdownit({typographer: true, linkify: true, breaks: true});
+            return md.render(data).replaceAll('<table>', '<table class="layui-table" lay-size="sm">');
+        });
+        layui.layim.callback('chatlog', function (data) {
+            return layui.chat.asChatlog(data);
+        });
+        layui.layim.on('sendMessage', function (data) {
+            layui.chat.asSendMessage(data);
+        });
+        layui.layim.on('chatInit', function (data) {
+            layui.chat.asChatInit(data);
+        });
+        layui.layim.on('ready', function () {
+            //layui.chat.asChat();
+        });
+        layui.chat.asChat();
 
         function load(page, next) {
             layui.common.req(`${config.base}ai/chat`, 'POST', {page: page, limit: 24}, {
