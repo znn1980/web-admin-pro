@@ -71,11 +71,11 @@ layui.define(['layim', 'common'], function (exports) {
                 layui.common.req(`${config.base}ai/chat/${layui.chat.conversationId}`, 'GET', null, {
                     done: function (data) {
                         data.data.forEach(function (data) {
-                            if (data.messageType === 'USER') {
-                                messages.push({...user, content: data.text, user: true});
+                            if (data.type === 'USER') {
+                                messages.push({...user, content: data.content, timestamp: data.timestamp, user: true});
                             }
-                            if (data.messageType === 'ASSISTANT') {
-                                messages.push({...receiver, content: data.text});
+                            if (data.type === 'ASSISTANT') {
+                                messages.push({...receiver, content: data.content, timestamp: data.timestamp});
                             }
                         });
                         resolve(messages);

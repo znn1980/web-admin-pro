@@ -1,13 +1,12 @@
 package com.admin.web.controller;
 
+import com.admin.web.model.ChatMemory;
 import com.admin.web.model.ChatRequest;
 import com.admin.web.model.ServerResponse;
 import com.admin.web.model.SysUserChat;
 import com.admin.web.model.vo.PageVo;
 import com.admin.web.service.SysUserChatService;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.MediaType;
@@ -15,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
+
+import static org.springframework.ai.chat.memory.ChatMemory.CONVERSATION_ID;
 
 /**
  * @author znn
@@ -35,7 +36,7 @@ public class AiChatController extends BaseController {
         this.sysUserChatService.save(super.getSysUser().getUsername(), chatRequest.conversationId(), chatRequest.question());
         return this.chatClient.prompt()
                 .user(chatRequest.question())
-                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, chatRequest.conversationId()))
+                .advisors(a -> a.param(CONVERSATION_ID, chatRequest.conversationId()))
                 .stream().chatResponse();
     }
 
@@ -46,8 +47,8 @@ public class AiChatController extends BaseController {
     }
 
     @GetMapping("{conversationId}")
-    public ServerResponse<List<Message>> all(@PathVariable String conversationId) {
-        List<Message> messages = this.sysUserChatService.findByConversationId(conversationId);
+    public ServerResponse<List<ChatMemory>> all(@PathVariable String conversationId) {
+        List<ChatMemory> messages = this.sysUserChatService.findByConversationId(conversationId);
         return ServerResponse.ok(messages);
     }
 
