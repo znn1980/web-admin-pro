@@ -55,6 +55,12 @@ public class ModelViewController extends BaseController {
         return new ModelAndView("admin/notice");
     }
 
+    @SysPermissions(SysLogin.class)
+    @GetMapping("/admin/chat.html")
+    public ModelAndView chat() {
+        return new ModelAndView("admin/chat");
+    }
+
     @SysPermissions
     @GetMapping("/admin/user.html")
     public ModelAndView user() {
