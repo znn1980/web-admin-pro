@@ -50,7 +50,7 @@ public interface SysMenuDao extends JpaRepository<SysMenu, Long>, JpaSpecificati
             WHERE sys_menu.sys_menu = true
             	AND sys_user.id = :userId
             ORDER BY sys_menu.sort
-                        """, nativeQuery = true)
+            """, nativeQuery = true)
     List<SysMenu> findByUserIdOrderBySort(Long userId);
 
     /**

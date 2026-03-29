@@ -1,0 +1,105 @@
+layui.define(['layim', 'common'], function (exports) {
+
+    layui.layim.config({
+        contactsPanel: false
+        , init: {
+            user: {
+                id: 'admin'
+                , username: parent.layui.$('#sys-user').html()
+                , avatar: parent.layui.$('#sys-avatar').attr('src')
+            }
+        }
+    });
+
+    const md = markdownit({typographer: true, linkify: true, breaks: true});
+    layui.layim.callback('contentParser', function (data) {
+        return md.render(data).replaceAll('<table>', '<table class="layui-table" lay-size="sm">');
+    });
+
+    exports('chat', {
+        abortController: null
+        , conversationId: layui.common.asUuid()
+        , asReload: function () {
+            layui.$('#chat-flow').html('');
+            layui.flow.reload('chat-flow');
+        }
+        , asDelete: function (id) {
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;删除后，聊天记录将不可恢复。`, {
+                title: '确定删除对话？', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
+            }, (index) => {
+                layui.layer.close(index);
+                layui.common.req(`${config.base}ai/chat/${id}`, 'DELETE', null, {
+                    done: () => {
+                        this.asReload();
+                    }
+                });
+            });
+        }
+        , asSendMessage: function (data) {
+            const user = data.user, receiver = data.receiver;
+            if (receiver.type === 'ai') {
+                const messages = [];
+                this.abortController = new AbortController();
+                SSE.fetchEventSource(`${config.base}ai/chat/completions`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'}
+                    , body: JSON.stringify({conversationId: this.conversationId, question: user.content})
+                    , signal: this.abortController.signal
+                    , onopen: function (response) {
+                        if (!response.ok) throw new Error(`URL ${response.status} ${response.statusText}`);
+                    }
+                    , onmessage: function (msg) {
+                        const data = JSON.parse(msg.data);
+                        data?.result?.output?.text && messages.push(data.result.output.text);
+                        if (layui.$.trim(messages.join(''))) {
+                            layui.layim.getMessage({...receiver, content: `${messages.join('')} _`, finished: false});
+                        }
+                    }
+                    , onerror: function (error) {
+                        layui.layim.getMessage({...receiver, content: `**错误信息：** ${error}`, finished: true});
+                        throw error;
+                    }
+                    , onclose: function () {
+                        layui.layim.getMessage({...receiver, content: messages.join(''), finished: true});
+                    }
+                });
+            }
+        }
+        , asChatlog: function (data) {
+            const user = data.user, receiver = data.receiver;
+            return new Promise((resolve, reject) => {
+                const messages = [];
+                layui.common.req(`${config.base}ai/chat/${layui.chat.conversationId}`, 'GET', null, {
+                    done: function (data) {
+                        data.data.forEach(function (data) {
+                            if (data.messageType === 'USER') {
+                                messages.push({...user, content: data.text, user: true});
+                            }
+                            if (data.messageType === 'ASSISTANT') {
+                                messages.push({...receiver, content: data.text});
+                            }
+                        });
+                        resolve(messages);
+                    }
+                });
+            });
+        }
+        , asChat: function (id) {
+            this.conversationId = id || layui.common.asUuid();
+            layui.layim.chat({
+                type: 'ai'
+                , id: config.title
+                , username: `${config.title} v${config.version}`
+                , avatar: `${config.base}style/imgs/logo.jpg`
+                , new: true
+                , enableLocalChatlog: false
+                , layer: {
+                    end: () => {
+                        if (this.abortController) this.abortController.abort();
+                        this.conversationId = layui.common.asUuid();
+                        this.asReload();
+                    }
+                }
+            });
+        }
+    });
+});
