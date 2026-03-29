@@ -13,9 +13,9 @@ public interface SysUserChatDao extends JpaRepository<SysUserChat, Long>, JpaSpe
      *
      * @param username       用户名
      * @param conversationId 会话ID
-     * @return 是否存在
+     * @return 用户会话表
      */
-    boolean existsByUsernameAndConversationId(String username, String conversationId);
+    SysUserChat findByUsernameAndConversationId(String username, String conversationId);
 
     /**
      * 删除用户会话表

@@ -43,7 +43,7 @@ public class AiChatConfig {
     public SystemPromptTemplate defaultSystem(
             @Value("${spring.application.name}") String name,
             @Value("${spring.application.version}") String version,
-            @Value("classpath:/static/default-system.md") Resource defaultSystem) {
+            @Value("classpath:/default-system.md") Resource defaultSystem) {
         return SystemPromptTemplate.builder().resource(defaultSystem)
                 .variables(Map.of("name", name, "version", version)).build();
     }

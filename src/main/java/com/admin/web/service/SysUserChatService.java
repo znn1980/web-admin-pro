@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author znn
@@ -33,9 +34,10 @@ public class SysUserChatService {
     }
 
     public void save(String username, String conversationId, String content) {
-        if (!this.sysUserChatDao.existsByUsernameAndConversationId(username, conversationId)) {
-            this.sysUserChatDao.save(new SysUserChat(username, conversationId, content));
-        }
+        SysUserChat sysUserChat = Optional.ofNullable(this.sysUserChatDao.findByUsernameAndConversationId(username, conversationId))
+                .orElseGet(() -> new SysUserChat(username, conversationId, content));
+        sysUserChat.setTimestamp(LocalDateTime.now());
+        this.sysUserChatDao.save(sysUserChat);
     }
 
     public List<ChatMemory> findByConversationId(String conversationId) {

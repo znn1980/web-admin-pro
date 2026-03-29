@@ -50,8 +50,7 @@
         });
 
         layui.layim.callback('contentParser', function (data) {
-            const md = markdownit({typographer: true, linkify: true, breaks: true});
-            return md.render(data).replaceAll('<table>', '<table class="layui-table" lay-size="sm">');
+            return layui.chat.asContentParser(data);
         });
         layui.layim.callback('chatlog', function (data) {
             return layui.chat.asChatlog(data);
@@ -65,7 +64,9 @@
         layui.layim.on('ready', function () {
             //layui.chat.asChat();
         });
-        layui.chat.asChat();
+        window.setTimeout(function () {
+            layui.chat.asChat();
+        }, 100)
 
         function load(page, next) {
             layui.common.req(`${config.base}ai/chat`, 'POST', {page: page, limit: 24}, {

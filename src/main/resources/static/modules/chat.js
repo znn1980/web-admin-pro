@@ -30,6 +30,10 @@ layui.define(['layim', 'common'], function (exports) {
                 });
             });
         }
+        , asContentParser: function (data) {
+            const md = markdownit({typographer: true, linkify: true, breaks: true});
+            return md.render(data).replaceAll('<table>', '<table class="layui-table" lay-size="sm">');
+        }
         , asChatInit: function (data) {
             layui.layim.getMessage({
                 system: true

@@ -33,7 +33,8 @@ public class AiChatController extends BaseController {
 
     @PostMapping(value = "/completions", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ChatResponse> chatCompletions(@RequestBody ChatRequest chatRequest) {
-        this.sysUserChatService.save(super.getSysUser().getUsername(), chatRequest.conversationId(), chatRequest.question());
+        this.sysUserChatService.save(super.getSysUser().getUsername()
+                , chatRequest.conversationId(), chatRequest.question());
         return this.chatClient.prompt()
                 .user(chatRequest.question())
                 .advisors(a -> a.param(CONVERSATION_ID, chatRequest.conversationId()))
@@ -48,8 +49,8 @@ public class AiChatController extends BaseController {
 
     @GetMapping("{conversationId}")
     public ServerResponse<List<ChatMemory>> all(@PathVariable String conversationId) {
-        List<ChatMemory> messages = this.sysUserChatService.findByConversationId(conversationId);
-        return ServerResponse.ok(messages);
+        List<ChatMemory> chatMemory = this.sysUserChatService.findByConversationId(conversationId);
+        return ServerResponse.ok(chatMemory);
     }
 
     @DeleteMapping("/{conversationId}")
