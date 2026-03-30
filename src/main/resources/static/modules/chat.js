@@ -5,7 +5,7 @@ layui.define(['layim', 'common'], function (exports) {
         , init: {
             user: {
                 id: 'admin'
-                , username: parent.layui.$('#sys-user').html()
+                , username: parent.layui.$('#sys-username').html()
                 , avatar: parent.layui.$('#sys-avatar').attr('src')
             }
         }
@@ -97,7 +97,7 @@ layui.define(['layim', 'common'], function (exports) {
                 type: 'ai'
                 , id: config.title
                 , username: `${config.title} v${config.version}`
-                , avatar: `${config.base}style/imgs/logo.jpg`
+                , avatar: `${config.base}style/imgs/logo.png`
                 , new: true
                 , enableLocalChatlog: false
                 , layer: {

@@ -68,10 +68,10 @@
                 <li class="layui-nav-item" lay-unselect>
                     <a href="javascript:">
                         <img id="sys-avatar" class="layui-nav-img" alt=""
-                             th:src="@{/style/imgs/logo.jpg}"
-                             src="../../static/style/imgs/logo.jpg"
-                             th:onerror="|this.onerror=null;this.src='@{/style/imgs/logo.jpg}';|">
-                        <cite id="sys-user"></cite>
+                             th:src="@{/style/imgs/logo.png}"
+                             src="../../static/style/imgs/logo.png"
+                             th:onerror="|this.onerror=null;this.src='@{/style/imgs/logo.png}';|">
+                        <cite id="sys-username"></cite>
                     </a>
                     <dl class="layui-nav-child">
                         <dd style="text-align: center;"><a lay-href="me.html">个人中心</a></dd>
@@ -170,7 +170,7 @@
         layui.common.req(`${config.base}sys/user/me.json`, 'GET', null, {
             done: function (data) {
                 if (data.data.avatar) layui.$('#sys-avatar').attr('src', data.data.avatar);
-                layui.$('#sys-user').html(data.data.username);
+                layui.$('#sys-username').html(data.data.username);
             }
         });
 

@@ -1,5 +1,7 @@
 package com.admin.web.controller;
 
+import com.admin.web.annotation.SysLogin;
+import com.admin.web.annotation.SysPermissions;
 import com.admin.web.model.ChatMemory;
 import com.admin.web.model.ChatRequest;
 import com.admin.web.model.ServerResponse;
@@ -31,6 +33,7 @@ public class AiChatController extends BaseController {
         this.sysUserChatService = sysUserChatService;
     }
 
+    @SysPermissions(SysLogin.class)
     @PostMapping(value = "/completions", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ChatResponse> chatCompletions(@RequestBody ChatRequest chatRequest) {
         this.sysUserChatService.save(super.getSysUser().getUsername()
@@ -41,20 +44,23 @@ public class AiChatController extends BaseController {
                 .stream().chatResponse();
     }
 
+    @SysPermissions(SysLogin.class)
     @PostMapping
-    public ServerResponse<List<SysUserChat>> all(@RequestBody PageVo vo) {
-        Slice<SysUserChat> sysUserChats = this.sysUserChatService.all(super.getSysUser().getUsername(), vo);
+    public ServerResponse<List<SysUserChat>> chatHistory(@RequestBody PageVo vo) {
+        Slice<SysUserChat> sysUserChats = this.sysUserChatService.findByUsername(super.getSysUser().getUsername(), PageVo.of(vo));
         return ServerResponse.ok(sysUserChats.getContent());
     }
 
+    @SysPermissions(SysLogin.class)
     @GetMapping("{conversationId}")
-    public ServerResponse<List<ChatMemory>> all(@PathVariable String conversationId) {
+    public ServerResponse<List<ChatMemory>> chatHistory(@PathVariable String conversationId) {
         List<ChatMemory> chatMemory = this.sysUserChatService.findByConversationId(conversationId);
         return ServerResponse.ok(chatMemory);
     }
 
+    @SysPermissions(SysLogin.class)
     @DeleteMapping("/{conversationId}")
-    public ServerResponse<?> delete(@PathVariable String conversationId) {
+    public ServerResponse<?> clearHistory(@PathVariable String conversationId) {
         this.sysUserChatService.deleteByConversationId(conversationId);
         return ServerResponse.ok();
     }

@@ -3,7 +3,7 @@ package com.admin.web.service;
 import com.admin.web.dao.SysUserChatDao;
 import com.admin.web.model.ChatMemory;
 import com.admin.web.model.SysUserChat;
-import com.admin.web.model.vo.PageVo;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -26,11 +26,11 @@ public class SysUserChatService {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Slice<SysUserChat> all(String username, PageVo vo) {
+    public Slice<SysUserChat> findByUsername(String username, PageRequest pageRequest) {
         return this.sysUserChatDao.findAll((root, query, builder) ->
                 query.where(builder.equal(root.get("username"), username))
                         .orderBy(builder.desc(root.get("timestamp")))
-                        .getRestriction(), PageVo.of(vo));
+                        .getRestriction(), pageRequest);
     }
 
     public void save(String username, String conversationId, String content) {

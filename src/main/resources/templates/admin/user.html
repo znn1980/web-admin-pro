@@ -21,7 +21,7 @@
     {{# if(d.avatar){ }}
     <img class="layui-nav-img" src="{{ d.avatar }}" lay-tips="{{ d.remark?d.remark:d.username }}" alt="">
     {{# }else{ }}
-    <img class="layui-nav-img" th:src="@{/style/imgs/logo.jpg}" lay-tips="{{ d.remark?d.remark:d.username }}" alt="" src="">
+    <img class="layui-nav-img" th:src="@{/style/imgs/logo.png}" lay-tips="{{ d.remark?d.remark:d.username }}" alt="" src="">
     {{# } }}
     {{ d.username }}
 </script>

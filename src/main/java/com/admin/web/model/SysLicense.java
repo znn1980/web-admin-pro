@@ -109,8 +109,8 @@ public record SysLicense(String num, LocalDate from, LocalDate to) implements Se
         if (!Objects.equals(asSysLicenseNumber(), license.num())) {
             throw new SysLicenseException(String.format("许可证签名无效！(%s)", license.num()));
         }
-        if (license.from().compareTo(LocalDate.now()) > 0
-                || license.to().compareTo(LocalDate.now()) < 0) {
+        if (license.from().isAfter(LocalDate.now())
+                || license.to().isBefore(LocalDate.now())) {
             throw new SysLicenseException(String.format("许可证已到期！(%s ~ %s)", license.from(), license.to()));
         }
     }
