@@ -30,7 +30,7 @@ layui.define(['layim', 'common'], function (exports) {
             recognition.onstart = function () {
                 layui.layer.load(2, {
                     time: 0, shade: 0.6, shadeClose: true
-                    , content: `<span style="font-weight:bold;color:white;position:absolute;left:-35px;width:150px;">语音识别中...<span>`
+                    , content: `<span style="color:white;position:absolute;left:-35px;width:150px;">语音识别中...<span>`
                     , end: function () {
                         recognition.stop();
                     }
