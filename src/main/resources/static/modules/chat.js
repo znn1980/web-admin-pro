@@ -18,30 +18,29 @@ layui.define(['layim', 'common'], function (exports) {
             if (!SpeechRecognition) return layui.layer.msg('当前浏览器不支持语音识别');
             const recognition = new SpeechRecognition();
             recognition.lang = 'zh-CN';
-            recognition.continuous = false;
-            recognition.interimResults = false;
+            recognition.continuous = true;
+            recognition.interimResults = true;
             recognition.maxAlternatives = 1;
-            recognition.onresult = function (event) {
-                const result = event.results[0][0].transcript;
-                recognition.stop();
-                if (layui.$.trim(result) === '') return layui.layer.msg('未识别到文字');
-                layui.layim.sendMessage(result);
-            }
+            let loading;
             recognition.onstart = function () {
-                layui.layer.load(2, {
-                    time: 0, shade: 0.6, shadeClose: true
-                    , content: `<span style="color:white;position:absolute;left:-35px;width:150px;">语音识别中...<span>`
+                loading = layui.layer.load(2, {
+                    time: 0, shade: 0.1, shadeClose: true
+                    , content: `<span style="position:absolute;left:-35px;width:150px;">语音识别中...<span>`
                     , end: function () {
                         recognition.stop();
                     }
                 });
             }
             recognition.onend = function () {
-                layui.layer.closeLast('loading');
+                layui.layer.close(loading);
             }
             recognition.onerror = function (event) {
-                layui.layer.closeLast('loading');
+                layui.layer.close(loading);
                 layui.layer.msg(`语音识别错误：${event.error}`);
+            }
+            recognition.onresult = function (event) {
+                layui.$('textarea.layim-scrollbar').val(Array.from(event.results)
+                    .map(result => result[0].transcript).join(''));
             }
             recognition.start();
         }
@@ -75,7 +74,7 @@ layui.define(['layim', 'common'], function (exports) {
                 system: true
                 , id: data.data.id
                 , type: data.data.type
-                , content: data.data.username
+                , content: config.copyright || data.data.username
                 , saveLocalChatlog: false
             });
         }
