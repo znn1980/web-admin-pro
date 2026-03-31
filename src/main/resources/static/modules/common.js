@@ -6,8 +6,8 @@ layui.define(function (exports) {
 
     layui.table.set({skin: 'line', loading: true});
 
-    layui.$('button[name="sys-query-more"]').on('click', function () {
-        layui.$(".sys-query-more").toggle();
+    layui.$('button.sys-query-more').on('click', function () {
+        layui.$('.sys-query-more').toggle();
     });
 
     exports('common', {
