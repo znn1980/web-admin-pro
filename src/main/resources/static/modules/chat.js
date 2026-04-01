@@ -47,8 +47,7 @@ layui.define(['layim', 'common'], function (exports) {
     }]);
 
     exports('chat', {
-        abortController: null
-        , conversationId: layui.common.asUuid()
+        abortController: null, conversationId: layui.common.asUuid()
         , asReload: function () {
             layui.$('#chat-flow').html('');
             layui.flow.reload('chat-flow');

@@ -11,17 +11,17 @@ layui.define(function (exports) {
     });
 
     exports('common', {
-        req: function (url, type, data, options) {
+        req: function (url, type, data, callback) {
             const loading = layui.layer.load(2);
             layui.admin.req({
                 url: url, type: type, data: data ? JSON.stringify(data) : {}
                 , contentType: "application/json;charset=UTF-8"
+                , done: function (data) {
+                    callback && typeof callback.done === 'function' && callback.done(data);
+                }
                 , complete: function () {
                     layui.layer.close(loading)
-                    options && typeof options.complete === 'function' && options.complete();
-                }
-                , done: function (data) {
-                    options && typeof options.done === 'function' && options.done(data);
+                    callback && typeof callback.complete === 'function' && callback.complete();
                 }
             });
         }
