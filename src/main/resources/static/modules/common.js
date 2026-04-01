@@ -14,7 +14,7 @@ layui.define(function (exports) {
         req: function (url, type, data, callback) {
             const loading = layui.layer.load(2);
             layui.admin.req({
-                url: url, type: type, data: data ? typeof data === 'object' ? JSON.stringify(data) : data : {}
+                url: url, type: type, data: data ? typeof data !== 'string' ? JSON.stringify(data) : data : {}
                 , contentType: "application/json;charset=UTF-8"
                 , done: function (data) {
                     callback && typeof callback.done === 'function' && callback.done(data);
