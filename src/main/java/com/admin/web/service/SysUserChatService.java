@@ -1,11 +1,14 @@
 package com.admin.web.service;
 
+import com.admin.web.dao.ChatMemoryDao;
 import com.admin.web.dao.SysUserChatDao;
+import com.admin.web.exception.ServerResponseException;
 import com.admin.web.model.ChatMemory;
+import com.admin.web.model.SysUser;
 import com.admin.web.model.SysUserChat;
+import com.admin.web.model.enums.ResponseCode;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,47 +22,49 @@ import java.util.Optional;
 @Service
 public class SysUserChatService {
     private final SysUserChatDao sysUserChatDao;
-    private final JdbcTemplate jdbcTemplate;
+    private final ChatMemoryDao chatMemoryDao;
 
-    public SysUserChatService(SysUserChatDao sysUserChatDao, JdbcTemplate jdbcTemplate) {
+    public SysUserChatService(SysUserChatDao sysUserChatDao, ChatMemoryDao chatMemoryDao) {
         this.sysUserChatDao = sysUserChatDao;
-        this.jdbcTemplate = jdbcTemplate;
+        this.chatMemoryDao = chatMemoryDao;
     }
 
-    public Slice<SysUserChat> findByUsername(String username, PageRequest pageRequest) {
+    public Slice<SysUserChat> findByUsername(SysUser sysUser, PageRequest pageRequest) {
         return this.sysUserChatDao.findAll((root, query, builder) ->
-                query.where(builder.equal(root.get("username"), username))
+                query.where(builder.equal(root.get("username"), sysUser.getUsername()))
                         .orderBy(builder.desc(root.get("timestamp")))
                         .getRestriction(), pageRequest);
     }
 
-    public void save(String username, String conversationId, String content) {
-        SysUserChat sysUserChat = Optional.ofNullable(this.sysUserChatDao.findByUsernameAndConversationId(username, conversationId))
-                .orElseGet(() -> new SysUserChat(username, conversationId, content));
+    public SysUserChat findByUsernameAndConversationId(SysUser sysUser, String conversationId) {
+        return this.sysUserChatDao.findByUsernameAndConversationId(sysUser.getUsername(), conversationId);
+    }
+
+    public List<ChatMemory> findByConversationId(String conversationId) {
+        return this.chatMemoryDao.findByConversationId(conversationId);
+    }
+
+    public void save(SysUser sysUser, String conversationId, String content) {
+        SysUserChat sysUserChat = Optional.ofNullable(this.sysUserChatDao.findByUsernameAndConversationId(sysUser.getUsername(), conversationId))
+                .orElseGet(() -> new SysUserChat(sysUser.getUsername(), conversationId, content));
         sysUserChat.setTimestamp(LocalDateTime.now());
         this.sysUserChatDao.save(sysUserChat);
     }
 
-    public List<ChatMemory> findByConversationId(String conversationId) {
-        return this.jdbcTemplate.query("""
-                SELECT spring_ai_chat_memory.*
-                FROM spring_ai_chat_memory
-                WHERE spring_ai_chat_memory.conversation_id = ?
-                ORDER BY spring_ai_chat_memory.timestamp
-                """, (rs, rowNum) ->
-                new ChatMemory(
-                        rs.getString("conversation_id"),
-                        rs.getString("content"),
-                        rs.getString("type"),
-                        rs.getObject("timestamp", LocalDateTime.class)
-                ), conversationId);
+    public void update(SysUser sysUser, String conversationId, String content) {
+        SysUserChat sysUserChat = Optional.ofNullable(this.sysUserChatDao.findByUsernameAndConversationId(sysUser.getUsername(), conversationId))
+                .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
+        sysUserChat.setContent(content);
+        sysUserChat.setTimestamp(LocalDateTime.now());
+        this.sysUserChatDao.save(sysUserChat);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteByConversationId(String conversationId) {
+    public void delete(SysUser sysUser, String conversationId) {
+        Optional.ofNullable(this.sysUserChatDao.findByUsernameAndConversationId(sysUser.getUsername(), conversationId))
+                .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         this.sysUserChatDao.deleteByConversationId(conversationId);
-        this.jdbcTemplate.update("""
-                DELETE FROM spring_ai_chat_memory WHERE spring_ai_chat_memory.conversation_id = ?
-                """, conversationId);
+        this.chatMemoryDao.deleteByConversationId(conversationId);
     }
+
 }

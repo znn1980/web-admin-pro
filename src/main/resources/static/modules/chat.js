@@ -13,7 +13,7 @@ layui.define(['layim', 'common'], function (exports) {
 
     layui.layim.extendChatTools([{
         name: 'mike', title: '语音输入', icon: 'layui-icon-mike'
-        , onClick: function () {
+        , onClick: function (data) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) return layui.layer.msg('当前浏览器不支持语音识别');
             const recognition = new SpeechRecognition();
@@ -39,8 +39,7 @@ layui.define(['layim', 'common'], function (exports) {
                 layui.layer.msg(`语音识别错误：${event.error}`);
             }
             recognition.onresult = function (event) {
-                layui.$('textarea.layim-scrollbar').val(Array.from(event.results)
-                    .map(result => result[0].transcript).join(''));
+                data.insert(Array.from(event.results).map(result => result[0].transcript).join(''));
             }
             recognition.start();
         }
@@ -51,6 +50,23 @@ layui.define(['layim', 'common'], function (exports) {
         , asReload: function () {
             layui.$('#chat-flow').html('');
             layui.flow.reload('chat-flow');
+        }
+        , asUpdate: function (id) {
+            layui.common.req(`${config.base}ai/chat/all/${id}`, 'GET', null, {
+                done: (data) => {
+                    layui.layer.prompt({
+                        title: '编辑对话名称', formType: 2, value: data.data.content
+                    }, (value, index, elem) => {
+                        if (value === '') return elem.focus();
+                        layer.close(index);
+                        layui.common.req(`${config.base}ai/chat/${id}`, 'PUT', value, {
+                            done: () => {
+                                this.asReload();
+                            }
+                        });
+                    });
+                }
+            });
         }
         , asDelete: function (id) {
             layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;删除后，聊天记录将不可恢复。`, {
@@ -110,7 +126,7 @@ layui.define(['layim', 'common'], function (exports) {
             const user = data.user, receiver = data.receiver;
             return new Promise((resolve, reject) => {
                 const messages = [];
-                layui.common.req(`${config.base}ai/chat/${layui.chat.conversationId}`, 'GET', null, {
+                layui.common.req(`${config.base}ai/chat/${this.conversationId}`, 'GET', null, {
                     done: function (data) {
                         data.data.forEach(function (data) {
                             if (data.type === 'USER') {
@@ -140,6 +156,42 @@ layui.define(['layim', 'common'], function (exports) {
                         this.conversationId = layui.common.asUuid();
                         this.asReload();
                     }
+                }
+            });
+        }
+        , asFlow: function (page, next) {
+            layui.common.req(`${config.base}ai/chat/all?page=${page - 1}&limit=24`, 'GET', null, {
+                done: (data) => {
+                    data.data.forEach((item, index) => {
+                        next(`
+                            <div class="layui-col-md2 layui-col-sm4 layui-col-xs6">
+                              <div class="cmdlist-container">
+                                <div class="cmdlist-text">
+                                  <p onclick="layui.chat.asChat('${item.conversationId}')"
+                                   class="info layui-ellip" style="font-weight:bold;" lay-tips="${item.content}">${item.content}</p>
+                                  <div class="price">
+                                    <a href="javascript:" id="chat-more-${index}" class="layui-icon layui-icon-more"></a>
+                                    <span class="flow" lay-tips="${item.timestamp}">${layui.util.timeAgo(item.timestamp)}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>`, true);
+                        layui.dropdown.render({
+                            elem: `#chat-more-${index}`, trigger: 'hover'
+                            , data: [
+                                {id: `${item.conversationId}`, title: 'update', templet: '<span><i class="layui-icon layui-icon-edit"></i> 重命名</span>'}
+                                , {id: `${item.conversationId}`, title: 'delete', templet: '<span style="color: red;"><i class="layui-icon layui-icon-delete"></i> 删除</span>'}]
+                            , click: (data) => {
+                                if (data.title === 'update') {
+                                    this.asUpdate(data.id)
+                                }
+                                if (data.title === 'delete') {
+                                    this.asDelete(data.id)
+                                }
+                            }
+                        });
+                    });
+                    next('', data.count > 0);
                 }
             });
         }

@@ -6,10 +6,10 @@ import com.admin.web.model.ChatMemory;
 import com.admin.web.model.ChatRequest;
 import com.admin.web.model.ServerResponse;
 import com.admin.web.model.SysUserChat;
-import com.admin.web.model.vo.PageVo;
 import com.admin.web.service.SysUserChatService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -36,8 +36,7 @@ public class AiChatController extends BaseController {
     @SysPermissions(SysLogin.class)
     @PostMapping(value = "/completions", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ChatResponse> chatCompletions(@RequestBody ChatRequest chatRequest) {
-        this.sysUserChatService.save(super.getSysUser().getUsername()
-                , chatRequest.conversationId(), chatRequest.question());
+        this.sysUserChatService.save(super.getSysUser(), chatRequest.conversationId(), chatRequest.question());
         return this.chatClient.prompt()
                 .user(chatRequest.question())
                 .advisors(a -> a.param(CONVERSATION_ID, chatRequest.conversationId()))
@@ -45,23 +44,39 @@ public class AiChatController extends BaseController {
     }
 
     @SysPermissions(SysLogin.class)
-    @PostMapping
-    public ServerResponse<List<SysUserChat>> chatHistory(@RequestBody PageVo vo) {
-        Slice<SysUserChat> sysUserChats = this.sysUserChatService.findByUsername(super.getSysUser().getUsername(), PageVo.of(vo));
-        return ServerResponse.ok(sysUserChats.getContent());
+    @GetMapping("/all")
+    public ServerResponse<List<SysUserChat>> all(@RequestParam Integer page, @RequestParam Integer limit) {
+        Slice<SysUserChat> sysUserChats = this.sysUserChatService
+                .findByUsername(super.getSysUser(), PageRequest.of(page, limit));
+        return ServerResponse.ok(sysUserChats.hasNext() ? 1L : 0L, sysUserChats.getContent());
+    }
+
+    @SysPermissions(SysLogin.class)
+    @GetMapping("/all/{conversationId}")
+    public ServerResponse<SysUserChat> all(@PathVariable String conversationId) {
+        SysUserChat sysUserChat = this.sysUserChatService
+                .findByUsernameAndConversationId(super.getSysUser(), conversationId);
+        return ServerResponse.ok(sysUserChat);
     }
 
     @SysPermissions(SysLogin.class)
     @GetMapping("{conversationId}")
-    public ServerResponse<List<ChatMemory>> chatHistory(@PathVariable String conversationId) {
+    public ServerResponse<List<ChatMemory>> chatMemory(@PathVariable String conversationId) {
         List<ChatMemory> chatMemory = this.sysUserChatService.findByConversationId(conversationId);
         return ServerResponse.ok(chatMemory);
     }
 
     @SysPermissions(SysLogin.class)
+    @PutMapping("/{conversationId}")
+    public ServerResponse<?> update(@PathVariable String conversationId, @RequestBody String content) {
+        this.sysUserChatService.update(super.getSysUser(), conversationId, content);
+        return ServerResponse.ok();
+    }
+
+    @SysPermissions(SysLogin.class)
     @DeleteMapping("/{conversationId}")
-    public ServerResponse<?> clearHistory(@PathVariable String conversationId) {
-        this.sysUserChatService.deleteByConversationId(conversationId);
+    public ServerResponse<?> delete(@PathVariable String conversationId) {
+        this.sysUserChatService.delete(super.getSysUser(), conversationId);
         return ServerResponse.ok();
     }
 }

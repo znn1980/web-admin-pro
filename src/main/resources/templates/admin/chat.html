@@ -43,7 +43,7 @@
         layui.flow.load({
             elem: '#chat-flow'
             , done: function (page, next) {
-                load(page, next)
+                layui.chat.asFlow(page, next)
             }
         });
 
@@ -65,31 +65,6 @@
         window.setTimeout(function () {
             layui.chat.asChat();
         }, 100)
-
-        function load(page, next) {
-            layui.common.req(`${config.base}ai/chat`, 'POST', {page: page, limit: 24}, {
-                done: function (data) {
-                    const items = [];
-                    data.data.forEach(item => {
-                        items.push(`
-                            <div class="layui-col-md2 layui-col-sm4 layui-col-xs6">
-                              <div class="cmdlist-container">
-                                <div class="cmdlist-text">
-                                  <p onclick="layui.chat.asChat('${item.conversationId}')"
-                                   class="info" style="font-weight:bold;" lay-tips="${item.content}">${item.content}</p>
-                                  <div class="price">
-                                    <i onclick="layui.chat.asDelete('${item.conversationId}')"
-                                     class="layui-icon layui-icon-delete" style="color:red;" lay-tips="删除"></i>
-                                    <span class="flow" lay-tips="${item.timestamp}">${layui.util.timeAgo(item.timestamp)}</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>`);
-                    });
-                    next(items.join(''), data.data.length > 0);
-                }
-            });
-        }
 
     });
 </script>
