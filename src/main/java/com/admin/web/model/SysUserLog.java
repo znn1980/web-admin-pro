@@ -57,7 +57,7 @@ public class SysUserLog implements Serializable {
         this.setResult(null);
         this.setErrors(null);
         this.setMs(0L);
-        this.setTimestamp(null);
+        this.setTimestamp(LocalDateTime.now());
     }
 
     public Long getId() {

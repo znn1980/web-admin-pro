@@ -19,13 +19,15 @@ import java.util.Set;
 public class SysUser extends SysBase {
     @Column(name = "USERNAME")
     @NotBlank(message = "用户名不能为空！", groups = {SysCreate.class})
-    @Size(min = 2, max = 32, message = "用户名长度应在2-32之间！", groups = {SysCreate.class})
+    @Size(min = 2, max = 20, message = "用户名长度应在2~20位之间！", groups = {SysCreate.class})
+    @Pattern(regexp = "^[A-Za-z\\u4e00-\\u9fa5][A-Za-z\\u4e00-\\u9fa5\\d_\\-.]{1,19}$"
+            , message = "用户名需为中文或英文开头，支持2~20位中文、英文、数字、下划线、中划线、点！", groups = {SysCreate.class})
     private String username;
     @Column(name = "PASSWORD")
     private String password;
     @Column(name = "MOBILE", length = 11)
     @NotBlank(message = "手机号码不能为空！", groups = {SysCreate.class, SysUpdate.class})
-    @Size(min = 8, max = 11, message = "手机号码长度应在8-11之间！", groups = {SysCreate.class, SysUpdate.class})
+    @Size(min = 8, max = 11, message = "手机号码长度应在8~11位之间！", groups = {SysCreate.class, SysUpdate.class})
     private String mobile;
     @Column(name = "EMAIL")
     @NotBlank(message = "邮箱地址不能为空！", groups = {SysCreate.class, SysUpdate.class})
