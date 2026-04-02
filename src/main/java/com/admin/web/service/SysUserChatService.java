@@ -61,10 +61,15 @@ public class SysUserChatService {
 
     @Transactional(rollbackFor = Exception.class)
     public void delete(SysUser sysUser, String conversationId) {
-        Optional.ofNullable(this.sysUserChatDao.findByUsernameAndConversationId(sysUser.getUsername(), conversationId))
-                .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
-        this.sysUserChatDao.deleteByConversationId(conversationId);
-        this.chatMemoryDao.deleteByConversationId(conversationId);
+        if ("all".equalsIgnoreCase(conversationId)) {
+            this.sysUserChatDao.findByUsername(sysUser.getUsername()).forEach(sysUserChat ->
+                    this.sysUserChatDao.deleteByConversationId(sysUserChat.getConversationId()));
+        } else {
+            Optional.ofNullable(this.sysUserChatDao.findByUsernameAndConversationId(sysUser.getUsername(), conversationId))
+                    .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
+            this.sysUserChatDao.deleteByConversationId(conversationId);
+            this.chatMemoryDao.deleteByConversationId(conversationId);
+        }
     }
 
 }

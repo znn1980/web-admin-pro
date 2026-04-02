@@ -9,6 +9,7 @@ import com.admin.web.model.SysUserChat;
 import com.admin.web.service.SysUserChatService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.MediaType;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.ai.chat.memory.ChatMemory.CONVERSATION_ID;
 
@@ -39,6 +41,11 @@ public class AiChatController extends BaseController {
         this.sysUserChatService.save(super.getSysUser(), chatRequest.conversationId(), chatRequest.question());
         return this.chatClient.prompt()
                 .user(chatRequest.question())
+                .options(OpenAiChatOptions.builder()
+                        .extraBody(Map.of(
+                                "enable_thinking", chatRequest.enableThinking(),
+                                "enable_search", chatRequest.enableSearch()
+                        )).build())
                 .advisors(a -> a.param(CONVERSATION_ID, chatRequest.conversationId()))
                 .stream().chatResponse();
     }

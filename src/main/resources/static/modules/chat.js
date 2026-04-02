@@ -1,5 +1,18 @@
 layui.define(['layim', 'common'], function (exports) {
 
+    let enableThinking = layui.data('enable-thinking').enable
+        , enableSearch = layui.data('enable-search').enable;
+    layui.form.on('checkbox(chat-switch)', function (data) {
+        if (data.elem.name === 'enable-thinking') {
+            enableThinking = data.elem.checked;
+            layui.data('enable-thinking', {key: 'enable', value: enableThinking});
+        }
+        if (data.elem.name === 'enable-search') {
+            enableSearch = data.elem.checked;
+            layui.data('enable-search', {key: 'enable', value: enableSearch});
+        }
+    });
+
     layui.layim.config({
         contactsPanel: false
         , init: {
@@ -55,15 +68,15 @@ layui.define(['layim', 'common'], function (exports) {
                 elem: data.elem, show: true
                 , content: `
                 <div class="layui-form layui-padding-2">
-                  <input ${enable_thinking ? 'checked' : ''} type="checkbox"
+                  <input ${enableThinking ? 'checked' : ''} type="checkbox"
                    name="enable-thinking" value="深度思考" lay-skin="none" lay-filter="chat-switch">
                   <div lay-checkbox class="chat-skin-tag layui-badge">
                     <i class="layui-icon layui-icon-component"></i> 深度思考
                   </div>
-                  <input ${enable_search ? 'checked' : ''} type="checkbox"
-                   name="enable-search" value="智能搜索" lay-skin="none" lay-filter="chat-switch">
+                  <input ${enableSearch ? 'checked' : ''} type="checkbox"
+                   name="enable-search" value="联网搜索" lay-skin="none" lay-filter="chat-switch">
                   <div lay-checkbox class="chat-skin-tag layui-badge">
-                    <i class="layui-icon layui-icon-website"></i> 智能搜索
+                    <i class="layui-icon layui-icon-website"></i> 联网搜索
                   </div>
                 </div>
                 `
@@ -73,16 +86,6 @@ layui.define(['layim', 'common'], function (exports) {
             });
         }
     }]);
-
-    let enable_thinking = false, enable_search = false;
-    layui.form.on('checkbox(chat-switch)', function (data) {
-        if (data.elem.name === 'enable-thinking') {
-            enable_thinking = data.elem.checked;
-        }
-        if (data.elem.name === 'enable-search') {
-            enable_search = data.elem.checked;
-        }
-    });
 
     exports('chat', {
         abortController: null, conversationId: layui.common.asUuid()
@@ -108,11 +111,12 @@ layui.define(['layim', 'common'], function (exports) {
             });
         }
         , asDelete: function (id) {
-            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;删除后，聊天记录将不可恢复。`, {
-                title: '确定删除对话？', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;删除后，${id ? ''
+                : '<span style="color:red;font-weight:bold;">【全部】</span>'}聊天记录将不可恢复。`, {
+                title: `确定删除对话？`, closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, (index) => {
                 layui.layer.close(index);
-                layui.common.req(`${config.base}ai/chat/${id}`, 'DELETE', null, {
+                layui.common.req(`${config.base}ai/chat/${id ? id : 'all'}`, 'DELETE', null, {
                     done: () => {
                         this.asReload();
                     }
@@ -121,7 +125,10 @@ layui.define(['layim', 'common'], function (exports) {
         }
         , asContentParser: function (data) {
             const md = markdownit({typographer: true, linkify: true, breaks: true});
-            return md.render(data).replaceAll('<table>', '<table class="layui-table" lay-size="sm">');
+            return md.render(data).replaceAll('<table>', '<table class="layui-table" lay-size="sm">')
+                .replaceAll('&lt;think&gt;', '<fieldset class="layui-elem-field">' +
+                    '<legend>深度思考</legend><div class="layui-field-box">')
+                .replaceAll('&lt;/think&gt;', '</div></fieldset>');
         }
         , asChatInit: function (data) {
             layui.layim.getMessage({
@@ -135,20 +142,40 @@ layui.define(['layim', 'common'], function (exports) {
         , asSendMessage: function (data) {
             const user = data.user, receiver = data.receiver;
             if (receiver.type === 'ai') {
-                const messages = [];
+                let thinking = false, content = [];
                 this.abortController = new AbortController();
                 SSE.fetchEventSource(`${config.base}ai/chat/completions`, {
                     method: 'POST', headers: {'Content-Type': 'application/json'}
-                    , body: JSON.stringify({conversationId: this.conversationId, question: user.content})
+                    , body: JSON.stringify({
+                        conversationId: this.conversationId
+                        , question: user.content
+                        , enableThinking: enableThinking
+                        , enableSearch: enableSearch
+                    })
                     , signal: this.abortController.signal
                     , onopen: function (response) {
                         if (!response.ok) throw new Error(`URL ${response.status} ${response.statusText}`);
                     }
                     , onmessage: function (msg) {
                         const data = JSON.parse(msg.data);
-                        data?.result?.output?.text && messages.push(data.result.output.text);
-                        if (layui.$.trim(messages.join(''))) {
-                            layui.layim.getMessage({...receiver, content: `${messages.join('')} _`, finished: false});
+                        const reasoningContent = data?.result?.output?.metadata?.reasoningContent;
+                        const text = data?.result?.output?.text;
+                        if (layui.$.trim(reasoningContent)) {
+                            if (thinking === false) {
+                                thinking = true;
+                                content.push('\n<think>\n');
+                            }
+                            content.push(reasoningContent);
+                        }
+                        if (layui.$.trim(text)) {
+                            if (thinking === true) {
+                                thinking = false;
+                                content.push('\n</think>\n');
+                            }
+                            content.push(text);
+                        }
+                        if (layui.$.trim(content.join(''))) {
+                            layui.layim.getMessage({...receiver, content: `${content.join('')} _`, finished: false});
                         }
                     }
                     , onerror: function (error) {
@@ -156,7 +183,7 @@ layui.define(['layim', 'common'], function (exports) {
                         throw error;
                     }
                     , onclose: function () {
-                        layui.layim.getMessage({...receiver, content: messages.join(''), finished: true});
+                        layui.layim.getMessage({...receiver, content: content.join(''), finished: true});
                     }
                 });
             }

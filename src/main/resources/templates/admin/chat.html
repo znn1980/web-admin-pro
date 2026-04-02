@@ -32,11 +32,14 @@
     }).use(['index', 'layim', 'common', 'chat'], function () {
 
         layui.util.fixbar({
-            default: false
-            , bars: [{icon: 'layui-icon-dialogue'}]
+            bars: [
+                {type: 'chat', icon: 'layui-icon-dialogue'}
+                , {type: 'delete', icon: 'layui-icon-delete', style: 'background-color:red;'}
+            ]
             , on: {
-                click: function () {
-                    layui.chat.asChat();
+                click: function (type) {
+                    if (type === 'chat') layui.chat.asChat();
+                    if (type === 'delete') layui.chat.asDelete();
                 }
             }
         });

@@ -4,10 +4,20 @@ import com.admin.web.model.SysUserChat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.List;
+
 /**
  * @author znn
  */
 public interface SysUserChatDao extends JpaRepository<SysUserChat, Long>, JpaSpecificationExecutor<SysUserChat> {
+    /**
+     * 查询用户会话表
+     *
+     * @param username 用户名
+     * @return 用户会话表
+     */
+    List<SysUserChat> findByUsername(String username);
+
     /**
      * 查询用户会话表
      *
