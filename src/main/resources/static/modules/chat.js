@@ -43,7 +43,46 @@ layui.define(['layim', 'common'], function (exports) {
             }
             recognition.start();
         }
+    }, {
+        name: 'upload', title: '上传附件', icon: 'layui-icon-upload-drag'
+        , onClick: function (data) {
+            layui.layer.msg('敬请期待！');
+        }
+    }, {
+        name: 'more', title: '更多', icon: 'layui-icon-more'
+        , onClick: function (data) {
+            layui.dropdown.render({
+                elem: data.elem, show: true
+                , content: `
+                <div class="layui-form layui-padding-2">
+                  <input ${enable_thinking ? 'checked' : ''} type="checkbox"
+                   name="enable-thinking" value="深度思考" lay-skin="none" lay-filter="chat-switch">
+                  <div lay-checkbox class="chat-skin-tag layui-badge">
+                    <i class="layui-icon layui-icon-component"></i> 深度思考
+                  </div>
+                  <input ${enable_search ? 'checked' : ''} type="checkbox"
+                   name="enable-search" value="智能搜索" lay-skin="none" lay-filter="chat-switch">
+                  <div lay-checkbox class="chat-skin-tag layui-badge">
+                    <i class="layui-icon layui-icon-website"></i> 智能搜索
+                  </div>
+                </div>
+                `
+                , ready: function () {
+                    layui.form.render();
+                }
+            });
+        }
     }]);
+
+    let enable_thinking = false, enable_search = false;
+    layui.form.on('checkbox(chat-switch)', function (data) {
+        if (data.elem.name === 'enable-thinking') {
+            enable_thinking = data.elem.checked;
+        }
+        if (data.elem.name === 'enable-search') {
+            enable_search = data.elem.checked;
+        }
+    });
 
     exports('chat', {
         abortController: null, conversationId: layui.common.asUuid()
@@ -57,7 +96,7 @@ layui.define(['layim', 'common'], function (exports) {
                     layui.layer.prompt({
                         title: '编辑对话名称', formType: 2, value: data.data.content
                     }, (value, index, elem) => {
-                        if (value === '') return elem.focus();
+                        if (layer.$.trim(value) === '') return elem.focus();
                         layer.close(index);
                         layui.common.req(`${config.base}ai/chat/${id}`, 'PUT', value, {
                             done: () => {
@@ -162,25 +201,34 @@ layui.define(['layim', 'common'], function (exports) {
         , asFlow: function (page, next) {
             layui.common.req(`${config.base}ai/chat/all?page=${page - 1}&limit=24`, 'GET', null, {
                 done: (data) => {
-                    data.data.forEach((item, index) => {
+                    data.data.forEach((item) => {
                         next(`
                             <div class="layui-col-md2 layui-col-sm4 layui-col-xs6">
                               <div class="cmdlist-container">
                                 <div class="cmdlist-text">
-                                  <p onclick="layui.chat.asChat('${item.conversationId}')"
-                                   class="info layui-ellip" style="font-weight:bold;" lay-tips="${item.content}">${item.content}</p>
+                                  <p id="chat-${item.conversationId}" lay-tips="${item.content}"
+                                   class="info layui-ellip" style="font-weight:bold;">${item.content}</p>
                                   <div class="price">
-                                    <a href="javascript:" id="chat-more-${index}" class="layui-icon layui-icon-more"></a>
+                                    <a id="chat-more-${item.conversationId}" href="javascript:" class="layui-icon layui-icon-more"></a>
                                     <span class="flow" lay-tips="${item.timestamp}">${layui.util.timeAgo(item.timestamp)}</span>
                                   </div>
                                 </div>
                               </div>
-                            </div>`, true);
+                            </div>`, data.count > 0);
+                        layui.$(`#chat-${item.conversationId}`).on('click', () => {
+                            this.asChat(item.conversationId);
+                        });
                         layui.dropdown.render({
-                            elem: `#chat-more-${index}`, trigger: 'hover'
+                            elem: `#chat-more-${item.conversationId}`
                             , data: [
-                                {id: `${item.conversationId}`, title: 'update', templet: '<span><i class="layui-icon layui-icon-edit"></i> 重命名</span>'}
-                                , {id: `${item.conversationId}`, title: 'delete', templet: '<span style="color: red;"><i class="layui-icon layui-icon-delete"></i> 删除</span>'}]
+                                {
+                                    id: `${item.conversationId}`, title: 'update'
+                                    , templet: '<span><i class="layui-icon layui-icon-edit"></i> 重命名</span>'
+                                }
+                                , {
+                                    id: `${item.conversationId}`, title: 'delete'
+                                    , templet: '<span style="color: red;"><i class="layui-icon layui-icon-delete"></i> 删除</span>'
+                                }]
                             , click: (data) => {
                                 if (data.title === 'update') {
                                     this.asUpdate(data.id)
