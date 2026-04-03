@@ -1,15 +1,20 @@
+.layui-form-radio,
+.layui-form-checkbox {
+    background-color: transparent;
+}
+
 .layui-form-radio > .chat-skin-tag,
 .layui-form-checkbox > .chat-skin-tag {
     color: #000;
     border: 1px solid #d2d2d2;
     background-color: #fff;
-    border-radius: 30px;
+    border-radius: 100px;
     display: table;
     padding: 5px;
 }
 
-.layui-form-checkbox:hover > .chat-skin-tag,
-.layui-form-radio:hover > .chat-skin-tag {
+.layui-form-radio:hover > .chat-skin-tag,
+.layui-form-checkbox:hover > .chat-skin-tag {
     color: #000;
     border: 1px solid #d2d2d2;
     background-color: #f7f7f7;

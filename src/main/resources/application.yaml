@@ -54,6 +54,6 @@ spring:
 logging:
   level:
     com.admin.web: info
-    org.springframework.web: debug
+    org.springframework.ai: debug
   file:
     name: logs/web-admin-pro.log

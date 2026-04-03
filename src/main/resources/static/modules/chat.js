@@ -1,8 +1,12 @@
 layui.define(['layim', 'common'], function (exports) {
 
-    let enableThinking = layui.data('enable-thinking').enable
+    let abortController = null
+        , conversationId = layui.common.asUuid()
+        , periodThinking = 0
+        , enableThinking = layui.data('enable-thinking').enable
         , enableSearch = layui.data('enable-search').enable;
-    layui.form.on('checkbox(chat-switch)', function (data) {
+
+    layui.form.on('checkbox(chat-tools-switch)', function (data) {
         if (data.elem.name === 'enable-thinking') {
             enableThinking = data.elem.checked;
             layui.data('enable-thinking', {key: 'enable', value: enableThinking});
@@ -10,6 +14,15 @@ layui.define(['layim', 'common'], function (exports) {
         if (data.elem.name === 'enable-search') {
             enableSearch = data.elem.checked;
             layui.data('enable-search', {key: 'enable', value: enableSearch});
+        }
+        if (data.elem.name === 'mike') {
+            layui.chat.asMike({
+                done: function (text) {
+                    layui.$('textarea.layim-scrollbar').append(text);
+                }, complete: function () {
+                    data.elem.checked = false;
+                }
+            });
         }
     });
 
@@ -27,69 +40,16 @@ layui.define(['layim', 'common'], function (exports) {
     layui.layim.extendChatTools([{
         name: 'mike', title: '语音输入', icon: 'layui-icon-mike'
         , onClick: function (data) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) return layui.layer.msg('当前浏览器不支持语音识别');
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'zh-CN';
-            recognition.continuous = true;
-            recognition.interimResults = true;
-            recognition.maxAlternatives = 1;
-            let loading;
-            recognition.onstart = function () {
-                loading = layui.layer.load(2, {
-                    time: 0, shade: 0.1, shadeClose: true
-                    , content: `<span style="position:absolute;left:-35px;width:150px;">语音识别中...<span>`
-                    , end: function () {
-                        recognition.stop();
-                    }
-                });
-            }
-            recognition.onend = function () {
-                layui.layer.close(loading);
-            }
-            recognition.onerror = function (event) {
-                layui.layer.close(loading);
-                layui.layer.msg(`语音识别错误：${event.error}`);
-            }
-            recognition.onresult = function (event) {
-                data.insert(Array.from(event.results).map(result => result[0].transcript).join(''));
-            }
-            recognition.start();
-        }
-    }, {
-        name: 'upload', title: '上传附件', icon: 'layui-icon-upload-drag'
-        , onClick: function (data) {
-            layui.layer.msg('敬请期待！');
-        }
-    }, {
-        name: 'more', title: '更多', icon: 'layui-icon-more'
-        , onClick: function (data) {
-            layui.dropdown.render({
-                elem: data.elem, show: true
-                , content: `
-                <div class="layui-form layui-padding-2">
-                  <input ${enableThinking ? 'checked' : ''} type="checkbox"
-                   name="enable-thinking" value="深度思考" lay-skin="none" lay-filter="chat-switch">
-                  <div lay-checkbox class="chat-skin-tag layui-badge">
-                    <i class="layui-icon layui-icon-component"></i> 深度思考
-                  </div>
-                  <input ${enableSearch ? 'checked' : ''} type="checkbox"
-                   name="enable-search" value="联网搜索" lay-skin="none" lay-filter="chat-switch">
-                  <div lay-checkbox class="chat-skin-tag layui-badge">
-                    <i class="layui-icon layui-icon-website"></i> 联网搜索
-                  </div>
-                </div>
-                `
-                , ready: function () {
-                    layui.form.render();
+            layui.chat.asMike({
+                done: function (text) {
+                    data.insert(text);
                 }
             });
         }
     }]);
 
     exports('chat', {
-        abortController: null, conversationId: layui.common.asUuid()
-        , asReload: function () {
+        asReload: function () {
             layui.$('#chat-flow').html('');
             layui.flow.reload('chat-flow');
         }
@@ -126,11 +86,45 @@ layui.define(['layim', 'common'], function (exports) {
         , asContentParser: function (data) {
             const md = markdownit({typographer: true, linkify: true, breaks: true});
             return md.render(data).replaceAll('<table>', '<table class="layui-table" lay-size="sm">')
-                .replaceAll('&lt;think&gt;', '<fieldset class="layui-elem-field">' +
-                    '<legend>深度思考</legend><div class="layui-field-box">')
-                .replaceAll('&lt;/think&gt;', '</div></fieldset>');
+                .replaceAll(layui.util.escape('<think>'), `
+                  <div class="layui-timeline">
+                    <div class="layui-timeline-item">
+                      <i class="layui-icon layui-timeline-axis layui-icon-component"></i>
+                      <div class="layui-timeline-content layui-text">
+                        <h6 class="layui-timeline-title">深度思考</h6>
+                `)
+                .replaceAll(layui.util.escape('</think>'), `
+                      </div>
+                    </div>
+                    <div class="layui-timeline-item">
+                      <i class="layui-icon layui-timeline-axis layui-icon-component"></i>
+                      <div class="layui-timeline-content layui-text">
+                        <h6 class="layui-timeline-title">已思考（用时${(periodThinking / 1000).toFixed(2)}秒）</h6>
+                      </div>
+                    </div>
+                  </div>
+                `);
         }
         , asChatInit: function (data) {
+            layui.$(data.elem).find('.layim-chat-tool').empty().html(`
+                <span class="layui-form">
+                  <input ${enableThinking ? 'checked' : ''} type="checkbox"
+                   name="enable-thinking" value="深度思考" lay-skin="none" lay-filter="chat-tools-switch">
+                  <div lay-checkbox class="chat-skin-tag layui-badge">
+                    <i class="layui-icon layui-icon-component"></i>深度思考
+                  </div>
+                  <input ${enableSearch ? 'checked' : ''} type="checkbox"
+                   name="enable-search" value="联网搜索" lay-skin="none" lay-filter="chat-tools-switch">
+                  <div lay-checkbox class="chat-skin-tag layui-badge">
+                    <i class="layui-icon layui-icon-website"></i>联网搜索
+                  </div>
+                  <input type="checkbox" name="mike" lay-skin="none" lay-filter="chat-tools-switch">
+                  <div lay-checkbox class="chat-skin-tag layui-badge">
+                    <i class="layui-icon layui-icon-mike"></i>语音输入
+                  </div>
+                </span>
+            `);
+            layui.form.render();
             layui.layim.getMessage({
                 system: true
                 , id: data.data.id
@@ -143,16 +137,16 @@ layui.define(['layim', 'common'], function (exports) {
             const user = data.user, receiver = data.receiver;
             if (receiver.type === 'ai') {
                 let thinking = false, content = [];
-                this.abortController = new AbortController();
+                abortController = new AbortController();
                 SSE.fetchEventSource(`${config.base}ai/chat/completions`, {
                     method: 'POST', headers: {'Content-Type': 'application/json'}
                     , body: JSON.stringify({
-                        conversationId: this.conversationId
+                        conversationId: conversationId
                         , question: user.content
                         , enableThinking: enableThinking
                         , enableSearch: enableSearch
                     })
-                    , signal: this.abortController.signal
+                    , signal: abortController.signal
                     , onopen: function (response) {
                         if (!response.ok) throw new Error(`URL ${response.status} ${response.statusText}`);
                     }
@@ -163,6 +157,7 @@ layui.define(['layim', 'common'], function (exports) {
                         if (layui.$.trim(reasoningContent)) {
                             if (thinking === false) {
                                 thinking = true;
+                                periodThinking = Date.now();
                                 content.push('\n<think>\n');
                             }
                             content.push(reasoningContent);
@@ -170,6 +165,7 @@ layui.define(['layim', 'common'], function (exports) {
                         if (layui.$.trim(text)) {
                             if (thinking === true) {
                                 thinking = false;
+                                periodThinking = Date.now() - periodThinking;
                                 content.push('\n</think>\n');
                             }
                             content.push(text);
@@ -192,7 +188,7 @@ layui.define(['layim', 'common'], function (exports) {
             const user = data.user, receiver = data.receiver;
             return new Promise((resolve, reject) => {
                 const messages = [];
-                layui.common.req(`${config.base}ai/chat/${this.conversationId}`, 'GET', null, {
+                layui.common.req(`${config.base}ai/chat/${conversationId}`, 'GET', null, {
                     done: function (data) {
                         data.data.forEach(function (data) {
                             if (data.type === 'USER') {
@@ -208,7 +204,7 @@ layui.define(['layim', 'common'], function (exports) {
             });
         }
         , asChat: function (id) {
-            this.conversationId = id || layui.common.asUuid();
+            conversationId = id || layui.common.asUuid();
             layui.layim.chat({
                 type: 'ai'
                 , id: config.title
@@ -218,8 +214,8 @@ layui.define(['layim', 'common'], function (exports) {
                 , enableLocalChatlog: false
                 , layer: {
                     end: () => {
-                        if (this.abortController) this.abortController.abort();
-                        this.conversationId = layui.common.asUuid();
+                        if (abortController) abortController.abort();
+                        conversationId = layui.common.asUuid();
                         this.asReload();
                     }
                 }
@@ -270,6 +266,37 @@ layui.define(['layim', 'common'], function (exports) {
                 }
             });
         }
+        , asMike: function (callback) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) return layui.layer.msg('当前浏览器不支持语音识别');
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'zh-CN';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.maxAlternatives = 1;
+            let loading;
+            recognition.onstart = function () {
+                loading = layui.layer.load(2, {
+                    time: 0, shade: 0.1, shadeClose: true
+                    , content: `<span style="position:absolute;left:-35px;width:150px;">语音识别中...<span>`
+                    , end: function () {
+                        recognition.stop();
+                        callback && typeof callback.complete === 'function' && callback.complete();
+                    }
+                });
+            }
+            recognition.onend = function () {
+                layui.layer.close(loading);
+            }
+            recognition.onerror = function (event) {
+                layui.layer.close(loading);
+                layui.layer.msg(`语音识别错误：${event.error}`);
+            }
+            recognition.onresult = function (event) {
+                const text = Array.from(event.results).map(result => result[0].transcript).join('');
+                callback && typeof callback.done === 'function' && callback.done(text);
+            }
+            recognition.start();
+        }
     });
-})
-;
+});
