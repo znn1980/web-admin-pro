@@ -16,13 +16,12 @@ layui.define(['layim', 'common'], function (exports) {
             layui.data('enable-search', {key: 'enable', value: enableSearch});
         }
         if (data.elem.name === 'mike') {
-            layui.chat.asMike({
-                done: function (text) {
+            layui.chat.asMike(function (text) {
                     layui.$('textarea.layim-scrollbar').append(text);
-                }, complete: function () {
+                }, function () {
                     data.elem.checked = false;
                 }
-            });
+            );
         }
     });
 
@@ -40,10 +39,8 @@ layui.define(['layim', 'common'], function (exports) {
     layui.layim.extendChatTools([{
         name: 'mike', title: '语音输入', icon: 'layui-icon-mike'
         , onClick: function (data) {
-            layui.chat.asMike({
-                done: function (text) {
-                    data.insert(text);
-                }
+            layui.chat.asMike(function (text) {
+                data.insert(text);
             });
         }
     }]);
@@ -266,7 +263,7 @@ layui.define(['layim', 'common'], function (exports) {
                 }
             });
         }
-        , asMike: function (callback) {
+        , asMike: function (callback, end) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) return layui.layer.msg('当前浏览器不支持语音识别');
             const recognition = new SpeechRecognition();
@@ -281,20 +278,22 @@ layui.define(['layim', 'common'], function (exports) {
                     , content: `<span style="position:absolute;left:-35px;width:150px;">语音识别中...<span>`
                     , end: function () {
                         recognition.stop();
-                        callback && typeof callback.complete === 'function' && callback.complete();
+                        typeof end === 'function' && end();
                     }
                 });
             }
             recognition.onend = function () {
                 layui.layer.close(loading);
+                typeof end === 'function' && end();
             }
             recognition.onerror = function (event) {
                 layui.layer.close(loading);
                 layui.layer.msg(`语音识别错误：${event.error}`);
+                typeof end === 'function' && end();
             }
             recognition.onresult = function (event) {
                 const text = Array.from(event.results).map(result => result[0].transcript).join('');
-                callback && typeof callback.done === 'function' && callback.done(text);
+                typeof callback === 'function' && callback(text);
             }
             recognition.start();
         }
