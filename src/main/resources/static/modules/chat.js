@@ -17,7 +17,7 @@ layui.define(['layim', 'common'], function (exports) {
         }
         if (data.elem.name === 'mike') {
             layui.chat.asMike(function (text) {
-                    layui.$('textarea.layim-scrollbar').append(text);
+                    layui.$('textarea.layim-scrollbar').val(text);
                 }, function () {
                     data.elem.checked = false;
                 }
@@ -40,7 +40,7 @@ layui.define(['layim', 'common'], function (exports) {
         name: 'mike', title: '语音输入', icon: 'layui-icon-mike'
         , onClick: function (data) {
             layui.chat.asMike(function (text) {
-                data.insert(text);
+                layui.$('textarea.layim-scrollbar').val(text);
             });
         }
     }]);
@@ -155,7 +155,7 @@ layui.define(['layim', 'common'], function (exports) {
                             if (thinking === false) {
                                 thinking = true;
                                 periodThinking = Date.now();
-                                content.push('\n<think>\n');
+                                content.push('<think>');
                             }
                             content.push(reasoningContent);
                         }
@@ -163,7 +163,7 @@ layui.define(['layim', 'common'], function (exports) {
                             if (thinking === true) {
                                 thinking = false;
                                 periodThinking = Date.now() - periodThinking;
-                                content.push('\n</think>\n');
+                                content.push('</think>');
                             }
                             content.push(text);
                         }
