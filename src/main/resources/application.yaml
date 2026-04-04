@@ -44,7 +44,11 @@ spring:
           model: qwen-plus
           extra-body:
             enable_thinking: false
+            thinking:
+              type: disabled
             enable_search: false
+            web_search:
+              enable: false
     chat:
       memory:
         repository:
