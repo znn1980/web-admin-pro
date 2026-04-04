@@ -107,16 +107,16 @@ layui.define(['layim', 'common'], function (exports) {
                 <span class="layui-form">
                   <input ${enableThinking ? 'checked' : ''} type="checkbox"
                    name="enable-thinking" value="深度思考" lay-skin="none" lay-filter="chat-tools-switch">
-                  <div lay-checkbox class="chat-skin-tag layui-badge">
+                  <div lay-checkbox class="chat-tools-skin layui-badge">
                     <i class="layui-icon layui-icon-component"></i>深度思考
                   </div>
                   <input ${enableSearch ? 'checked' : ''} type="checkbox"
                    name="enable-search" value="联网搜索" lay-skin="none" lay-filter="chat-tools-switch">
-                  <div lay-checkbox class="chat-skin-tag layui-badge">
+                  <div lay-checkbox class="chat-tools-skin layui-badge">
                     <i class="layui-icon layui-icon-website"></i>联网搜索
                   </div>
                   <input type="checkbox" name="mike" lay-skin="none" lay-filter="chat-tools-switch">
-                  <div lay-checkbox class="chat-skin-tag layui-badge">
+                  <div lay-checkbox class="chat-tools-skin layui-badge">
                     <i class="layui-icon layui-icon-mike"></i>语音输入
                   </div>
                 </span>

@@ -3,8 +3,8 @@
     background-color: transparent;
 }
 
-.layui-form-radio > .chat-skin-tag,
-.layui-form-checkbox > .chat-skin-tag {
+.layui-form-radio > .chat-tools-skin,
+.layui-form-checkbox > .chat-tools-skin {
     color: #000;
     border: 1px solid #d2d2d2;
     background-color: #fff;
@@ -13,15 +13,15 @@
     padding: 5px;
 }
 
-.layui-form-radio:hover > .chat-skin-tag,
-.layui-form-checkbox:hover > .chat-skin-tag {
+.layui-form-radio:hover > .chat-tools-skin,
+.layui-form-checkbox:hover > .chat-tools-skin {
     color: #000;
     border: 1px solid #d2d2d2;
     background-color: #f7f7f7;
 }
 
-.layui-form-checked > .chat-skin-tag,
-.layui-form-radioed > .chat-skin-tag {
+.layui-form-checked > .chat-tools-skin,
+.layui-form-radioed > .chat-tools-skin {
     color: #fff !important;
     border: 1px solid #16b777 !important;
     background-color: #16b777 !important;
