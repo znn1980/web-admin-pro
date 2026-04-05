@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
 <head>
     <meta charset="utf-8">
-    <title th:text="|${config.title} v${config.version}|">WEB-ADMIN-PRO</title>
+    <title th:text="|${config.name} v${config.version}|">WEB-ADMIN-PRO</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
@@ -20,7 +20,7 @@
 <script th:inline="javascript">
     const config = {
         base:/*[[@{/}]]*/ '../../static/'
-        , title: /*[[${config.title}]]*/ 'WEB-ADMIN-PRO'
+        , name: /*[[${config.name}]]*/ 'WEB-ADMIN-PRO'
         , version: /*[[${config.version}]]*/ '1.0.0'
         , copyright: /*[[${config.copyright}]]*/ '© 2025 All Rights Reserved.'
     }

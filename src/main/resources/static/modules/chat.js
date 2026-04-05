@@ -204,8 +204,8 @@ layui.define(['layim', 'common'], function (exports) {
             conversationId = id || layui.common.asUuid();
             layui.layim.chat({
                 type: 'ai'
-                , id: config.title
-                , username: `${config.title} v${config.version}`
+                , id: config.name
+                , username: `${config.name} v${config.version}`
                 , avatar: `${config.base}style/imgs/logo.png`
                 , new: true
                 , enableLocalChatlog: false

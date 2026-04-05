@@ -29,22 +29,27 @@ public class AiChatConfig {
     }
 
     @Bean
-    public ChatClient chatClient(OpenAiChatModel chatModel, ChatMemory chatMemory, SystemPromptTemplate defaultSystem) {
+    public ChatClient chatClient(
+            OpenAiChatModel chatModel,
+            ChatMemory chatMemory,
+            SystemPromptTemplate systemPromptTemplate) {
         return ChatClient.builder(chatModel)
                 .defaultAdvisors(
                         SimpleLoggerAdvisor.builder().build(),
                         MessageChatMemoryAdvisor.builder(chatMemory).build()
                 )
-                .defaultSystem(defaultSystem.render())
+                .defaultSystem(systemPromptTemplate.render())
                 .build();
     }
 
     @Bean
-    public SystemPromptTemplate defaultSystem(
-            @Value("${spring.application.name}") String name,
-            @Value("${spring.application.version}") String version,
-            @Value("classpath:/default-system.md") Resource defaultSystem) {
-        return SystemPromptTemplate.builder().resource(defaultSystem)
-                .variables(Map.of("name", name, "version", version)).build();
+    public SystemPromptTemplate systemPromptTemplate(
+            ConfigProperties configProperties,
+            @Value("classpath:/system-prompt.md") Resource systemPrompt) {
+        return SystemPromptTemplate.builder().resource(systemPrompt)
+                .variables(Map.of(
+                        "name", configProperties.getName(),
+                        "version", configProperties.getVersion()
+                )).build();
     }
 }

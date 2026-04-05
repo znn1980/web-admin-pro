@@ -2,7 +2,7 @@ package com.admin.web.controller;
 
 import com.admin.web.annotation.SysLogin;
 import com.admin.web.annotation.SysPermissions;
-import com.admin.web.config.WebServerConfig;
+import com.admin.web.config.ConfigProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,16 +14,16 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class ModelViewController extends BaseController {
-    private final WebServerConfig config;
+    private final ConfigProperties configProperties;
 
-    public ModelViewController(WebServerConfig config) {
-        this.config = config;
+    public ModelViewController(ConfigProperties configProperties) {
+        this.configProperties = configProperties;
     }
 
     @ModelAttribute
     public void addAttributes(Model model) {
         model.addAttribute("ip", super.getClientIp());
-        model.addAttribute("config", this.config);
+        model.addAttribute("config", this.configProperties);
     }
 
     @GetMapping({"/", "/index.html", "/admin/login.html"})

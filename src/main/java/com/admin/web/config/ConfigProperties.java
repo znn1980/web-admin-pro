@@ -8,17 +8,17 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConfigurationProperties(prefix = "config")
-public class WebServerConfig {
-    private String title;
-    private String version;
-    private String copyright;
+public class ConfigProperties {
+    private String name = "WEB-ADMIN-PRO";
+    private String version = "1.0.0";
+    private String copyright = "© 2025 All Rights Reserved.";
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getVersion() {
