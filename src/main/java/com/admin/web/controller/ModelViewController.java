@@ -23,7 +23,7 @@ public class ModelViewController extends BaseController {
     @ModelAttribute
     public void addAttributes(Model model) {
         model.addAttribute("ip", super.getClientIp());
-        model.addAttribute("config", this.configProperties);
+        model.addAttribute(ConfigProperties.CONFIG_PREFIX, this.configProperties);
     }
 
     @GetMapping({"/", "/index.html", "/admin/login.html"})

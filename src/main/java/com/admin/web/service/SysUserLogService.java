@@ -45,7 +45,8 @@ public class SysUserLogService {
             } else if (Objects.nonNull(vo.getEndTimestamp())) {
                 predicates.add(builder.lessThanOrEqualTo(root.get("timestamp"), vo.getEndTimestamp()));
             }
-            return query.where(predicates.toArray(new Predicate[0]))
+            return Objects.requireNonNull(query)
+                    .where(predicates.toArray(new Predicate[0]))
                     .orderBy(builder.desc(root.get("timestamp")))
                     .getRestriction();
         }, UserLogVo.of(vo));
@@ -57,8 +58,10 @@ public class SysUserLogService {
 
     public SysUserLog log(SysLog sysLog, Object[] args, Object result, Exception error, long ms) {
         SysUserLog logs = new SysUserLog();
-        logs.setUsername(Objects.requireNonNullElse(SecurityUtils.getSysUser(WebUtils.getRequest())
-                , SecurityUtils.getSysUser()).getUsername());
+        logs.setUsername(Objects.requireNonNullElse(
+                SecurityUtils.getSysUser(WebUtils.getRequest()),
+                SecurityUtils.getSysUser()
+        ).getUsername());
         logs.setIp(WebUtils.getClientIp(WebUtils.getRequest()));
         logs.setOs(UserAgentUtils.getOs(UserAgentUtils.getUserAgent(WebUtils.getRequest())));
         logs.setBrowser(UserAgentUtils.getBrowser(UserAgentUtils.getUserAgent(WebUtils.getRequest())));

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -31,7 +32,8 @@ public class SysUserChatService {
 
     public Slice<SysUserChat> findByUsername(SysUser sysUser, PageRequest pageRequest) {
         return this.sysUserChatDao.findAll((root, query, builder) ->
-                query.where(builder.equal(root.get("username"), sysUser.getUsername()))
+                Objects.requireNonNull(query)
+                        .where(builder.equal(root.get("username"), sysUser.getUsername()))
                         .orderBy(builder.desc(root.get("timestamp")))
                         .getRestriction(), pageRequest);
     }

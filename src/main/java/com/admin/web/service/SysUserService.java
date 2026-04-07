@@ -173,9 +173,8 @@ public class SysUserService {
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.LOGOUT));
         if (!SecurityUtils.isSuperAdmin(sysUser)
                 && !Arrays.asList(sysPermissions.value()).contains(SysLogin.class)) {
-            if (!this.hasPermissions(this.sysUserDao.findById(sysUser.getId()).orElseThrow(() -> {
-                throw new ServerResponseException(ResponseCode.NOT_FOUND);
-            }).getRoles())) {
+            if (!this.hasPermissions(this.sysUserDao.findById(sysUser.getId()).orElseThrow(() ->
+                    new ServerResponseException(ResponseCode.NOT_FOUND)).getRoles())) {
                 throw new ServerResponseException(ResponseCode.DENIED);
             }
         }

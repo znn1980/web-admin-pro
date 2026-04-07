@@ -29,7 +29,7 @@ public class SysLogAspect {
 
     @Before(value = "@annotation(sysLog)")
     public void doBefore(JoinPoint joinPoint, SysLog sysLog) {
-        log.info("SYS-ASPECT => {}.{}()", joinPoint.getTarget().getClass().getName(), joinPoint.getSignature().getName());
+        log.info("SYS-ASPECT => [{}] {}.{}()", sysLog.value(), joinPoint.getTarget().getClass().getName(), joinPoint.getSignature().getName());
         THREAD_LOCAL.set(System.currentTimeMillis());
     }
 

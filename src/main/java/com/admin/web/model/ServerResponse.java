@@ -83,7 +83,8 @@ public class ServerResponse<T> implements Serializable {
     }
 
     public static <T> ServerResponse<T> fail(BindingResult bindingResult) {
-        return new ServerResponse<>(ResponseCode.FAIL.value(), bindingResult.getFieldError().getDefaultMessage(), null, null);
+        return new ServerResponse<>(ResponseCode.FAIL.value(), Objects.isNull(bindingResult.getFieldError())
+                ? ResponseCode.FAIL.msg() : bindingResult.getFieldError().getDefaultMessage(), null, null);
     }
 
     @Override

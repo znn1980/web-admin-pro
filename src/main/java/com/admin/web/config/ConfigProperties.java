@@ -7,11 +7,15 @@ import org.springframework.context.annotation.Configuration;
  * @author znn
  */
 @Configuration
-@ConfigurationProperties(prefix = "config")
+@ConfigurationProperties(prefix = ConfigProperties.CONFIG_PREFIX)
 public class ConfigProperties {
-    private String name = "WEB-ADMIN-PRO";
-    private String version = "1.0.0";
-    private String copyright = "© 2025 All Rights Reserved.";
+    public static final String CONFIG_PREFIX = "config";
+    public static final String DEFAULT_NAME = "WEB-ADMIN-PRO";
+    public static final String DEFAULT_VERSION = "1.0.0";
+    public static final String DEFAULT_COPYRIGHT = "© 2025 All Rights Reserved.";
+    private String name = DEFAULT_NAME;
+    private String version = DEFAULT_VERSION;
+    private String copyright = DEFAULT_COPYRIGHT;
 
     public String getName() {
         return name;

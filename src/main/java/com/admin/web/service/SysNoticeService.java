@@ -31,7 +31,7 @@ public class SysNoticeService {
         if (Objects.equals(NoticeVo.State.UNREAD, vo.getState())) {
             //未读
             return this.sysNoticeDao.findAll((root, query, builder) -> {
-                Subquery<Long> subQuery = query.subquery(Long.class);
+                Subquery<Long> subQuery = Objects.requireNonNull(query).subquery(Long.class);
                 Root<SysNotice> subRoot = subQuery.from(SysNotice.class);
                 subQuery.select(subRoot.get("id"))
                         .where(builder.equal(subRoot.join("users").get("id"), sysUser.getId()));
@@ -42,7 +42,8 @@ public class SysNoticeService {
         } else if (Objects.equals(NoticeVo.State.READ, vo.getState())) {
             //已读
             return this.sysNoticeDao.findAll((root, query, builder) ->
-                    query.where(builder.equal(root.join("users").get("id"), sysUser.getId()))
+                    Objects.requireNonNull(query)
+                            .where(builder.equal(root.join("users").get("id"), sysUser.getId()))
                             .orderBy(builder.desc(root.get("createTimestamp")))
                             .getRestriction(), PageVo.of(vo));
         } else if (Objects.equals(NoticeVo.State.ME, vo.getState())) {
@@ -99,7 +100,7 @@ public class SysNoticeService {
 
     public Long unRead(Long userId) {
         return this.sysNoticeDao.count((root, query, builder) -> {
-            Subquery<Long> subQuery = query.subquery(Long.class);
+            Subquery<Long> subQuery = Objects.requireNonNull(query).subquery(Long.class);
             Root<SysNotice> subRoot = subQuery.from(SysNotice.class);
             subQuery.select(subRoot.get("id")).where(builder.equal(subRoot.join("users").get("id"), userId));
             return builder.not(root.get("id").in(subQuery));

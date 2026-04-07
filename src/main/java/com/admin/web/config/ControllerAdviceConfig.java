@@ -52,7 +52,7 @@ public class ControllerAdviceConfig {
                         String.format("(%s)", Os.asBytes(ex.getMaxUploadSize())) : ""));
             }
             if (Objects.nonNull(e.getMessage())) {
-                return ResponseEntity.ok(ServerResponse.fail(ResponseCode.ERROR.msg() + String.format("(%s)", e.getMessage())));
+                return ResponseEntity.ok(ServerResponse.fail("%s(%s)", ResponseCode.ERROR.msg(), e.getMessage()));
             }
             return ResponseEntity.ok(ServerResponse.fail(ResponseCode.ERROR));
         }

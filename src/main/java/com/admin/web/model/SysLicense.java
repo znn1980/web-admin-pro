@@ -17,9 +17,7 @@ import java.util.UUID;
  * @author znn
  */
 public record SysLicense(String num, LocalDate from, LocalDate to) implements Serializable {
-
-    @Override
-    public String toString() {
+    public String tips() {
         return String.format("许可证{编号=%s, 有效期=[%s, %s]}", this.num(), this.from(), this.to());
     }
 
