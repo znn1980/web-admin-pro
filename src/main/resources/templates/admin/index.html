@@ -23,7 +23,7 @@
                     </a>
                 </li>
                 <li class="layui-nav-item layui-hide-xs" lay-unselect>
-                    <a href="login.html" target="_blank" title="前台">
+                    <a th:href="@{/admin/login.html}" href="login.html" target="_blank" title="前台">
                         <i class="layui-icon layui-icon-website"></i>
                     </a>
                 </li>
@@ -40,13 +40,13 @@
             </ul>
             <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
                 <li class="layui-nav-item" lay-unselect>
-                    <a lay-href="notice.html" layadmin-event="message" lay-text="通知公告">
+                    <a th:lay-href="@{/admin/notice.html}" lay-href="notice.html" layadmin-event="message" lay-text="通知公告">
                         <i class="layui-icon layui-icon-notice"></i>
                         <span id="sys-notice-unread"></span>
                     </a>
                 </li>
                 <li class="layui-nav-item" lay-unselect>
-                    <a lay-href="chat.html" layadmin-event="chat" lay-text="AI对话">
+                    <a th:lay-href="@{/admin/chat.html}" lay-href="chat.html" layadmin-event="chat" lay-text="AI对话">
                         <i class="layui-icon layui-icon-dialogue"></i>
                     </a>
                 </li>
@@ -74,7 +74,7 @@
                         <cite id="sys-username"></cite>
                     </a>
                     <dl class="layui-nav-child">
-                        <dd style="text-align: center;"><a lay-href="me.html">个人中心</a></dd>
+                        <dd style="text-align: center;"><a th:lay-href="@{/admin/me.html}" lay-href="me.html">个人中心</a></dd>
                         <dd style="text-align: center;" layadmin-event="lock"><a>锁屏</a></dd>
                         <hr>
                         <dd style="text-align: center;" layadmin-event="logout"><a>退出登录</a></dd>
@@ -91,7 +91,7 @@
         <!-- 侧边菜单 -->
         <div class="layui-side layui-side-menu">
             <div class="layui-side-scroll">
-                <div class="layui-logo" lay-href="home.html">
+                <div class="layui-logo" th:lay-href="@{/admin/home.html}" lay-href="home.html">
                     <span th:text="${config.name}">WEB-ADMIN-PRO</span>
                 </div>
                 <ul class="layui-nav layui-nav-tree" lay-accordion id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
@@ -117,14 +117,16 @@
             </div>
             <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
                 <ul class="layui-tab-title" id="LAY_app_tabsheader">
-                    <li lay-id="home.html" lay-attr="home.html" class="layui-this"><i class="layui-icon layui-icon-home"></i></li>
+                    <li th:lay-id="@{/admin/home.html}" th:lay-attr="@{/admin/home.html}" lay-id="home.html" lay-attr="home.html" class="layui-this">
+                        <i class="layui-icon layui-icon-home"></i>
+                    </li>
                 </ul>
             </div>
         </div>
         <!-- 主体内容 -->
         <div class="layui-body" id="LAY_app_body">
             <div class="layadmin-tabsbody-item layui-show">
-                <iframe src="home.html" frameborder="0" class="layadmin-iframe"></iframe>
+                <iframe th:src="@{/admin/home.html}" src="home.html" frameborder="0" class="layadmin-iframe"></iframe>
             </div>
         </div>
         <!-- 辅助元素，一般用于移动设备下遮罩 -->
