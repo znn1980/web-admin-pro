@@ -34,6 +34,7 @@
         layui.util.fixbar({
             bars: [
                 {type: 'chat', icon: 'layui-icon-dialogue'}
+                , {type: 'set', content: '<li class="layui-icon layui-icon-set" layim-event="set"></li>'}
                 , {type: 'delete', icon: 'layui-icon-delete', style: 'background-color:red;'}
             ]
             , on: {
@@ -51,20 +52,20 @@
             }
         });
 
-        layui.layim.callback('contentParser', function (data) {
-            return layui.chat.asContentParser(data);
+        layui.layim.on('chatInit', function (data) {
+            layui.chat.asChatInit(data);
         });
         layui.layim.callback('chatlog', function (data) {
             return layui.chat.asChatlog(data);
         });
+        layui.layim.callback('contentParser', function (data) {
+            return layui.chat.asContentParser(data);
+        });
         layui.layim.on('sendMessage', function (data) {
             layui.chat.asSendMessage(data);
         });
-        layui.layim.on('chatInit', function (data) {
-            layui.chat.asChatInit(data);
-        });
-        layui.layim.on('ready', function () {
-            //layui.chat.asChat();
+        layui.layim.on('backgroundImage', function (data) {
+            layui.chat.asBackgroundImage(data);
         });
         window.setTimeout(function () {
             layui.chat.asChat();
