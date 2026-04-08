@@ -70,7 +70,7 @@
 </script>
 <form class="layui-form" id="sys-user-form" lay-filter="sys-user-form" style="display: none;">
     <input type="hidden" id="id" name="id">
-    <div class="layui-form-item" id="sys-user">
+    <div class="layui-form-item" id="sys-username">
         <label class="layui-form-label" for="username">用户名称</label>
         <div class="layui-input-block">
             <input type="text" id="username" name="username" lay-verify="required" placeholder="用户名称" lay-reqtext="请输入用户名称" autocomplete="off" class="layui-input" lay-affix="clear">
@@ -168,7 +168,7 @@
             if (data.event === 'sys-add-toolbar') {
                 layui.$('#id').val('');
                 layui.$('#sys-user-form')[0].reset();
-                layui.$('#sys-user').show();
+                layui.$('#sys-username').show();
                 load(function () {
                     xmSelect.get('#sys-role', true).setValue([]);
                     save('创建用户', 'POST');
@@ -180,7 +180,7 @@
                 if (data.event === 'sys-edit-toolbar') {
                     users[0].disable = !users[0].disable;
                     layui.form.val('sys-user-form', users[0]);
-                    layui.$('#sys-user').hide();
+                    layui.$('#sys-username').hide();
                     load(function () {
                         xmSelect.get('#sys-role', true).setValue(users[0].roles ? users[0].roles : []);
                         save('修改用户', 'PUT');

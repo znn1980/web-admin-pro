@@ -69,7 +69,7 @@ public class AiChatController extends BaseController {
     }
 
     @SysPermissions(SysLogin.class)
-    @GetMapping("{conversationId}")
+    @GetMapping("/{conversationId}")
     public ServerResponse<List<ChatMemory>> chatMemory(@PathVariable String conversationId) {
         List<ChatMemory> chatMemory = this.sysUserChatService.findByConversationId(conversationId);
         return ServerResponse.ok(chatMemory);

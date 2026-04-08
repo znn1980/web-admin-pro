@@ -1,6 +1,10 @@
+/**
+ * ai-chat
+ */
+
 layui.define(['layim', 'common'], function (exports) {
 
-    let abortController = null
+    let abortController
         , conversationId = layui.common.asUuid()
         , periodThinking = 0
         , enableThinking = layui.data('enable-thinking').enable
@@ -29,7 +33,7 @@ layui.define(['layim', 'common'], function (exports) {
         contactsPanel: false
         , init: {
             user: {
-                id: 'admin'
+                id: parent.layui.$('#sys-username').html()
                 , username: parent.layui.$('#sys-username').html()
                 , avatar: parent.layui.$('#sys-avatar').attr('src')
             }
@@ -105,13 +109,13 @@ layui.define(['layim', 'common'], function (exports) {
         , asChatInit: function (data) {
             layui.$(data.elem).find('.layim-chat-tool').empty().html(`
                 <span class="layui-form">
-                  <input ${enableThinking ? 'checked' : ''} type="checkbox"
-                   name="enable-thinking" value="深度思考" lay-skin="none" lay-filter="chat-tools-switch">
+                  <input type="checkbox" ${enableThinking ? 'checked' : ''}
+                   name="enable-thinking" lay-skin="none" lay-filter="chat-tools-switch">
                   <div lay-checkbox class="chat-tools-skin layui-badge">
                     <i class="layui-icon layui-icon-component"></i>深度思考
                   </div>
-                  <input ${enableSearch ? 'checked' : ''} type="checkbox"
-                   name="enable-search" value="联网搜索" lay-skin="none" lay-filter="chat-tools-switch">
+                  <input type="checkbox" ${enableSearch ? 'checked' : ''}
+                   name="enable-search" lay-skin="none" lay-filter="chat-tools-switch">
                   <div lay-checkbox class="chat-tools-skin layui-badge">
                     <i class="layui-icon layui-icon-website"></i>联网搜索
                   </div>

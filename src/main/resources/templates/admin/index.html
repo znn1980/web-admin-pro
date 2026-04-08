@@ -208,13 +208,18 @@
                 id: 'sys-lock', skin: 'lock-screen'
                 , type: 1, title: false, closeBtn: false, area: ['100%', '100%']
                 , scrollbar: false, anim: -1, isOutAnim: false, resize: false
-                , content: ['<form class="layui-form" onsubmit="return false;"><div class="layui-input-wrap">',
-                    '<input type="password" class="lock-screen-pin" autocomplete="off" lay-affix="eye" value="">',
-                    '<div class="layui-input-suffix"><i class="layui-icon layui-icon-right"></i></div>',
-                    '</div><div>请输入登陆密码，即可退出锁屏。</div></form>'].join('')
+                , content: `
+                  <form class="layui-form" onsubmit="return false;">
+                    <div class="layui-input-wrap">
+                      <input type="password" class="lock-screen-pin" autocomplete="off" lay-affix="eye" value="">
+                      <div class="layui-input-suffix"><i class="layui-icon layui-icon-right"></i></div>
+                    </div>
+                    <div>请输入登陆密码，即可退出锁屏。</div>
+                  </form>
+                  `
                 , success: function (layero, index) {
-                    layui.data('lock-screen', {key: 'lock', value: true});
                     layui.form.render();
+                    layui.data('lock-screen', {key: 'lock', value: true});
                     layero.find('.layui-form')[0].reset();
                     layero.find('.layui-icon-right').on('click', function () {
                         if (layero.find('input').val() === '') return layero.find('input').focus();
