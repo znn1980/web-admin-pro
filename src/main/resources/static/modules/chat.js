@@ -60,7 +60,7 @@ layui.define(['layim', 'common'], function (exports) {
                     layui.layer.prompt({
                         title: '编辑对话名称', formType: 2, value: data.data.content
                     }, (value, index, elem) => {
-                        if (layer.$.trim(value) === '') return elem.focus();
+                        if (layui.$.trim(value) === '') return elem.focus();
                         layer.close(index);
                         layui.common.req(`${config.base}ai/chat/${id}`, 'PUT', value, {
                             done: () => {

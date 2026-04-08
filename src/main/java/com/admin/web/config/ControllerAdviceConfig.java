@@ -25,13 +25,13 @@ import java.util.Objects;
  */
 @ControllerAdvice
 public class ControllerAdviceConfig {
-    private static final Logger log = LoggerFactory.getLogger(ControllerAdviceConfig.class);
+    private static final Logger logger = LoggerFactory.getLogger(ControllerAdviceConfig.class);
 
     @ExceptionHandler(Exception.class)
     public Object exceptionHandler(HttpServletRequest request, Exception e) {
-        log.error("SYS-ERROR => {} => URL => {}", request.getMethod(), request.getRequestURI());
+        logger.error("SYS-ERROR => {} => URL => {}", request.getMethod(), request.getRequestURI());
         if (!(e instanceof ServerResponseException)) {
-            log.error("SYS-ERROR => {}", e, e);
+            logger.error("SYS-ERROR => {}", e, e);
         }
         if (WebUtils.isRequestRest(request)) {
             if (e instanceof ServerResponseException ex) {

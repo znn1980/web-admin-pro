@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class SysPermissionsAspect {
-    private static final Logger log = LoggerFactory.getLogger(SysPermissionsAspect.class);
+    private static final Logger logger = LoggerFactory.getLogger(SysPermissionsAspect.class);
     private final SysUserService sysUserService;
 
     public SysPermissionsAspect(SysUserService sysUserService) {
@@ -24,7 +24,7 @@ public class SysPermissionsAspect {
 
     @Before(value = "@annotation(sysPermissions)")
     public void doBefore(JoinPoint joinPoint, SysPermissions sysPermissions) {
-        log.info("SYS-ASPECT => {}.{}()", joinPoint.getTarget().getClass().getName(), joinPoint.getSignature().getName());
+        logger.info("SYS-ASPECT => {}.{}()", joinPoint.getTarget().getClass().getName(), joinPoint.getSignature().getName());
         this.sysUserService.hasPermissions(sysPermissions);
     }
 }

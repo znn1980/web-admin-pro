@@ -21,14 +21,14 @@ import java.nio.file.Paths;
 @Aspect
 @Component
 public class SysLicenseAspect {
-    private static final Logger log = LoggerFactory.getLogger(SysLicenseAspect.class);
+    private static final Logger logger = LoggerFactory.getLogger(SysLicenseAspect.class);
 
     @Before("login()")
     public void doBefore() {
         try {
             byte[] bytes = SysLicense.readSysLicense(Paths.get("license.dat"));
             SysLicense license = SysLicense.asSysLicense(bytes);
-            log.info("SYS-ASPECT => {}", license.tips());
+            logger.info("SYS-ASPECT => {}", license.tips());
             SysLicense.hasSysLicense(license);
         } catch (SysLicenseException e) {
             throw new ServerResponseException(e.getMessage());
@@ -42,7 +42,7 @@ public class SysLicenseAspect {
     @Bean
     public ApplicationRunner runner() {
         String licenseNumber = SysLicense.asSysLicenseNumber();
-        log.info("[许可证] => {}", licenseNumber);
+        logger.info("[许可证] => {}", licenseNumber);
         return args -> Files.write(Paths.get("license.key"), licenseNumber.getBytes());
     }
 

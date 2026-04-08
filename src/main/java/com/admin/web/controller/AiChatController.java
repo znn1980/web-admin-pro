@@ -1,5 +1,6 @@
 package com.admin.web.controller;
 
+import com.admin.web.annotation.SysLog;
 import com.admin.web.annotation.SysLogin;
 import com.admin.web.annotation.SysPermissions;
 import com.admin.web.model.ChatMemory;
@@ -35,6 +36,7 @@ public class AiChatController extends BaseController {
         this.sysUserChatService = sysUserChatService;
     }
 
+    @SysLog("AI对话")
     @SysPermissions(SysLogin.class)
     @PostMapping(value = "/completions", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ChatResponse> chatCompletions(@RequestBody ChatRequest chatRequest) {
@@ -75,6 +77,7 @@ public class AiChatController extends BaseController {
         return ServerResponse.ok(chatMemory);
     }
 
+    @SysLog("AI对话重命名")
     @SysPermissions(SysLogin.class)
     @PutMapping("/{conversationId}")
     public ServerResponse<?> update(@PathVariable String conversationId, @RequestBody String content) {
@@ -82,6 +85,7 @@ public class AiChatController extends BaseController {
         return ServerResponse.ok();
     }
 
+    @SysLog("AI对话删除")
     @SysPermissions(SysLogin.class)
     @DeleteMapping("/{conversationId}")
     public ServerResponse<?> delete(@PathVariable String conversationId) {
