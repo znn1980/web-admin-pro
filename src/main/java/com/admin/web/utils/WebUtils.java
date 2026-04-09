@@ -9,32 +9,40 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Objects;
 
 /**
  * @author znn
  */
 public class WebUtils extends org.springframework.web.util.WebUtils {
-    static final String UNKNOWN = "unknown";
-    static final String COMMA = ",";
 
     public static String getClientIp(HttpServletRequest request) {
-        if (request == null) {
-            return UNKNOWN;
+        String ip = request.getHeader("X-Forwarded-For");
+        if (!StringUtils.hasText(ip) || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("X-Real-IP");
         }
-        String ip = request.getHeader("X-Real-IP");
-        if (!StringUtils.hasText(ip) || UNKNOWN.equalsIgnoreCase(ip)) {
-            ip = request.getHeader("X-Forwarded-For");
-        }
-        if (!StringUtils.hasText(ip) || UNKNOWN.equalsIgnoreCase(ip)) {
+        if (!StringUtils.hasText(ip) || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
         }
-        if (!StringUtils.hasText(ip) || UNKNOWN.equalsIgnoreCase(ip)) {
+        if (!StringUtils.hasText(ip) || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("WL-Proxy-Client-IP");
         }
-        if (!StringUtils.hasText(ip) || UNKNOWN.equalsIgnoreCase(ip)) {
+        if (!StringUtils.hasText(ip) || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (!StringUtils.hasText(ip) || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (!StringUtils.hasText(ip) || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
-        return ip.split(COMMA)[0].trim();
+        for (String sub : Objects.requireNonNullElse(StringUtils.split(ip, ","), new String[0])) {
+            ip = sub.trim();
+            if (StringUtils.hasText(ip) && !"unknown".equalsIgnoreCase(ip)) {
+                break;
+            }
+        }
+        return (Objects.equals("0:0:0:0:0:0:0:1", ip) || Objects.equals("::1", ip)) ? "127.0.0.1" : ip;
     }
 
     public static boolean isRequestRest(HttpServletRequest request) {
