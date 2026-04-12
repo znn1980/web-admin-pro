@@ -29,7 +29,8 @@ public class SysLogAspect {
 
     @Before(value = "@annotation(sysLog)")
     public void doBefore(JoinPoint joinPoint, SysLog sysLog) {
-        logger.info("SYS-ASPECT => [{}] {}.{}()", sysLog.value(), joinPoint.getTarget().getClass().getName(), joinPoint.getSignature().getName());
+        logger.info("SYS-ASPECT => [{}] {}.{}()", sysLog.value()
+                , joinPoint.getTarget().getClass().getName(), joinPoint.getSignature().getName());
         THREAD_LOCAL.set(System.currentTimeMillis());
     }
 
@@ -45,9 +46,9 @@ public class SysLogAspect {
 
     private void doAround(SysLog sysLog, Object[] args, Object result, Exception e) {
         try {
-            SysUserLog logs = this.sysUserLogService.log(sysLog, args, result, e, THREAD_LOCAL.get());
-            logger.info("SYS-REQUEST => {}", logs.getParams());
-            logger.info("SYS-RESPONSE => {}", logs.getResult());
+            SysUserLog log = this.sysUserLogService.log(sysLog, args, result, e, THREAD_LOCAL.get());
+            logger.info("SYS-REQUEST => {}", log.getParams());
+            logger.info("SYS-RESPONSE => {}", log.getResult());
         } finally {
             THREAD_LOCAL.remove();
         }
