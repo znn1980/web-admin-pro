@@ -7,7 +7,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Objects;
@@ -37,9 +36,9 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
         if (!StringUtils.hasText(ip) || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
-        for (String sub : Objects.requireNonNullElse(StringUtils.split(ip, ","), new String[0])) {
-            ip = sub.trim();
-            if (StringUtils.hasText(ip) && !"unknown".equalsIgnoreCase(ip)) {
+        for (String sub : Objects.requireNonNullElse(StringUtils.split(ip, ","), new String[]{ip})) {
+            if (StringUtils.hasText(sub.trim()) && !"unknown".equalsIgnoreCase(sub.trim())) {
+                ip = sub.trim();
                 break;
             }
         }
@@ -70,11 +69,8 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
     }
 
     public static String getStackTrace(Throwable e) {
-        try (StringWriter writer = new StringWriter()) {
-            e.printStackTrace(new PrintWriter(writer, true));
-            return writer.toString();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
+        StringWriter writer = new StringWriter();
+        e.printStackTrace(new PrintWriter(writer));
+        return writer.toString();
     }
 }
