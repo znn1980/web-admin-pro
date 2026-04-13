@@ -14,7 +14,7 @@
 </head>
 <body class="layui-fluid">
 <div class="layui-card">
-    <div class="layui-card-header">AI对话</div>
+    <div class="layui-card-header">历史对话</div>
     <div class="layui-card-body">
         <div id="chat-flow" class="layui-row layui-col-space10"></div>
     </div>
@@ -38,14 +38,24 @@
 
         layui.util.fixbar({
             bars: [
-                {type: 'chat', icon: 'layui-icon-dialogue'}
+                {type: 'chat', content: '<li class="layui-icon layui-icon-dialogue"></li>'}
                 , {type: 'set', content: '<li class="layui-icon layui-icon-set" layim-event="set"></li>'}
-                , {type: 'delete', icon: 'layui-icon-delete', style: 'background-color:red;'}
+                , {type: 'delete', content: '<li class="layui-icon layui-icon-delete" style="background-color:red;"></li>'}
             ]
             , on: {
                 click: function (type) {
                     if (type === 'chat') layui.chat.asChat();
                     if (type === 'delete') layui.chat.asDelete();
+                }
+                , mouseenter: function (type) {
+                    let tips;
+                    if (type === 'chat') tips = '新对话';
+                    if (type === 'set') tips = '设置';
+                    if (type === 'delete') tips = '删除';
+                    layui.layer.tips(tips, this, {tips: 4, fixed: true});
+                }
+                , mouseleave: function (type) {
+                    layui.layer.closeAll('tips');
                 }
             }
         });
@@ -73,7 +83,7 @@
             layui.chat.asBackgroundImage(data);
         });
         window.setTimeout(function () {
-            layui.chat.asChat();
+            //layui.chat.asChat();
         }, 100)
 
     });

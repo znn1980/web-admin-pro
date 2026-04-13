@@ -1,12 +1,10 @@
 package com.admin.web.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * @author znn
  */
-@Configuration
 @ConfigurationProperties(prefix = ConfigProperties.CONFIG_PREFIX)
 public class ConfigProperties {
     public static final String CONFIG_PREFIX = "config";

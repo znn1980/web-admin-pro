@@ -94,9 +94,8 @@ layui.define(['layim', 'common'], function (exports) {
             });
         }
         , asDelete: function (id) {
-            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;删除后，${id ? ''
-                : '<span style="color:red;font-weight:bold;">【全部】</span>'}聊天记录将不可恢复。`, {
-                title: `确定删除对话？`, closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;删除后，${id ? '' : '全部'}聊天记录将不可恢复。`, {
+                title: `确定删除${id ? '' : '历史'}对话？`, closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, (index) => {
                 layui.layer.close(index);
                 layui.common.req(`${config.base}ai/chat/${id ? id : 'all'}`, 'DELETE', null, {
