@@ -7,6 +7,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Objects;
@@ -68,9 +69,12 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
         return (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
     }
 
-    public static String getStackTrace(Exception e) {
-        return new StringWriter() {{
-            e.printStackTrace(new PrintWriter(this, true));
-        }}.toString();
+    public static String getStackTrace(Throwable e) {
+        try (StringWriter writer = new StringWriter()) {
+            e.printStackTrace(new PrintWriter(writer, true));
+            return writer.toString();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

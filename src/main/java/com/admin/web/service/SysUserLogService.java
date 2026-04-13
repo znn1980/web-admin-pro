@@ -56,7 +56,7 @@ public class SysUserLogService {
         this.sysUserLogDao.deleteAllById(id);
     }
 
-    public SysUserLog log(SysLog sysLog, Object[] args, Object result, Exception error, long ms) {
+    public SysUserLog log(SysLog sysLog, Object[] args, Object result, Throwable e, long ms) {
         SysUserLog logs = new SysUserLog();
         logs.setUsername(Objects.requireNonNullElse(
                 SecurityUtils.getSysUser(WebUtils.getRequest()),
@@ -74,11 +74,11 @@ public class SysUserLogService {
         if (Objects.nonNull(result)) {
             logs.setResult(ObjectUtils.getDisplayString(result));
         }
-        if (Objects.nonNull(error)) {
-            if (error instanceof ServerResponseException e) {
-                logs.setResult(ObjectUtils.getDisplayString(e.getServerResponse()));
+        if (Objects.nonNull(e)) {
+            if (e instanceof ServerResponseException ex) {
+                logs.setResult(ObjectUtils.getDisplayString(ex.getServerResponse()));
             } else {
-                logs.setErrors(WebUtils.getStackTrace(error));
+                logs.setErrors(WebUtils.getStackTrace(e));
             }
         }
         logs.setMs(System.currentTimeMillis() - ms);

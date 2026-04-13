@@ -32,7 +32,6 @@ public class SysUserController extends BaseController {
         return ServerResponse.ok(new SessionVo(super.getSessionId()));
     }
 
-    @SysLog("用户退出")
     @GetMapping("/logout.json")
     public ServerResponse<?> logout() {
         super.setSysUser(null);

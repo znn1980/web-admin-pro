@@ -40,11 +40,11 @@ public class SysLogAspect {
     }
 
     @AfterThrowing(value = "@annotation(sysLog)", throwing = "e")
-    public void doAfterThrowing(JoinPoint joinPoint, SysLog sysLog, Exception e) {
+    public void doAfterThrowing(JoinPoint joinPoint, SysLog sysLog, Throwable e) {
         this.doAround(sysLog, joinPoint.getArgs(), null, e);
     }
 
-    private void doAround(SysLog sysLog, Object[] args, Object result, Exception e) {
+    private void doAround(SysLog sysLog, Object[] args, Object result, Throwable e) {
         try {
             SysUserLog log = this.sysUserLogService.log(sysLog, args, result, e, THREAD_LOCAL.get());
             logger.info("SYS-REQUEST => {}", log.getParams());
