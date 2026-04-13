@@ -74,6 +74,13 @@ layui.define(['layim', 'common'], function (exports) {
                 done: (data) => {
                     layui.layer.prompt({
                         title: '编辑对话名称', formType: 2, value: data.data.content
+                        , skin: 'layui-layer-admin'
+                        , success: function (layero) {
+                            layero.addClass('layui-form').find('textarea')
+                                .addClass('layui-textarea').attr('lay-affix', 'clear');
+                            layui.form.render();
+                            layero.find('textarea').focus();
+                        }
                     }, (value, index, elem) => {
                         if (layui.$.trim(value) === '') return elem.focus();
                         layer.close(index);
@@ -262,16 +269,16 @@ layui.define(['layim', 'common'], function (exports) {
                 done: (data) => {
                     data.data.forEach((item) => {
                         next(`
-                            <div class="layui-col-md2 layui-col-sm4 layui-col-xs6">
-                              <div class="cmdlist-container">
-                                <div class="cmdlist-text">
-                                  <p id="chat-${item.conversationId}" lay-tips="${item.content}"
-                                   class="info layui-ellip" style="font-weight:bold;">${item.content}</p>
-                                  <div class="price">
-                                    <a id="chat-more-${item.conversationId}" href="javascript:" class="layui-icon layui-icon-more"></a>
-                                    <span class="flow" lay-tips="${item.timestamp}">${layui.util.timeAgo(item.timestamp)}</span>
-                                  </div>
+                            <div class="layui-col-xs6 layui-col-sm4 layui-col-md3 layui-col-lg3 layui-col-xl2">
+                              <div class="layuiadmin-card-text">
+                                <div class="layui-text-top">
+                                  <i class="layui-icon layui-icon-dialogue"></i>
                                 </div>
+                                <p class="layui-text-center" id="chat-${item.conversationId}" lay-tips="${item.content}">${item.content}</p>
+                                <p class="layui-text-bottom">
+                                  <a id="chat-more-${item.conversationId}" href="javascript:" class="layui-icon layui-icon-more"></a>
+                                  <span lay-tips="${item.timestamp}">${layui.util.timeAgo(item.timestamp)}</span>
+                                </p>
                               </div>
                             </div>`, data.count > 0);
                         layui.$(`#chat-${item.conversationId}`).on('click', () => {
@@ -303,7 +310,7 @@ layui.define(['layim', 'common'], function (exports) {
             });
         }
         , asReload: function () {
-            layui.$('#chat-flow').html('');
+            layui.$('#chat-flow').empty();
             layui.flow.reload('chat-flow');
         }
     });

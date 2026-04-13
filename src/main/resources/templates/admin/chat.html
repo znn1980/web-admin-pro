@@ -12,8 +12,13 @@
     <link rel="stylesheet" th:href="@{/style/template.css}" href="../../static/style/template.css" media="all">
     <link rel="stylesheet" th:href="@{/style/ai-chat.css}" href="../../static/style/ai-chat.css" media="all">
 </head>
-<body class="layui-fluid layadmin-cmdlist-fluid">
-<div id="chat-flow" class="layui-row layui-col-space10"></div>
+<body class="layui-fluid">
+<div class="layui-card">
+    <div class="layui-card-header">AI对话</div>
+    <div class="layui-card-body">
+        <div id="chat-flow" class="layui-row layui-col-space10"></div>
+    </div>
+</div>
 <script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
 <script th:src="@{/modules/markdown-it.min.js}" src="../../static/modules/markdown-it.min.js"></script>
 <script th:src="@{/modules/fetch-event-source.js}" src="../../static/modules/fetch-event-source.js"></script>
