@@ -35,16 +35,18 @@ public class SysRoleService {
         SysRole sysRole = this.sysRoleDao.findById(vo.getId())
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         List<SysRole> sysRoles = this.sysRoleDao.findByOrderBySort();
+        boolean isUp = Objects.equals(Move.UP, vo.getMove());
         int index = IntStream.range(0, sysRoles.size())
                 .filter(i -> Objects.equals(sysRole.getId(), sysRoles.get(i).getId()))
-                .boxed().findFirst().orElse(-1);
-        if (Objects.equals(Move.UP, vo.getMove()) ? index > 0 : index < sysRoles.size() - 1 && index != -1) {
-            SysRole oldSysRole = sysRoles.get(Objects.equals(Move.UP, vo.getMove()) ? index - 1 : index + 1);
-            Long oldSysRoleSort = oldSysRole.getSort();
-            oldSysRole.setSort(sysRole.getSort());
-            sysRole.setSort(oldSysRoleSort);
-            this.sysRoleDao.saveAll(Arrays.asList(sysRole, oldSysRole));
+                .findFirst().orElse(-1);
+        if (index == -1 || (isUp ? index <= 0 : index >= sysRoles.size() - 1)) {
+            return;
         }
+        SysRole oldSysRole = sysRoles.get(isUp ? index - 1 : index + 1);
+        Long oldSysRoleSort = oldSysRole.getSort();
+        oldSysRole.setSort(sysRole.getSort());
+        sysRole.setSort(oldSysRoleSort);
+        this.sysRoleDao.saveAll(Arrays.asList(sysRole, oldSysRole));
     }
 
     @Transactional(rollbackFor = Exception.class)

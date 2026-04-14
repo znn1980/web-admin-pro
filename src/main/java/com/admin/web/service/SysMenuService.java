@@ -50,14 +50,16 @@ public class SysMenuService {
         List<SysMenu> sysMenus = this.sysMenuDao.findByPidOrderBySort(sysMenu.getPid());
         int index = IntStream.range(0, sysMenus.size())
                 .filter(i -> Objects.equals(sysMenu.getId(), sysMenus.get(i).getId()))
-                .boxed().findFirst().orElse(-1);
-        if (Objects.equals(Move.UP, vo.getMove()) ? index > 0 : index < sysMenus.size() - 1 && index != -1) {
-            SysMenu oldSysMenu = sysMenus.get(Objects.equals(Move.UP, vo.getMove()) ? index - 1 : index + 1);
-            Long oldSysMenuSort = oldSysMenu.getSort();
-            oldSysMenu.setSort(sysMenu.getSort());
-            sysMenu.setSort(oldSysMenuSort);
-            this.sysMenuDao.saveAll(Arrays.asList(sysMenu, oldSysMenu));
+                .findFirst().orElse(-1);
+        boolean isUp = Objects.equals(Move.UP, vo.getMove());
+        if (index == -1 || (isUp ? index <= 0 : index >= sysMenus.size() - 1)) {
+            return;
         }
+        SysMenu oldSysMenu = sysMenus.get(isUp ? index - 1 : index + 1);
+        Long oldSysMenuSort = oldSysMenu.getSort();
+        oldSysMenu.setSort(sysMenu.getSort());
+        sysMenu.setSort(oldSysMenuSort);
+        this.sysMenuDao.saveAll(Arrays.asList(sysMenu, oldSysMenu));
     }
 
     @Transactional(rollbackFor = Exception.class)
