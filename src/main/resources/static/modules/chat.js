@@ -7,18 +7,18 @@ layui.define(['layim', 'common'], function (exports) {
     let abortController
         , conversationId = layui.common.asUuid()
         , periodThinking = 0
-        , enableThinking = layui.data('enable-thinking').enable
-        , enableSearch = layui.data('enable-search').enable
+        , enableThinking = layui.common.data().enableThinking
+        , enableSearch = layui.common.data().enableSearch
         , md = markdownit({typographer: true, linkify: true, breaks: true});
 
     layui.form.on('checkbox(chat-tools-switch)', function (data) {
         if (data.elem.name === 'enable-thinking') {
             enableThinking = data.elem.checked;
-            layui.data('enable-thinking', {key: 'enable', value: enableThinking});
+            layui.common.data({'enableThinking': enableThinking});
         }
         if (data.elem.name === 'enable-search') {
             enableSearch = data.elem.checked;
-            layui.data('enable-search', {key: 'enable', value: enableSearch});
+            layui.common.data({'enableSearch': enableSearch});
         }
         if (data.elem.name === 'mike') {
             layui.chat.asMike(function (text) {
@@ -34,9 +34,9 @@ layui.define(['layim', 'common'], function (exports) {
         contactsPanel: false
         , init: {
             user: {
-                id: parent.layui.$('#sys-username').html()
-                , username: parent.layui.$('#sys-username').html()
-                , avatar: parent.layui.$('#sys-avatar').attr('src')
+                id: layui.common.data().username
+                , username: layui.common.data().username
+                , avatar: layui.common.data().avatar
             }
         }
     });

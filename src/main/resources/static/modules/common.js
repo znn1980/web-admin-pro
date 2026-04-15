@@ -4,11 +4,26 @@
 
 layui.define(function (exports) {
 
-    layui.table.set({skin: 'line', loading: true});
+    const localName = 'web-admin-pro'
+        , moreQuery = layui.$('button.sys-query-more').attr('lay-filter');
+    if (localData()[moreQuery]) {
+        layui.$('.sys-query-more').toggle();
+    }
 
     layui.$('button.sys-query-more').on('click', function () {
         layui.$('.sys-query-more').toggle();
+        localData({[moreQuery]: !localData()[moreQuery]});
     });
+
+    layui.table.set({skin: 'line', loading: true});
+
+    function localData(settings, uid) {
+        if (uid) layui.data(localName, {key: 'uid', value: uid});
+        const local = layui.data(localName).uid;
+        const data = (layui.data(localName) || {})[local] || {};
+        if (settings) layui.data(localName, {key: local, value: {...data, ...settings}})
+        return data;
+    }
 
     exports('common', {
         req: function (url, type, data, callback) {
@@ -25,6 +40,9 @@ layui.define(function (exports) {
                 }
             });
         }
+        , data: function (settings, uid) {
+            return localData(settings, uid);
+        }
         , asDay: function (day) {
             const ms = day ? day * (1000 * 60 * 60 * 24) : 0;
             return layui.util.toDateString(Date.now() + ms, 'yyyy-MM-dd');
@@ -37,7 +55,7 @@ layui.define(function (exports) {
             return (rate * 100).toFixed(2)
         }
         , asCols: function (that, id) {
-            const fields = layui.data(id || that.id);
+            const fields = localData()[id || that.id] || {};
             that.cols[0].forEach(function (col) {
                 if (col.field in fields) {
                     layui.table.hideCol(that.id, {field: col.field, hide: fields[col.field]});
@@ -45,7 +63,8 @@ layui.define(function (exports) {
             });
             that.elem.next().on('mousedown', 'input[lay-filter="LAY_TABLE_TOOL_COLS"]+', function () {
                 const field = layui.$(this).prev()[0];
-                layui.data(id || that.id, {key: field.name, value: field.checked});
+                const fields = localData()[id || that.id] || {};
+                localData({[id || that.id]: {...fields, [field.name]: field.checked}});
             });
         }
         , asUuid: function () {

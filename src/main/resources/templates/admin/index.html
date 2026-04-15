@@ -165,7 +165,7 @@
             lock();
         };
 
-        if (layui.data('lock-screen').lock) {
+        if (layui.common.data().lock) {
             lock();
         }
 
@@ -173,6 +173,10 @@
             done: function (data) {
                 if (data.data.avatar) layui.$('#sys-avatar').attr('src', data.data.avatar);
                 layui.$('#sys-username').html(data.data.username);
+                layui.common.data({
+                    username: data.data.username
+                    , avatar: layui.$('#sys-avatar').attr('src')
+                }, data.data.username);
             }
         });
 
@@ -221,7 +225,7 @@
                   `
                 , success: function (layero, index) {
                     layui.form.render();
-                    layui.data('lock-screen', {key: 'lock', value: true});
+                    layui.common.data({lock: true});
                     layero.find('.layui-form')[0].reset();
                     layero.find('.layui-icon-right').on('click', function () {
                         if (layero.find('input').val() === '') return layero.find('input').focus();
@@ -230,7 +234,7 @@
                         }, {
                             done: function () {
                                 layui.layer.close(index);
-                                layui.data('lock-screen', {key: 'lock', value: false});
+                                layui.common.data({lock: false});
                             }
                         });
                     });
