@@ -74,9 +74,9 @@
 <script>
     layui.config({
         base: '../../', version: true
-    }).use(['index'], function () {
+    }).use(['index', 'common'], function () {
         layui.$('img').on('click', function () {
-            layui.data('sys-user', {key: 'avatar', value: layui.$(this).attr('src')});
+            layui.common.data({avatar: layui.$(this).attr('src')});
             parent.layui.$('#avatar').val(layui.$(this).attr('src'));
             parent.layui.$('#sys-avatar').attr('src', layui.$(this).attr('src'));
             parent.parent.layui.$('#sys-avatar').attr('src', layui.$(this).attr('src'));
