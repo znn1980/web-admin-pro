@@ -2,6 +2,9 @@ INSERT INTO SYS_USER
     (ID, USERNAME, MOBILE, EMAIL, PASSWORD, SYS_ADMIN, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
 VALUES (1, 'admin', '18888888888', 'admin@admin.com', '37b062c8ebfe6c3480f5c8b5753fcae8', true, false, 'admin', now());
 
+SELECT SETVAL('SYS_USER_ID_SEQ', MAX(ID))
+FROM SYS_USER;
+
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
 VALUES (1, null, '系统管理', null, null, 1, true, false, 'admin', now());
@@ -88,3 +91,6 @@ VALUES (26, 24, '修改通知公告', 'PUT', '/sys/notice/update.json', 26, fals
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
 VALUES (27, 24, '删除通知公告', 'DELETE', '/sys/notice/delete.json', 27, false, false, 'admin', now());
+
+SELECT SETVAL('SYS_MENU_ID_SEQ', MAX(ID))
+FROM SYS_MENU;

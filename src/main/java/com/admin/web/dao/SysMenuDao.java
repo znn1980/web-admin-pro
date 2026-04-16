@@ -41,7 +41,7 @@ public interface SysMenuDao extends JpaRepository<SysMenu, Long>, JpaSpecificati
      * @return 菜单列表
      */
     @Query(value = """
-            SELECT sys_menu.*
+            SELECT DISTINCT sys_menu.*
             FROM sys_menu
             	JOIN sys_roles_menus ON sys_menu.id = sys_roles_menus.menu_id
             	JOIN sys_role ON sys_roles_menus.role_id = sys_role.id
@@ -61,7 +61,7 @@ public interface SysMenuDao extends JpaRepository<SysMenu, Long>, JpaSpecificati
      * @return 菜单列表
      */
     @Query(value = """
-            SELECT sys_menu.*
+            SELECT DISTINCT sys_menu.*
             FROM sys_menu
             	JOIN sys_roles_menus ON sys_menu.id = sys_roles_menus.menu_id
             	JOIN sys_role ON sys_roles_menus.role_id = sys_role.id
