@@ -80,7 +80,6 @@
         layui.form.on('submit(sys-login-submit)', function (data) {
             layui.common.req(`${config.base}sys/user/login.json`, 'POST', data.field, {
                 done: function (data) {
-                    layui.common.data({lock: false});
                     layui.layer.msg(data.msg, {
                         offset: '15px', icon: 1, time: 1000
                     }, function () {

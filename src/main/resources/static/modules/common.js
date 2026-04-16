@@ -20,7 +20,7 @@ layui.define(function (exports) {
     function localData(settings, uid) {
         if (uid) layui.data(localName, {key: 'uid', value: uid});
         const local = layui.data(localName).uid;
-        const data = (layui.data(localName) || {})[local] || {};
+        const data = layui.data(localName)[local] || {};
         if (settings) layui.data(localName, {key: local, value: {...data, ...settings}})
         return data;
     }

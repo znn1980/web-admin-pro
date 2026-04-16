@@ -7,18 +7,11 @@ layui.define(['layim', 'common'], function (exports) {
     let abortController
         , conversationId = layui.common.asUuid()
         , periodThinking = 0
-        , enableThinking = layui.common.data().enableThinking
-        , enableSearch = layui.common.data().enableSearch
         , md = markdownit({typographer: true, linkify: true, breaks: true});
 
     layui.form.on('checkbox(chat-tools-switch)', function (data) {
-        if (data.elem.name === 'enable-thinking') {
-            enableThinking = data.elem.checked;
-            layui.common.data({'enableThinking': enableThinking});
-        }
-        if (data.elem.name === 'enable-search') {
-            enableSearch = data.elem.checked;
-            layui.common.data({'enableSearch': enableSearch});
+        if (data.elem.name === 'enable-thinking' || data.elem.name === 'enable-search') {
+            layui.common.data({[data.elem.name]: data.elem.checked});
         }
         if (data.elem.name === 'mike') {
             layui.chat.asMike(function (text) {
@@ -108,13 +101,13 @@ layui.define(['layim', 'common'], function (exports) {
         , asChatInit: function (data) {
             layui.$(data.elem).find('.layim-chat-tool').empty().html(`
                 <span class="layui-form">
-                  <input type="checkbox" ${enableThinking ? 'checked' : ''}
-                   name="enable-thinking" lay-skin="none" lay-filter="chat-tools-switch">
+                  <input ${layui.common.data()['enable-thinking'] ? 'checked' : ''}
+                   type="checkbox" name="enable-thinking" lay-skin="none" lay-filter="chat-tools-switch">
                   <div lay-checkbox class="chat-tools-skin layui-badge">
                     <i class="layui-icon layui-icon-component"></i>深度思考
                   </div>
-                  <input type="checkbox" ${enableSearch ? 'checked' : ''}
-                   name="enable-search" lay-skin="none" lay-filter="chat-tools-switch">
+                  <input ${layui.common.data()['enable-search'] ? 'checked' : ''}
+                   type="checkbox" name="enable-search" lay-skin="none" lay-filter="chat-tools-switch">
                   <div lay-checkbox class="chat-tools-skin layui-badge">
                     <i class="layui-icon layui-icon-website"></i>联网搜索
                   </div>
@@ -183,8 +176,8 @@ layui.define(['layim', 'common'], function (exports) {
                     , body: JSON.stringify({
                         conversationId: conversationId
                         , question: user.content
-                        , enableThinking: enableThinking
-                        , enableSearch: enableSearch
+                        , enableThinking: layui.common.data()['enable-thinking']
+                        , enableSearch: layui.common.data()['enable-search']
                     })
                     , signal: abortController.signal
                     , onopen: function (response) {

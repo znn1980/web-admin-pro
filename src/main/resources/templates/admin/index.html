@@ -165,10 +165,6 @@
             lock();
         };
 
-        if (layui.common.data().lock) {
-            lock();
-        }
-
         layui.common.req(`${config.base}sys/user/me.json`, 'GET', null, {
             done: function (data) {
                 if (data.data.avatar) layui.$('#sys-avatar').attr('src', data.data.avatar);
@@ -177,6 +173,7 @@
                     username: data.data.username
                     , avatar: layui.$('#sys-avatar').attr('src')
                 }, data.data.username);
+                if (layui.common.data()['lock-screen']) lock();
             }
         });
 
@@ -225,7 +222,7 @@
                   `
                 , success: function (layero, index) {
                     layui.form.render();
-                    layui.common.data({lock: true});
+                    layui.common.data({'lock-screen': true});
                     layero.find('.layui-form')[0].reset();
                     layero.find('.layui-icon-right').on('click', function () {
                         if (layero.find('input').val() === '') return layero.find('input').focus();
@@ -234,7 +231,7 @@
                         }, {
                             done: function () {
                                 layui.layer.close(index);
-                                layui.common.data({lock: false});
+                                layui.common.data({'lock-screen': false});
                             }
                         });
                     });
