@@ -22,7 +22,7 @@
                     <input type="text" class="layui-input" id="timestamp" readonly placeholder="日期范围">
                 </div>
             </div>
-            <!--更多查询条件的例子，没有实际作用，只作为演示使用。-->
+            <!-- 更多查询条件 -->
             <div class="layui-inline sys-query-more" style="display: none;">
                 <label class="layui-form-label">用户账号</label>
                 <div class="layui-input-inline">
@@ -37,10 +37,11 @@
                 <button layadmin-event="refresh" class="layui-btn layui-btn-radius layui-btn-sm layui-bg-orange">
                     <i class="layui-icon layui-icon-refresh"></i>重置
                 </button>
-                <button lay-filter="sys-log-query-more" class="layui-btn layui-btn-primary layui-btn-xs sys-query-more">
+                <!-- 展开/收起，更多查询条件。 -->
+                <button data-local-more="sys-log-query-more" class="layui-btn layui-btn-primary layui-btn-xs sys-query-more">
                     <i class="layui-icon layui-icon-down"></i>展开筛选项
                 </button>
-                <button lay-filter="sys-log-query-more" class="layui-btn layui-btn-primary layui-btn-xs sys-query-more" style="display: none;">
+                <button data-local-more="sys-log-query-more" class="layui-btn layui-btn-primary layui-btn-xs sys-query-more" style="display: none;">
                     <i class="layui-icon layui-icon-up"></i>收起筛选项
                 </button>
             </div>

@@ -5,14 +5,14 @@
 layui.define(function (exports) {
 
     const localName = 'web-admin-pro'
-        , moreQuery = layui.$('button.sys-query-more').attr('lay-filter');
-    if (localData()[moreQuery]) {
+        , localMore = layui.$('button.sys-query-more').data('localMore');
+    if (localData()[localMore]) {
         layui.$('.sys-query-more').toggle();
     }
 
     layui.$('button.sys-query-more').on('click', function () {
         layui.$('.sys-query-more').toggle();
-        localData({[moreQuery]: !localData()[moreQuery]});
+        localData({[localMore]: !localData()[localMore]});
     });
 
     layui.table.set({skin: 'line', loading: true});
