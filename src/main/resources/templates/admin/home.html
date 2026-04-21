@@ -16,6 +16,7 @@
         <div class="layui-card">
             <div class="layui-card-header layui-icon layui-icon-windows">
                 服务器信息
+                <span id="ms" class="layui-badge layui-bg-red layuiadmin-badge"></span>
             </div>
             <div class="layui-card-body" id="os-info"></div>
         </div>
@@ -126,23 +127,43 @@
             osDisk.resize();
         });
 
-        let monitor = window.setInterval(load, 1000 * 30);
-        const observe = new MutationObserver(function (mutations) {
-            mutations.forEach(function (mutation, index) {
-                if (index === 0 && mutation.type === 'attributes'
-                    && mutation.attributeName === 'class') {
-                    if (layui.$(mutation.target).hasClass('layui-show')) {
-                        monitor = window.setInterval(load, 1000 * 30);
-                    } else {
-                        window.clearInterval(monitor);
-                    }
-                }
-            });
+        const ms = 1000 * 30;
+        const monitor = layui.util.countdown({
+            date: Date.now() + ms, now: new Date()
+            , ready: function () {
+                load();
+            }
+            , clock: function (data) {
+                layui.$('#ms').html(`${data.s}秒`);
+            }
+            , done: function () {
+                load(function () {
+                    window.setTimeout(function () {
+                        monitor.reload({date: Date.now() + ms});
+                    }, 1000);
+                });
+            }
         });
-        observe.observe(parent.layui.$('.layadmin-tabsbody-item')[0], {attributes: true});
-        load();
 
-        function load() {
+        try {
+            const observe = new MutationObserver(function (mutations) {
+                mutations.forEach(function (mutation, index) {
+                    if (index === 0 && mutation.type === 'attributes'
+                        && mutation.attributeName === 'class') {
+                        if (layui.$(mutation.target).hasClass('layui-show')) {
+                            monitor.reload({date: Date.now() + ms});
+                        } else {
+                            monitor.clear();
+                        }
+                    }
+                });
+            });
+            observe.observe(parent.layui.$('.layadmin-tabsbody-item')[0], {attributes: true});
+        } catch (e) {
+            console.error(`监听异常：${e}`);
+        }
+
+        function load(callback) {
             layui.common.req(`${config.base}sys/monitor.json`, 'GET', null, {
                 done: function (data) {
                     osSys.setOption(gauge(layui.common.asRate(data.data.osSys.cpuLoad)));
@@ -161,6 +182,9 @@
                     layui.$('#os-jvm-mem').attr('lay-tips', data.data.osJvmMem.tips.replaceAll(',', '<br>'));
                     layui.$('#os-disk').attr('lay-tips', data.data.osDisk.tips.replaceAll(',', '<br>'));
                     window.parent.os = data.data;
+                }
+                , always: function () {
+                    typeof callback === 'function' && callback();
                 }
             });
         }
