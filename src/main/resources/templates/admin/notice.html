@@ -230,7 +230,7 @@
                     done: function (data) {
                         layui.layer.msg(data.msg);
                     }
-                    , complete: function () {
+                    , always: function () {
                         layui.table.reload('sys-notice-table', {
                             done: function (data) {
                                 load(data);

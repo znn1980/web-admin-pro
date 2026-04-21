@@ -233,7 +233,7 @@
                     done: function (data) {
                         layui.layer.msg(data.msg);
                     }
-                    , complete: function () {
+                    , always: function () {
                         layui.table.reload('sys-user-table');
                     }
                 });
@@ -253,7 +253,7 @@
                     done: function (data) {
                         layui.layer.msg(data.msg);
                     }
-                    , complete: function () {
+                    , always: function () {
                         layui.table.reload('sys-user-table');
                     }
                 });

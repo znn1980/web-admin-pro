@@ -34,9 +34,19 @@ layui.define(function (exports) {
                 , done: function (data) {
                     callback && typeof callback.done === 'function' && callback.done(data);
                 }
+                , success: function (data) {
+                    const response = layui.setter.response;
+                    const statusCode = response.statusCode;
+                    if (data[response.statusName] !== statusCode.ok) {
+                        callback && typeof callback.fail === 'function' && callback.fail();
+                    }
+                }
+                , error: function () {
+                    callback && typeof callback.fail === 'function' && callback.fail();
+                }
                 , complete: function () {
                     layui.layer.close(loading)
-                    callback && typeof callback.complete === 'function' && callback.complete();
+                    callback && typeof callback.always === 'function' && callback.always();
                 }
             });
         }

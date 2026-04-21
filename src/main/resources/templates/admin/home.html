@@ -126,8 +126,21 @@
             osDisk.resize();
         });
 
+        let monitor = window.setInterval(load, 1000 * 30);
+        const observe = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation, index) {
+                if (index === 0 && mutation.type === 'attributes'
+                    && mutation.attributeName === 'class') {
+                    if (layui.$(mutation.target).hasClass('layui-show')) {
+                        monitor = window.setInterval(load, 1000 * 30);
+                    } else {
+                        window.clearInterval(monitor);
+                    }
+                }
+            });
+        });
+        observe.observe(parent.layui.$('.layadmin-tabsbody-item')[0], {attributes: true});
         load();
-        setInterval(load, 1000 * 30);
 
         function load() {
             layui.common.req(`${config.base}sys/monitor.json`, 'GET', null, {

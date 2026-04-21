@@ -294,7 +294,7 @@
                     done: function (data) {
                         layui.layer.msg(data.msg);
                     }
-                    , complete: function () {
+                    , always: function () {
                         layui.table.reload('sys-menu-table');
                     }
                 });
@@ -314,7 +314,7 @@
                     done: function (data) {
                         layui.layer.msg(data.msg);
                     }
-                    , complete: function () {
+                    , always: function () {
                         layui.table.reload('sys-menu-table');
                     }
                 });

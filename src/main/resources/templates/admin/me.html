@@ -216,8 +216,9 @@
         base: config.base, version: true
     }).use(['index', 'common'], function () {
 
+        let avatar = layui.$('#avatar').val();
         layui.$('#sys-avatar').on('click', function () {
-            const avatar = layui.$('#avatar').val();
+            avatar = layui.$('#avatar').val();
             layui.admin.popup({
                 id: 'sys-avatar'
                 , type: 2, anim: -1, shadeClose: true
@@ -345,6 +346,13 @@
                 done: function (data) {
                     layui.layer.msg(data.msg);
                     load(data.data);
+                }
+                , fail: function () {
+                    if (!avatar) avatar = `${config.base}style/imgs/logo.png`;
+                    layui.common.data({avatar: avatar});
+                    layui.$('#avatar').val(avatar);
+                    layui.$('#sys-avatar').attr('src', avatar);
+                    parent.layui.$('#sys-avatar').attr('src', avatar);
                 }
             });
         });
