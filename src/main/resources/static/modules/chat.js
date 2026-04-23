@@ -63,7 +63,7 @@ layui.define(['layim', 'common'], function (exports) {
             });
         }
         , asUpdate: function (id) {
-            layui.common.req(`${config.base}ai/chat/all/${id}`, 'GET', null, {
+            layui.common.req(`${config.base}ai/chat/${id}`, 'GET', null, {
                 done: (data) => {
                     layui.layer.prompt({
                         title: '编辑对话名称', formType: 2, value: data.data.content
@@ -130,7 +130,7 @@ layui.define(['layim', 'common'], function (exports) {
             const user = data.user, receiver = data.receiver;
             return new Promise((resolve, reject) => {
                 const messages = [];
-                layui.common.req(`${config.base}ai/chat/${conversationId}`, 'GET', null, {
+                layui.common.req(`${config.base}ai/chat/all/${conversationId}`, 'GET', null, {
                     done: function (data) {
                         data.data.forEach(function (data) {
                             if (data.type === 'USER') {

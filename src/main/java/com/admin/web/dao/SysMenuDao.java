@@ -44,11 +44,9 @@ public interface SysMenuDao extends JpaRepository<SysMenu, Long>, JpaSpecificati
             SELECT DISTINCT sys_menu.*
             FROM sys_menu
             	JOIN sys_roles_menus ON sys_menu.id = sys_roles_menus.menu_id
-            	JOIN sys_role ON sys_roles_menus.role_id = sys_role.id
-            	JOIN sys_users_roles ON sys_role.id = sys_users_roles.role_id
-            	JOIN sys_user ON sys_users_roles.user_id = sys_user.id
+            	JOIN sys_users_roles ON sys_roles_menus.role_id = sys_users_roles.role_id
             WHERE sys_menu.sys_menu = true
-            	AND sys_user.id = :userId
+            	AND sys_users_roles.user_id = :userId
             ORDER BY sys_menu.sort
             """, nativeQuery = true)
     List<SysMenu> findByUserIdOrderBySort(Long userId);
@@ -64,12 +62,10 @@ public interface SysMenuDao extends JpaRepository<SysMenu, Long>, JpaSpecificati
             SELECT DISTINCT sys_menu.*
             FROM sys_menu
             	JOIN sys_roles_menus ON sys_menu.id = sys_roles_menus.menu_id
-            	JOIN sys_role ON sys_roles_menus.role_id = sys_role.id
-            	JOIN sys_users_roles ON sys_role.id = sys_users_roles.role_id
-            	JOIN sys_user ON sys_users_roles.user_id = sys_user.id
+            	JOIN sys_users_roles ON sys_roles_menus.role_id = sys_users_roles.role_id
             WHERE sys_menu.sys_menu = true
-            	AND sys_menu.disable = :disable
-            	AND sys_user.id = :userId
+            	AND sys_users_roles.user_id = :userId
+                AND sys_menu.disable = :disable
             ORDER BY sys_menu.sort
             """, nativeQuery = true)
     List<SysMenu> findByUserIdAndDisableOrderBySort(Long userId, boolean disable);

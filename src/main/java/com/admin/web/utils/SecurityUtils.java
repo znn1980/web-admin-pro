@@ -52,6 +52,6 @@ public class SecurityUtils {
     }
 
     public static String hexPassword(SysUser sysUser) {
-        return hexPassword(sysUser.getMobile().substring(sysUser.getMobile().length() - 6));
+        return hexPassword(sysUser.getPhone().substring(sysUser.getPhone().length() - 6));
     }
 }

@@ -77,9 +77,9 @@
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label" for="mobile">手机号码</label>
+        <label class="layui-form-label" for="phone">手机号码</label>
         <div class="layui-input-block">
-            <input type="tel" id="mobile" name="mobile" value="" lay-verify="required|phone" placeholder="手机号码" lay-reqtext="请输入手机号码" autocomplete="off" class="layui-input" lay-affix="clear">
+            <input type="tel" id="phone" name="phone" value="" lay-verify="required|phone" placeholder="手机号码" lay-reqtext="请输入手机号码" autocomplete="off" class="layui-input" lay-affix="clear">
         </div>
     </div>
     <div class="layui-form-item">
@@ -136,7 +136,7 @@
                 [
                     {fixed: 'left', type: 'checkbox'}
                     , {field: 'username', title: '用户', sort: true, minWidth: 120, templet: '#sys-user-username'}
-                    , {field: 'mobile', title: '手机', sort: true, minWidth: 130}
+                    , {field: 'phone', title: '手机', sort: true, minWidth: 130}
                     , {field: 'email', title: '邮箱', sort: true, minWidth: 180}
                     , {field: 'sysAdmin', title: '管理', sort: true, align: 'center', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-user-admin'}
                     , {field: 'disable', title: '状态', sort: true, align: 'center', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-user-disable'}

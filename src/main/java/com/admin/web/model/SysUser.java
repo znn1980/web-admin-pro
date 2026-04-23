@@ -25,10 +25,10 @@ public class SysUser extends SysBase {
     private String username;
     @Column(name = "PASSWORD")
     private String password;
-    @Column(name = "MOBILE", length = 11)
+    @Column(name = "PHONE", length = 11)
     @NotBlank(message = "手机号码不能为空！", groups = {SysCreate.class, SysUpdate.class})
     @Size(min = 8, max = 11, message = "手机号码长度应在8~11位之间！", groups = {SysCreate.class, SysUpdate.class})
-    private String mobile;
+    private String phone;
     @Column(name = "EMAIL")
     @NotBlank(message = "邮箱地址不能为空！", groups = {SysCreate.class, SysUpdate.class})
     @Email(message = "邮箱地址不正确！", groups = {SysCreate.class, SysUpdate.class})
@@ -53,7 +53,7 @@ public class SysUser extends SysBase {
     public SysUser() {
         super();
         this.setPassword(null);
-        this.setMobile(null);
+        this.setPhone(null);
         this.setEmail(null);
         this.setAvatar(null);
         this.setPassTimestamp(null);
@@ -84,12 +84,12 @@ public class SysUser extends SysBase {
         this.password = password;
     }
 
-    public String getMobile() {
-        return mobile;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getEmail() {
@@ -156,7 +156,7 @@ public class SysUser extends SysBase {
                 "SysUser{" +
                 "username='" + this.getUsername() + '\'' +
                 ", password='" + "******" + '\'' +
-                ", mobile='" + this.getMobile() + '\'' +
+                ", phone='" + this.getPhone() + '\'' +
                 ", email='" + this.getEmail() + '\'' +
                 ", avatar='" + this.getAvatar() + '\'' +
                 ", passTimestamp=" + this.getPassTimestamp() +

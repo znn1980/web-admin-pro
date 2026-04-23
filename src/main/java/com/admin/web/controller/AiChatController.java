@@ -55,6 +55,14 @@ public class AiChatController extends BaseController {
     }
 
     @SysPermissions(SysLogin.class)
+    @GetMapping("/{conversationId}")
+    public ServerResponse<SysUserChat> all(@PathVariable String conversationId) {
+        SysUserChat sysUserChat = this.sysUserChatService
+                .findByUsernameAndConversationId(super.getSysUser(), conversationId);
+        return ServerResponse.ok(sysUserChat);
+    }
+
+    @SysPermissions(SysLogin.class)
     @GetMapping("/all")
     public ServerResponse<List<SysUserChat>> all(@RequestParam Integer page, @RequestParam Integer limit) {
         Slice<SysUserChat> sysUserChats = this.sysUserChatService
@@ -64,14 +72,6 @@ public class AiChatController extends BaseController {
 
     @SysPermissions(SysLogin.class)
     @GetMapping("/all/{conversationId}")
-    public ServerResponse<SysUserChat> all(@PathVariable String conversationId) {
-        SysUserChat sysUserChat = this.sysUserChatService
-                .findByUsernameAndConversationId(super.getSysUser(), conversationId);
-        return ServerResponse.ok(sysUserChat);
-    }
-
-    @SysPermissions(SysLogin.class)
-    @GetMapping("/{conversationId}")
     public ServerResponse<List<ChatMemory>> chatMemory(@PathVariable String conversationId) {
         List<ChatMemory> chatMemory = this.sysUserChatService.findByConversationId(conversationId);
         return ServerResponse.ok(chatMemory);

@@ -20,10 +20,10 @@ public interface SysUserDao extends JpaRepository<SysUser, Long>, JpaSpecificati
     /**
      * 查询用户表
      *
-     * @param mobile 手机号
+     * @param phone 手机号
      * @return 用户
      */
-    SysUser findByMobile(String mobile);
+    SysUser findByPhone(String phone);
 
     /**
      * 查询用户表

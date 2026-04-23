@@ -45,7 +45,7 @@ public class SysUserService {
             throw new ServerResponseException("验证码输入不正确！");
         }
         SysUser sysUser = Optional.ofNullable(this.sysUserDao.findByUsername(vo.getUsername()))
-                .orElseGet(() -> Optional.ofNullable(this.sysUserDao.findByMobile(vo.getUsername()))
+                .orElseGet(() -> Optional.ofNullable(this.sysUserDao.findByPhone(vo.getUsername()))
                         .orElseGet(() -> this.sysUserDao.findByEmail(vo.getUsername())));
         if (Objects.isNull(sysUser) || !Objects.equals(sysUser.getPassword()
                 , SecurityUtils.hexPassword(vo.getPassword()))) {
@@ -80,7 +80,7 @@ public class SysUserService {
         if (Objects.nonNull(this.sysUserDao.findByUsername(sysUser.getUsername()))) {
             throw new ServerResponseException("用户名称已存在！");
         }
-        if (Objects.nonNull(this.sysUserDao.findByMobile(sysUser.getMobile()))) {
+        if (Objects.nonNull(this.sysUserDao.findByPhone(sysUser.getPhone()))) {
             throw new ServerResponseException("手机号码已存在！");
         }
         if (Objects.nonNull(this.sysUserDao.findByEmail(sysUser.getEmail()))) {
@@ -113,8 +113,8 @@ public class SysUserService {
         if (!Objects.equals(oldSysUser.getUsername(), sysUser.getUsername())) {
             throw new ServerResponseException("用户名称不能修改！");
         }
-        if (!Objects.equals(oldSysUser.getMobile(), sysUser.getMobile())
-                && Objects.nonNull(this.sysUserDao.findByMobile(sysUser.getMobile()))) {
+        if (!Objects.equals(oldSysUser.getPhone(), sysUser.getPhone())
+                && Objects.nonNull(this.sysUserDao.findByPhone(sysUser.getPhone()))) {
             throw new ServerResponseException("手机号码已存在！");
         }
         if (!Objects.equals(oldSysUser.getEmail(), sysUser.getEmail())
