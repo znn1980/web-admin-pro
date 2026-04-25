@@ -7,18 +7,16 @@ import com.admin.web.config.ConfigProperties;
 import com.admin.web.model.ServerResponse;
 import com.admin.web.model.SysUpload;
 import com.google.code.kaptcha.Producer;
-import jakarta.servlet.ServletException;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
@@ -26,6 +24,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -49,7 +48,7 @@ public class SysUploadController extends BaseController {
     @SysLog("上传文件")
     @SysPermissions(SysLogin.class)
     @PostMapping("/sys/upload.json")
-    public ServerResponse<SysUpload> upload(MultipartFile file) throws IOException, ServletException {
+    public ServerResponse<SysUpload> upload(MultipartFile file) throws IOException {
         if (!this.configProperties.getUpload().hasUpload(file.getContentType())) {
             return ServerResponse.fail("上传的文件中包含不支持的格式！");
         }
@@ -66,14 +65,18 @@ public class SysUploadController extends BaseController {
     }
 
     @GetMapping("/sys/download/**")
-    public ResponseEntity<Resource> download() {
+    public ResponseEntity<Resource> download() throws NoResourceFoundException {
         String fileName = URLDecoder.decode(StringUtils
                 .delete(super.getRequest().getRequestURI(), "/sys/download/"), StandardCharsets.UTF_8);
+        Path file = Paths.get(this.configProperties.getUpload().getLocation(), fileName);
+        if (!Files.exists(file)) {
+            throw new NoResourceFoundException(HttpMethod.GET, fileName);
+        }
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=\"%s\""
                         , URLEncoder.encode(fileName, StandardCharsets.UTF_8)
                                 .replace("+", "%20")))
-                .body(new FileSystemResource(Paths.get(this.configProperties.getUpload().getLocation(), fileName)));
+                .body(new FileSystemResource(file));
     }
 
     @GetMapping("/sys/code.jpg")
