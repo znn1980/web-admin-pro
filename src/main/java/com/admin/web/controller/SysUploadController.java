@@ -3,21 +3,26 @@ package com.admin.web.controller;
 import com.admin.web.annotation.SysLog;
 import com.admin.web.annotation.SysLogin;
 import com.admin.web.annotation.SysPermissions;
+import com.admin.web.config.ConfigProperties;
 import com.admin.web.model.ServerResponse;
 import com.admin.web.model.SysUpload;
 import com.google.code.kaptcha.Producer;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
+import jakarta.servlet.ServletException;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -31,26 +36,29 @@ import java.time.format.DateTimeFormatter;
  */
 @RestController
 public class SysUploadController extends BaseController {
-    @Value("${spring.servlet.multipart.location}")
-    private String location;
     private static final DateTimeFormatter UPLOAD_PATH = DateTimeFormatter.ofPattern("yyyy/MM/dd");
     private static final DateTimeFormatter UPLOAD_NAME = DateTimeFormatter.ofPattern("HHmmssSSS");
+    private final ConfigProperties configProperties;
     private final Producer producer;
 
-    public SysUploadController(Producer producer) {
+    public SysUploadController(ConfigProperties configProperties, Producer producer) {
+        this.configProperties = configProperties;
         this.producer = producer;
     }
 
     @SysLog("上传文件")
     @SysPermissions(SysLogin.class)
     @PostMapping("/sys/upload.json")
-    public ServerResponse<SysUpload> upload(MultipartFile file) throws IOException {
+    public ServerResponse<SysUpload> upload(MultipartFile file) throws IOException, ServletException {
+        if (!this.configProperties.getUpload().hasUpload(file.getContentType())) {
+            return ServerResponse.fail("上传的文件中包含不支持的格式！");
+        }
         String fileName = String.format("%s/%s.%s"
                 , LocalDate.now().format(UPLOAD_PATH)
                 , LocalTime.now().format(UPLOAD_NAME)
                 , file.getOriginalFilename());
-        Files.createDirectories(Paths.get(this.location, fileName).getParent());
-        file.transferTo(Paths.get(this.location, fileName));
+        Files.createDirectories(Paths.get(this.configProperties.getUpload().getLocation(), fileName).getParent());
+        file.transferTo(Paths.get(this.configProperties.getUpload().getLocation(), fileName));
         SysUpload sysUpload = new SysUpload();
         sysUpload.setSrc(String.format("%s/sys/download/%s", super.getRequest().getContextPath(), fileName));
         sysUpload.setTitle(file.getOriginalFilename());
@@ -58,24 +66,25 @@ public class SysUploadController extends BaseController {
     }
 
     @GetMapping("/sys/download/**")
-    public void download(HttpServletResponse response) throws IOException {
-        String fileName = StringUtils.delete(super.getRequest().getRequestURI(), "/sys/download/");
-        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;fileName=%s"
-                , URLEncoder.encode(fileName, StandardCharsets.UTF_8)));
-        response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-        Files.copy(Paths.get(this.location, fileName), response.getOutputStream());
+    public ResponseEntity<Resource> download() {
+        String fileName = URLDecoder.decode(StringUtils
+                .delete(super.getRequest().getRequestURI(), "/sys/download/"), StandardCharsets.UTF_8);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=\"%s\""
+                        , URLEncoder.encode(fileName, StandardCharsets.UTF_8)
+                                .replace("+", "%20")))
+                .body(new FileSystemResource(Paths.get(this.configProperties.getUpload().getLocation(), fileName)));
     }
 
     @GetMapping("/sys/code.jpg")
-    public void code(HttpServletResponse response) throws IOException {
-        response.setHeader(HttpHeaders.PRAGMA, "no-cache");
-        response.setHeader(HttpHeaders.CACHE_CONTROL, "no-store, no-cache, must-revalidate");
-        response.addHeader(HttpHeaders.CACHE_CONTROL, "post-check=0, pre-check=0");
-        response.setDateHeader(HttpHeaders.EXPIRES, 0L);
-        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+    public ResponseEntity<StreamingResponseBody> code() throws IOException {
         String sysCode = this.producer.createText();
         super.setSysCode(sysCode);
-        ImageIO.write(this.producer.createImage(sysCode), "jpg", response.getOutputStream());
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG)
+                .header(HttpHeaders.EXPIRES, "0")
+                .header(HttpHeaders.PRAGMA, "no-cache")
+                .header(HttpHeaders.CACHE_CONTROL, "no-store, no-cache, must-revalidate, max-age=0")
+                .body(os -> ImageIO.write(producer.createImage(sysCode), "jpg", os));
     }
+
 }

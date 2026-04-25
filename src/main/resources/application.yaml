@@ -2,6 +2,10 @@ config:
   name: WEB-ADMIN-PRO
   version: 1.1.0
   copyright: © 2026 All Rights Reserved.
+  upload:
+    location: uploads
+    extensions:
+      - image/*
 
 server:
   port: 80
@@ -31,9 +35,10 @@ spring:
             enabled: true
   servlet:
     multipart:
+      location: ${config.upload.location}
       max-file-size: 5MB
       max-request-size: 5MB
-      location: uploads
+      file-size-threshold: 5KB
   ai:
     openai:
       api-key:

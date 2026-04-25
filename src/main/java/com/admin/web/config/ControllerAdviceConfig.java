@@ -4,9 +4,10 @@ import com.admin.web.exception.ServerResponseException;
 import com.admin.web.model.enums.ResponseCode;
 import com.admin.web.model.ServerResponse;
 import com.admin.web.model.os.Os;
+import com.admin.web.utils.ExceptionUtils;
 import com.admin.web.utils.WebUtils;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
+import org.apache.tomcat.util.http.fileupload.impl.SizeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -44,9 +45,9 @@ public class ControllerAdviceConfig {
                 return ResponseEntity.ok(ServerResponse.fail("访问的资源(%s)不存在！", ex.getResourcePath()));
             }
             if (e instanceof MaxUploadSizeExceededException ex) {
-                if (e.getCause().getCause() instanceof FileSizeLimitExceededException exx) {
+                if (ExceptionUtils.getCause(e, SizeException.class) instanceof SizeException cause) {
                     return ResponseEntity.ok(ServerResponse.fail("上传文件(%s)超出(%s)限制！"
-                            , Os.asBytes(exx.getActualSize()), Os.asBytes(exx.getPermittedSize())));
+                            , Os.asBytes(cause.getActualSize()), Os.asBytes(cause.getPermittedSize())));
                 }
                 return ResponseEntity.ok(ServerResponse.fail("上传文件超出%s限制！", ex.getMaxUploadSize() >= 0L ?
                         String.format("(%s)", Os.asBytes(ex.getMaxUploadSize())) : ""));
@@ -62,6 +63,6 @@ public class ControllerAdviceConfig {
         if (e instanceof NoResourceFoundException) {
             return new ModelAndView("error/404", HttpStatus.NOT_FOUND);
         }
-        return new ModelAndView("error/500", "error", WebUtils.getStackTrace(e));
+        return new ModelAndView("error/500", "error", ExceptionUtils.getStackTrace(e));
     }
 }

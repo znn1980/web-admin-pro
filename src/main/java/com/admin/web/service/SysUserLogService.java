@@ -6,6 +6,7 @@ import com.admin.web.exception.ServerResponseException;
 import com.admin.web.model.SysUserLog;
 import com.admin.web.model.vo.UserLogVo;
 
+import com.admin.web.utils.ExceptionUtils;
 import com.admin.web.utils.SecurityUtils;
 import com.admin.web.utils.UserAgentUtils;
 import com.admin.web.utils.WebUtils;
@@ -78,7 +79,7 @@ public class SysUserLogService {
             if (e instanceof ServerResponseException ex) {
                 logs.setResult(ObjectUtils.getDisplayString(ex.getServerResponse()));
             } else {
-                logs.setErrors(WebUtils.getStackTrace(e));
+                logs.setErrors(ExceptionUtils.getStackTrace(e));
             }
         }
         logs.setMs(System.currentTimeMillis() - ms);
@@ -89,14 +90,24 @@ public class SysUserLogService {
     private String getParams(Object[] args) {
         StringJoiner params = new StringJoiner(System.lineSeparator());
         Arrays.asList(args).forEach(arg -> {
-            if (Objects.nonNull(arg) && !(arg instanceof MultipartFile
-                    || arg instanceof MultipartFile[]
-                    || arg instanceof HttpServletRequest
+            if (Objects.nonNull(arg) && !(arg instanceof HttpServletRequest
                     || arg instanceof HttpServletResponse)) {
-                params.add(ObjectUtils.getDisplayString(arg));
+                if (arg instanceof MultipartFile file) {
+                    params.add(this.toMultipartFileString(file));
+                } else if (arg instanceof MultipartFile[] files) {
+                    Arrays.asList(files).forEach(file ->
+                            params.add(this.toMultipartFileString(file)));
+                } else {
+                    params.add(ObjectUtils.getDisplayString(arg));
+                }
+
             }
         });
         return params.toString();
     }
 
+    private String toMultipartFileString(MultipartFile file) {
+        return String.format("MultipartFile{name=%s, originalFilename=%s, contentType=%s}"
+                , file.getName(), file.getOriginalFilename(), file.getContentType());
+    }
 }
