@@ -84,7 +84,7 @@ public class SysUploadController extends BaseController {
                 .header(HttpHeaders.EXPIRES, "0")
                 .header(HttpHeaders.PRAGMA, "no-cache")
                 .header(HttpHeaders.CACHE_CONTROL, "no-store, no-cache, must-revalidate, max-age=0")
-                .body(os -> ImageIO.write(producer.createImage(sysCode), "jpg", os));
+                .body(os -> ImageIO.write(producer.createImage(sysCode), MediaType.IMAGE_JPEG.getSubtype(), os));
     }
 
 }

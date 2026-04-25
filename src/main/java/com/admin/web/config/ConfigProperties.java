@@ -50,9 +50,9 @@ public class ConfigProperties {
 
     public static class Upload {
         public static final String DEFAULT_LOCATION = "uploads";
-        public static final List<MimeType> DEFAULT_EXTENSION = List.of(MimeType.valueOf("*/*"));
+        public static final MimeType DEFAULT_EXTENSION = MimeType.valueOf("*/*");
         private String location = DEFAULT_LOCATION;
-        private List<MimeType> extensions = DEFAULT_EXTENSION;
+        private List<MimeType> extensions = List.of(DEFAULT_EXTENSION);
 
         public String getLocation() {
             return location;
