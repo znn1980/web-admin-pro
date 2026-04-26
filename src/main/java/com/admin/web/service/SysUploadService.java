@@ -9,6 +9,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MimeType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -37,29 +38,55 @@ public class SysUploadService {
     }
 
     public SysUpload upload(HttpServletRequest request, MultipartFile file) throws IOException {
-        if (file.isEmpty() || !this.upload.hasUpload(file.getContentType())) {
+        if (file.isEmpty() || !this.hasUpload(file.getContentType())) {
             throw new ServerResponseException("上传的文件中包含不支持的格式！");
         }
-        String fileName = String.format("%s/%s_%s"
-                , LocalDate.now().format(UPLOAD_PATH)
-                , LocalTime.now().format(UPLOAD_NAME)
-                , file.getOriginalFilename());
+        String fileName = this.uploadFilename(file);
         Files.createDirectories(Paths.get(this.upload.getLocation(), fileName).getParent());
-        file.transferTo(Paths.get(this.upload.getLocation(), fileName));
-        SysUpload sysUpload = new SysUpload();
-        sysUpload.setSrc(String.format("%s/sys/download/%s", request.getContextPath(), fileName));
-        sysUpload.setTitle(file.getOriginalFilename());
-        return sysUpload;
+        this.transferTo(file, fileName);
+        return new SysUpload(
+                String.format("%s/sys/download/%s", request.getContextPath(), fileName),
+                file.getOriginalFilename()
+        );
     }
 
     public Resource download(HttpServletRequest request) throws NoResourceFoundException {
-        String fileName = URLDecoder.decode(StringUtils
-                .delete(request.getRequestURI(), "/sys/download/"), StandardCharsets.UTF_8);
+        String fileName = this.downloadFilename(request);
         Resource resource = new FileSystemResource(Paths.get(this.upload.getLocation(), fileName));
         if (!resource.exists()) {
             throw new NoResourceFoundException(HttpMethod.GET, fileName);
         }
         return resource;
+    }
+
+    public boolean hasUpload(String contentType) {
+        if (StringUtils.hasLength(contentType)) {
+            for (MimeType mimeType : this.upload.getExtensions()) {
+                if (mimeType.includes(MimeType.valueOf(contentType))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void transferTo(MultipartFile file, String fileName) throws IOException {
+        file.transferTo(Paths.get(this.upload.getLocation(), fileName));
+    }
+
+    public String uploadFilename(MultipartFile file) {
+        return String.format("%s/%s_%s",
+                LocalDate.now().format(UPLOAD_PATH),
+                LocalTime.now().format(UPLOAD_NAME),
+                file.getOriginalFilename()
+        );
+    }
+
+    public String downloadFilename(HttpServletRequest request) {
+        return URLDecoder.decode(
+                StringUtils.delete(request.getRequestURI(), "/sys/download/"),
+                StandardCharsets.UTF_8
+        );
     }
 
     public MediaType probeContentType(Resource resource) throws IOException {

@@ -2,7 +2,6 @@ package com.admin.web.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.MimeType;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -69,17 +68,5 @@ public class ConfigProperties {
         public void setExtensions(List<MimeType> extensions) {
             this.extensions = extensions;
         }
-
-        public boolean hasUpload(String contentType) {
-            if (StringUtils.hasLength(contentType)) {
-                for (MimeType mimeType : this.getExtensions()) {
-                    if (mimeType.includes(MimeType.valueOf(contentType))) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
     }
 }
