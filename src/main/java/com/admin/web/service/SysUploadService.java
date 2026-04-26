@@ -68,7 +68,7 @@ public class SysUploadService {
                 ? MediaType.valueOf(contentType) : MediaType.APPLICATION_OCTET_STREAM;
     }
 
-    public String  probeContentDisposition(Resource resource) throws IOException {
+    public String probeContentDisposition(Resource resource) throws IOException {
         return String.format("attachment; filename*=UTF-8''%s"
                 , URLEncoder.encode(resource.getFile().getName(), StandardCharsets.UTF_8)
                         .replace("+", "%20"));
