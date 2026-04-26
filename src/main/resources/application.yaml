@@ -1,6 +1,6 @@
 config:
   name: WEB-ADMIN-PRO
-  version: 1.1.0
+  version: 1.2.0
   copyright: © 2026 All Rights Reserved.
   upload:
     location: uploads

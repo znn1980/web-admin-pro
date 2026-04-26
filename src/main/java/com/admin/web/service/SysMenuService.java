@@ -1,6 +1,6 @@
 package com.admin.web.service;
 
-import com.admin.web.dao.SysMenuDao;
+import com.admin.web.repository.SysMenuRepository;
 import com.admin.web.exception.ServerResponseException;
 import com.admin.web.model.SysMenu;
 import com.admin.web.model.SysUser;
@@ -20,34 +20,34 @@ import java.util.stream.IntStream;
  */
 @Service
 public class SysMenuService {
-    private final SysMenuDao sysMenuDao;
+    private final SysMenuRepository sysMenuRepository;
 
-    public SysMenuService(SysMenuDao sysMenuDao) {
-        this.sysMenuDao = sysMenuDao;
+    public SysMenuService(SysMenuRepository sysMenuRepository) {
+        this.sysMenuRepository = sysMenuRepository;
     }
 
     public List<SysMenu> all() {
-        return this.sysMenuDao.findByOrderBySort();
+        return this.sysMenuRepository.findByOrderBySort();
     }
 
     public List<SysMenu> all(SysUser sysUser) {
         if (SecurityUtils.isSuperAdmin(sysUser)) {
             //超级管理员可以看到所有菜单
-            return this.sysMenuDao.findBySysMenuOrderBySort(true);
+            return this.sysMenuRepository.findBySysMenuOrderBySort(true);
         }
         if (SecurityUtils.isSysAdmin(sysUser)) {
             //普通管理员可以看到所有权限菜单，但是禁用的菜单任然不能操作
-            return this.sysMenuDao.findByUserIdOrderBySort(sysUser.getId());
+            return this.sysMenuRepository.findByUserIdOrderBySort(sysUser.getId());
         }
         //普通用户可以看到所有权限并且没有禁用的菜单
-        return this.sysMenuDao.findByUserIdAndDisableOrderBySort(sysUser.getId(), false);
+        return this.sysMenuRepository.findByUserIdAndDisableOrderBySort(sysUser.getId(), false);
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void move(MoveVo vo) {
-        SysMenu sysMenu = this.sysMenuDao.findById(vo.getId())
+        SysMenu sysMenu = this.sysMenuRepository.findById(vo.getId())
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
-        List<SysMenu> sysMenus = this.sysMenuDao.findByPidOrderBySort(sysMenu.getPid());
+        List<SysMenu> sysMenus = this.sysMenuRepository.findByPidOrderBySort(sysMenu.getPid());
         int index = IntStream.range(0, sysMenus.size())
                 .filter(i -> Objects.equals(sysMenu.getId(), sysMenus.get(i).getId()))
                 .findFirst().orElse(-1);
@@ -59,25 +59,25 @@ public class SysMenuService {
         Long oldSysMenuSort = oldSysMenu.getSort();
         oldSysMenu.setSort(sysMenu.getSort());
         sysMenu.setSort(oldSysMenuSort);
-        this.sysMenuDao.saveAll(Arrays.asList(sysMenu, oldSysMenu));
+        this.sysMenuRepository.saveAll(Arrays.asList(sysMenu, oldSysMenu));
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void create(SysMenu sysMenu) {
         if (Objects.nonNull(sysMenu.getPid())
-                && !this.sysMenuDao.existsById(sysMenu.getPid())) {
+                && !this.sysMenuRepository.existsById(sysMenu.getPid())) {
             throw new ServerResponseException("上级菜单不存在！");
         }
-        if (Objects.nonNull(this.sysMenuDao.findByTitle(sysMenu.getTitle()))) {
+        if (Objects.nonNull(this.sysMenuRepository.findByTitle(sysMenu.getTitle()))) {
             throw new ServerResponseException("菜单标题已存在！");
         }
-        this.sysMenuDao.save(sysMenu);
+        this.sysMenuRepository.save(sysMenu);
         sysMenu.setSort(sysMenu.getId());
-        this.sysMenuDao.save(sysMenu);
+        this.sysMenuRepository.save(sysMenu);
     }
 
     public void update(SysMenu sysMenu) {
-        SysMenu oldSysMenu = this.sysMenuDao.findById(sysMenu.getId())
+        SysMenu oldSysMenu = this.sysMenuRepository.findById(sysMenu.getId())
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         if (Objects.equals(sysMenu.getId(), sysMenu.getPid())) {
             throw new ServerResponseException("不能选择自己作为上级菜单！");
@@ -87,36 +87,36 @@ public class SysMenuService {
             throw new ServerResponseException("不能选择自己的下级菜单作为上级菜单！");
         }
         if (Objects.nonNull(sysMenu.getPid())
-                && !this.sysMenuDao.existsById(sysMenu.getPid())) {
+                && !this.sysMenuRepository.existsById(sysMenu.getPid())) {
             throw new ServerResponseException("上级菜单不存在！");
         }
         if (!Objects.equals(oldSysMenu.getTitle(), sysMenu.getTitle())
-                && Objects.nonNull(this.sysMenuDao.findByTitle(sysMenu.getTitle()))) {
+                && Objects.nonNull(this.sysMenuRepository.findByTitle(sysMenu.getTitle()))) {
             throw new ServerResponseException("菜单标题已存在！");
         }
         oldSysMenu.setPid(sysMenu.getPid());
         BeanUtils.copyNonNullProperties(sysMenu, oldSysMenu);
-        this.sysMenuDao.save(oldSysMenu);
+        this.sysMenuRepository.save(oldSysMenu);
     }
 
     public void delete(Long id) {
-        SysMenu sysMenu = this.sysMenuDao.findById(id)
+        SysMenu sysMenu = this.sysMenuRepository.findById(id)
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
-        if (this.sysMenuDao.existsByMenuId(sysMenu.getId())) {
+        if (this.sysMenuRepository.existsByMenuId(sysMenu.getId())) {
             throw new ServerResponseException("此菜单已绑定角色，请先解绑角色下的菜单！");
         }
-        if (this.sysMenuDao.existsByPid(sysMenu.getId())) {
+        if (this.sysMenuRepository.existsByPid(sysMenu.getId())) {
             throw new ServerResponseException("请先删除下级菜单！");
         }
-        this.sysMenuDao.deleteById(id);
+        this.sysMenuRepository.deleteById(id);
     }
 
     private boolean exists(Long id, Long pid) {
         Set<Long> exists = new HashSet<>();
-        SysMenu sysMenu = this.sysMenuDao.findById(pid).orElse(null);
+        SysMenu sysMenu = this.sysMenuRepository.findById(pid).orElse(null);
         while (Objects.nonNull(sysMenu) && Objects.nonNull(sysMenu.getPid())) {
             exists.add(sysMenu.getPid());
-            sysMenu = this.sysMenuDao.findById(sysMenu.getPid()).orElse(null);
+            sysMenu = this.sysMenuRepository.findById(sysMenu.getPid()).orElse(null);
         }
         return exists.contains(id);
     }

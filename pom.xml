@@ -5,11 +5,11 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.13</version>
+        <version>3.5.14</version>
     </parent>
     <groupId>com.admin.pro</groupId>
     <artifactId>web-admin-pro</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <properties>
         <skipTests>true</skipTests>
         <java.version>21</java.version>

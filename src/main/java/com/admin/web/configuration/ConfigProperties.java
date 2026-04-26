@@ -1,4 +1,4 @@
-package com.admin.web.config;
+package com.admin.web.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.MimeType;

@@ -1,4 +1,4 @@
-package com.admin.web.dao;
+package com.admin.web.repository;
 
 import com.admin.web.model.ChatMemory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,10 +11,10 @@ import java.util.List;
  * @author znn
  */
 @Repository
-public class ChatMemoryDao {
+public class ChatMemoryRepository {
     private final JdbcTemplate jdbcTemplate;
 
-    public ChatMemoryDao(JdbcTemplate jdbcTemplate) {
+    public ChatMemoryRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

@@ -1,4 +1,4 @@
-package com.admin.web.config;
+package com.admin.web.configuration;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
@@ -19,7 +19,7 @@ import java.util.Map;
  * @author znn
  */
 @Configuration
-public class AiChatConfig {
+public class AiChatConfiguration {
 
     @Bean
     public ChatMemory chatMemory(JdbcChatMemoryRepository chatMemoryRepository) {

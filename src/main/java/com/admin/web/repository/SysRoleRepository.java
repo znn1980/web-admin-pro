@@ -1,4 +1,4 @@
-package com.admin.web.dao;
+package com.admin.web.repository;
 
 import com.admin.web.model.SysMenu;
 import com.admin.web.model.SysRole;
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author znn
  */
-public interface SysRoleDao extends JpaRepository<SysRole, Long>, JpaSpecificationExecutor<SysMenu> {
+public interface SysRoleRepository extends JpaRepository<SysRole, Long>, JpaSpecificationExecutor<SysMenu> {
     /**
      * 查询角色表
      *

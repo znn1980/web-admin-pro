@@ -1,6 +1,6 @@
 package com.admin.web.service;
 
-import com.admin.web.config.ConfigProperties;
+import com.admin.web.configuration.ConfigProperties;
 import com.admin.web.exception.ServerResponseException;
 import com.admin.web.model.SysUpload;
 import jakarta.servlet.http.HttpServletRequest;

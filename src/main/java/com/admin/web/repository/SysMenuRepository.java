@@ -1,4 +1,4 @@
-package com.admin.web.dao;
+package com.admin.web.repository;
 
 import com.admin.web.model.SysMenu;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @author znn
  */
-public interface SysMenuDao extends JpaRepository<SysMenu, Long>, JpaSpecificationExecutor<SysMenu> {
+public interface SysMenuRepository extends JpaRepository<SysMenu, Long>, JpaSpecificationExecutor<SysMenu> {
     /**
      * 查询菜单表
      *

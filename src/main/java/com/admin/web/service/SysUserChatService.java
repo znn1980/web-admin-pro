@@ -1,7 +1,7 @@
 package com.admin.web.service;
 
-import com.admin.web.dao.ChatMemoryDao;
-import com.admin.web.dao.SysUserChatDao;
+import com.admin.web.repository.ChatMemoryRepository;
+import com.admin.web.repository.SysUserChatRepository;
 import com.admin.web.exception.ServerResponseException;
 import com.admin.web.model.ChatMemory;
 import com.admin.web.model.SysUser;
@@ -22,16 +22,16 @@ import java.util.Optional;
  */
 @Service
 public class SysUserChatService {
-    private final SysUserChatDao sysUserChatDao;
-    private final ChatMemoryDao chatMemoryDao;
+    private final SysUserChatRepository sysUserChatRepository;
+    private final ChatMemoryRepository chatMemoryRepository;
 
-    public SysUserChatService(SysUserChatDao sysUserChatDao, ChatMemoryDao chatMemoryDao) {
-        this.sysUserChatDao = sysUserChatDao;
-        this.chatMemoryDao = chatMemoryDao;
+    public SysUserChatService(SysUserChatRepository sysUserChatRepository, ChatMemoryRepository chatMemoryRepository) {
+        this.sysUserChatRepository = sysUserChatRepository;
+        this.chatMemoryRepository = chatMemoryRepository;
     }
 
     public Slice<SysUserChat> findByUsername(SysUser sysUser, PageRequest pageRequest) {
-        return this.sysUserChatDao.findAll((root, query, builder) ->
+        return this.sysUserChatRepository.findAll((root, query, builder) ->
                 Objects.requireNonNull(query)
                         .where(builder.equal(root.get("username"), sysUser.getUsername()))
                         .orderBy(builder.desc(root.get("timestamp")))
@@ -39,35 +39,35 @@ public class SysUserChatService {
     }
 
     public SysUserChat findByUsernameAndConversationId(SysUser sysUser, String conversationId) {
-        return this.sysUserChatDao.findByUsernameAndConversationId(sysUser.getUsername(), conversationId);
+        return this.sysUserChatRepository.findByUsernameAndConversationId(sysUser.getUsername(), conversationId);
     }
 
     public List<ChatMemory> findByConversationId(String conversationId) {
-        return this.chatMemoryDao.findByConversationId(conversationId);
+        return this.chatMemoryRepository.findByConversationId(conversationId);
     }
 
     public void save(SysUser sysUser, String conversationId, String content) {
-        SysUserChat sysUserChat = Optional.ofNullable(this.sysUserChatDao.findByUsernameAndConversationId(sysUser.getUsername(), conversationId))
+        SysUserChat sysUserChat = Optional.ofNullable(this.sysUserChatRepository.findByUsernameAndConversationId(sysUser.getUsername(), conversationId))
                 .orElseGet(() -> new SysUserChat(sysUser.getUsername(), conversationId, content));
         sysUserChat.setTimestamp(LocalDateTime.now());
-        this.sysUserChatDao.save(sysUserChat);
+        this.sysUserChatRepository.save(sysUserChat);
     }
 
     public void update(SysUser sysUser, String conversationId, String content) {
-        SysUserChat sysUserChat = Optional.ofNullable(this.sysUserChatDao.findByUsernameAndConversationId(sysUser.getUsername(), conversationId))
+        SysUserChat sysUserChat = Optional.ofNullable(this.sysUserChatRepository.findByUsernameAndConversationId(sysUser.getUsername(), conversationId))
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         sysUserChat.setContent(content);
         sysUserChat.setTimestamp(LocalDateTime.now());
-        this.sysUserChatDao.save(sysUserChat);
+        this.sysUserChatRepository.save(sysUserChat);
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void delete(SysUser sysUser, String conversationId) {
         if ("all".equalsIgnoreCase(conversationId)) {
-            this.sysUserChatDao.findByUsername(sysUser.getUsername()).forEach(sysUserChat ->
+            this.sysUserChatRepository.findByUsername(sysUser.getUsername()).forEach(sysUserChat ->
                     this.deleteByConversationId(sysUserChat.getConversationId()));
         } else {
-            Optional.ofNullable(this.sysUserChatDao.findByUsernameAndConversationId(sysUser.getUsername(), conversationId))
+            Optional.ofNullable(this.sysUserChatRepository.findByUsernameAndConversationId(sysUser.getUsername(), conversationId))
                     .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
             this.deleteByConversationId(conversationId);
         }
@@ -75,8 +75,8 @@ public class SysUserChatService {
 
     @Transactional(rollbackFor = Exception.class)
     public void deleteByConversationId(String conversationId) {
-        this.sysUserChatDao.deleteByConversationId(conversationId);
-        this.chatMemoryDao.deleteByConversationId(conversationId);
+        this.sysUserChatRepository.deleteByConversationId(conversationId);
+        this.chatMemoryRepository.deleteByConversationId(conversationId);
     }
 
 }

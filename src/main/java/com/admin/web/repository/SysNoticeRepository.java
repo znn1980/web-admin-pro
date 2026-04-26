@@ -1,4 +1,4 @@
-package com.admin.web.dao;
+package com.admin.web.repository;
 
 import com.admin.web.model.SysNotice;
 import org.springframework.data.domain.Page;
@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 /**
  * @author znn
  */
-public interface SysNoticeDao extends JpaRepository<SysNotice, Long>, JpaSpecificationExecutor<SysNotice> {
+public interface SysNoticeRepository extends JpaRepository<SysNotice, Long>, JpaSpecificationExecutor<SysNotice> {
     /**
      * 查询通知公告表
      *

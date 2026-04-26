@@ -1,4 +1,4 @@
-package com.admin.web.dao;
+package com.admin.web.repository;
 
 import com.admin.web.model.SysUserChat;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @author znn
  */
-public interface SysUserChatDao extends JpaRepository<SysUserChat, Long>, JpaSpecificationExecutor<SysUserChat> {
+public interface SysUserChatRepository extends JpaRepository<SysUserChat, Long>, JpaSpecificationExecutor<SysUserChat> {
     /**
      * 查询用户会话表
      *

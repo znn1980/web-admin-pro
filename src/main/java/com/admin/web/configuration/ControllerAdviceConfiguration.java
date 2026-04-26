@@ -1,4 +1,4 @@
-package com.admin.web.config;
+package com.admin.web.configuration;
 
 import com.admin.web.exception.ServerResponseException;
 import com.admin.web.model.enums.ResponseCode;
@@ -25,8 +25,8 @@ import java.util.Objects;
  * @author znn
  */
 @ControllerAdvice
-public class ControllerAdviceConfig {
-    private static final Logger logger = LoggerFactory.getLogger(ControllerAdviceConfig.class);
+public class ControllerAdviceConfiguration {
+    private static final Logger logger = LoggerFactory.getLogger(ControllerAdviceConfiguration.class);
 
     @ExceptionHandler(Exception.class)
     public Object exceptionHandler(HttpServletRequest request, Exception e) {

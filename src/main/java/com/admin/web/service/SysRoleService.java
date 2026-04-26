@@ -1,6 +1,6 @@
 package com.admin.web.service;
 
-import com.admin.web.dao.SysRoleDao;
+import com.admin.web.repository.SysRoleRepository;
 import com.admin.web.exception.ServerResponseException;
 import com.admin.web.model.SysRole;
 import com.admin.web.model.enums.Move;
@@ -20,21 +20,21 @@ import java.util.stream.IntStream;
  */
 @Service
 public class SysRoleService {
-    private final SysRoleDao sysRoleDao;
+    private final SysRoleRepository sysRoleRepository;
 
-    public SysRoleService(SysRoleDao sysRoleDao) {
-        this.sysRoleDao = sysRoleDao;
+    public SysRoleService(SysRoleRepository sysRoleRepository) {
+        this.sysRoleRepository = sysRoleRepository;
     }
 
     public List<SysRole> all() {
-        return this.sysRoleDao.findByOrderBySort();
+        return this.sysRoleRepository.findByOrderBySort();
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void move(MoveVo vo) {
-        SysRole sysRole = this.sysRoleDao.findById(vo.getId())
+        SysRole sysRole = this.sysRoleRepository.findById(vo.getId())
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
-        List<SysRole> sysRoles = this.sysRoleDao.findByOrderBySort();
+        List<SysRole> sysRoles = this.sysRoleRepository.findByOrderBySort();
         boolean isUp = Objects.equals(Move.UP, vo.getMove());
         int index = IntStream.range(0, sysRoles.size())
                 .filter(i -> Objects.equals(sysRole.getId(), sysRoles.get(i).getId()))
@@ -46,36 +46,36 @@ public class SysRoleService {
         Long oldSysRoleSort = oldSysRole.getSort();
         oldSysRole.setSort(sysRole.getSort());
         sysRole.setSort(oldSysRoleSort);
-        this.sysRoleDao.saveAll(Arrays.asList(sysRole, oldSysRole));
+        this.sysRoleRepository.saveAll(Arrays.asList(sysRole, oldSysRole));
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void create(SysRole sysRole) {
-        if (Objects.nonNull(this.sysRoleDao.findByName(sysRole.getName()))) {
+        if (Objects.nonNull(this.sysRoleRepository.findByName(sysRole.getName()))) {
             throw new ServerResponseException("角色名称已存在！");
         }
-        this.sysRoleDao.save(sysRole);
+        this.sysRoleRepository.save(sysRole);
         sysRole.setSort(sysRole.getId());
-        this.sysRoleDao.save(sysRole);
+        this.sysRoleRepository.save(sysRole);
     }
 
     public void update(SysRole sysRole) {
-        SysRole oldSysRole = this.sysRoleDao.findById(sysRole.getId())
+        SysRole oldSysRole = this.sysRoleRepository.findById(sysRole.getId())
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         if (!Objects.equals(oldSysRole.getName(), sysRole.getName())
-                && Objects.nonNull(this.sysRoleDao.findByName(sysRole.getName()))) {
+                && Objects.nonNull(this.sysRoleRepository.findByName(sysRole.getName()))) {
             throw new ServerResponseException("角色名称已存在！");
         }
         BeanUtils.copyNonNullProperties(sysRole, oldSysRole);
-        this.sysRoleDao.save(oldSysRole);
+        this.sysRoleRepository.save(oldSysRole);
     }
 
     public void delete(Long id) {
-        SysRole sysRole = this.sysRoleDao.findById(id)
+        SysRole sysRole = this.sysRoleRepository.findById(id)
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
-        if (this.sysRoleDao.existsByRoleId(sysRole.getId())) {
+        if (this.sysRoleRepository.existsByRoleId(sysRole.getId())) {
             throw new ServerResponseException("此角色已绑定用户，请先解绑用户下的角色！");
         }
-        this.sysRoleDao.deleteById(id);
+        this.sysRoleRepository.deleteById(id);
     }
 }

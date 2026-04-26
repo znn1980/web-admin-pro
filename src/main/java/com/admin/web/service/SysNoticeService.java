@@ -1,6 +1,6 @@
 package com.admin.web.service;
 
-import com.admin.web.dao.SysNoticeDao;
+import com.admin.web.repository.SysNoticeRepository;
 import com.admin.web.exception.ServerResponseException;
 import com.admin.web.model.SysNotice;
 import com.admin.web.model.SysUser;
@@ -21,16 +21,16 @@ import java.util.*;
  */
 @Service
 public class SysNoticeService {
-    private final SysNoticeDao sysNoticeDao;
+    private final SysNoticeRepository sysNoticeRepository;
 
-    public SysNoticeService(SysNoticeDao sysNoticeDao) {
-        this.sysNoticeDao = sysNoticeDao;
+    public SysNoticeService(SysNoticeRepository sysNoticeRepository) {
+        this.sysNoticeRepository = sysNoticeRepository;
     }
 
     public Page<SysNotice> all(NoticeVo vo, SysUser sysUser) {
         if (Objects.equals(NoticeVo.State.UNREAD, vo.getState())) {
             //未读
-            return this.sysNoticeDao.findAll((root, query, builder) -> {
+            return this.sysNoticeRepository.findAll((root, query, builder) -> {
                 Subquery<Long> subQuery = Objects.requireNonNull(query).subquery(Long.class);
                 Root<SysNotice> subRoot = subQuery.from(SysNotice.class);
                 subQuery.select(subRoot.get("id"))
@@ -41,23 +41,23 @@ public class SysNoticeService {
             }, PageVo.of(vo));
         } else if (Objects.equals(NoticeVo.State.READ, vo.getState())) {
             //已读
-            return this.sysNoticeDao.findAll((root, query, builder) ->
+            return this.sysNoticeRepository.findAll((root, query, builder) ->
                     Objects.requireNonNull(query)
                             .where(builder.equal(root.join("users").get("id"), sysUser.getId()))
                             .orderBy(builder.desc(root.get("createTimestamp")))
                             .getRestriction(), PageVo.of(vo));
         } else if (Objects.equals(NoticeVo.State.ME, vo.getState())) {
             //我的
-            return this.sysNoticeDao.findByCreateUsernameOrderByCreateTimestampDesc(sysUser.getUsername(), PageVo.of(vo));
+            return this.sysNoticeRepository.findByCreateUsernameOrderByCreateTimestampDesc(sysUser.getUsername(), PageVo.of(vo));
         } else if (Objects.equals(NoticeVo.State.ALL, vo.getState())) {
             //全部
-            return this.sysNoticeDao.findByOrderByCreateTimestampDesc(PageVo.of(vo));
+            return this.sysNoticeRepository.findByOrderByCreateTimestampDesc(PageVo.of(vo));
         }
-        return this.sysNoticeDao.findAll(PageVo.of(vo));
+        return this.sysNoticeRepository.findAll(PageVo.of(vo));
     }
 
     public SysNotice show(Long id, SysUser sysUser) {
-        SysNotice sysNotice = this.sysNoticeDao.findById(id)
+        SysNotice sysNotice = this.sysNoticeRepository.findById(id)
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         if (!Objects.equals(sysNotice.getCreateUsername(), sysUser.getUsername())
                 && !SecurityUtils.isSuperAdmin(sysUser) && sysNotice.isDisable()) {
@@ -66,17 +66,17 @@ public class SysNoticeService {
         Set<SysUser> sysUsers = sysNotice.getUsers();
         if (Objects.nonNull(sysUsers) && !sysUsers.contains(sysUser)) {
             sysUsers.add(sysUser);
-            this.sysNoticeDao.save(sysNotice);
+            this.sysNoticeRepository.save(sysNotice);
         }
         return sysNotice;
     }
 
     public void create(SysNotice sysNotice) {
-        this.sysNoticeDao.save(sysNotice);
+        this.sysNoticeRepository.save(sysNotice);
     }
 
     public void update(SysNotice sysNotice, SysUser sysUser) {
-        SysNotice oldSysNotice = this.sysNoticeDao.findById(sysNotice.getId())
+        SysNotice oldSysNotice = this.sysNoticeRepository.findById(sysNotice.getId())
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         if (!SecurityUtils.isSuperAdmin(sysUser)
                 && !Objects.equals(oldSysNotice.getCreateUsername(), sysUser.getUsername())) {
@@ -85,21 +85,21 @@ public class SysNoticeService {
         sysNotice.setUsers(null);
         oldSysNotice.setUsers(null);
         BeanUtils.copyNonNullProperties(sysNotice, oldSysNotice);
-        this.sysNoticeDao.save(oldSysNotice);
+        this.sysNoticeRepository.save(oldSysNotice);
     }
 
     public void delete(Long id, SysUser sysUser) {
-        SysNotice sysNotice = this.sysNoticeDao.findById(id)
+        SysNotice sysNotice = this.sysNoticeRepository.findById(id)
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         if (!SecurityUtils.isSuperAdmin(sysUser)
                 && !Objects.equals(sysNotice.getCreateUsername(), sysUser.getUsername())) {
             throw new ServerResponseException("您只能删除自己发布的通知公告！");
         }
-        this.sysNoticeDao.deleteById(id);
+        this.sysNoticeRepository.deleteById(id);
     }
 
     public Long unRead(Long userId) {
-        return this.sysNoticeDao.count((root, query, builder) -> {
+        return this.sysNoticeRepository.count((root, query, builder) -> {
             Subquery<Long> subQuery = Objects.requireNonNull(query).subquery(Long.class);
             Root<SysNotice> subRoot = subQuery.from(SysNotice.class);
             subQuery.select(subRoot.get("id")).where(builder.equal(subRoot.join("users").get("id"), userId));

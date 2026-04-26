@@ -1,4 +1,4 @@
-package com.admin.web.config;
+package com.admin.web.configuration;
 
 import com.admin.web.model.SysMonitor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Configuration;
 /**
  * @author znn
  */
-@EnableConfigurationProperties({ConfigProperties.class})
 @Configuration
-public class AutoConfig {
+@EnableConfigurationProperties({ConfigProperties.class})
+public class AutoConfiguration {
 
     @Bean
     public SysMonitor sysMonitor() {

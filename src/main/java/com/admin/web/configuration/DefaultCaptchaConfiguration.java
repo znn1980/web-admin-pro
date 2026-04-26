@@ -1,4 +1,4 @@
-package com.admin.web.config;
+package com.admin.web.configuration;
 
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
@@ -11,7 +11,7 @@ import java.util.Properties;
  * @author znn
  */
 @Configuration
-public class DefaultCaptchaConfig {
+public class DefaultCaptchaConfiguration {
 
     @Bean
     public Config config() {

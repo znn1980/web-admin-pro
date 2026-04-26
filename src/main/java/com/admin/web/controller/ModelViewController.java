@@ -2,7 +2,7 @@ package com.admin.web.controller;
 
 import com.admin.web.annotation.SysLogin;
 import com.admin.web.annotation.SysPermissions;
-import com.admin.web.config.ConfigProperties;
+import com.admin.web.configuration.ConfigProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

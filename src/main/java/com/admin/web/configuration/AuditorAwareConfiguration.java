@@ -1,4 +1,4 @@
-package com.admin.web.config;
+package com.admin.web.configuration;
 
 import com.admin.web.utils.SecurityUtils;
 import com.admin.web.utils.WebUtils;
@@ -15,7 +15,7 @@ import java.util.Optional;
  */
 @Configuration
 @EnableJpaAuditing
-public class AuditorAwareConfig {
+public class AuditorAwareConfiguration {
 
     @Bean
     public AuditorAware<String> auditorAware() {

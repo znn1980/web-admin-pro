@@ -1,7 +1,7 @@
 package com.admin.web.service;
 
 import com.admin.web.annotation.SysLog;
-import com.admin.web.dao.SysUserLogDao;
+import com.admin.web.repository.SysUserLogRepository;
 import com.admin.web.exception.ServerResponseException;
 import com.admin.web.model.SysUserLog;
 import com.admin.web.model.vo.UserLogVo;
@@ -27,14 +27,14 @@ import java.util.*;
  */
 @Service
 public class SysUserLogService {
-    private final SysUserLogDao sysUserLogDao;
+    private final SysUserLogRepository sysUserLogRepository;
 
-    public SysUserLogService(SysUserLogDao sysUserLogDao) {
-        this.sysUserLogDao = sysUserLogDao;
+    public SysUserLogService(SysUserLogRepository sysUserLogRepository) {
+        this.sysUserLogRepository = sysUserLogRepository;
     }
 
     public Page<SysUserLog> all(UserLogVo vo) {
-        return this.sysUserLogDao.findAll((root, query, builder) -> {
+        return this.sysUserLogRepository.findAll((root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (StringUtils.hasText(vo.getUsername())) {
                 predicates.add(builder.equal(root.get("username"), vo.getUsername()));
@@ -54,7 +54,7 @@ public class SysUserLogService {
     }
 
     public void delete(List<Long> id) {
-        this.sysUserLogDao.deleteAllById(id);
+        this.sysUserLogRepository.deleteAllById(id);
     }
 
     public SysUserLog log(SysLog sysLog, Object[] args, Object result, Throwable e, long ms) {
@@ -84,7 +84,7 @@ public class SysUserLogService {
         }
         logs.setMs(System.currentTimeMillis() - ms);
         logs.setTimestamp(LocalDateTime.now());
-        return this.sysUserLogDao.save(logs);
+        return this.sysUserLogRepository.save(logs);
     }
 
     private String getParams(Object[] args) {
