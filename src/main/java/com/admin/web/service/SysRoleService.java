@@ -32,10 +32,10 @@ public class SysRoleService {
 
     @Transactional(rollbackFor = Exception.class)
     public void move(MoveVo vo) {
-        SysRole sysRole = this.sysRoleRepository.findById(vo.getId())
+        SysRole sysRole = this.sysRoleRepository.findById(vo.id())
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         List<SysRole> sysRoles = this.sysRoleRepository.findByOrderBySort();
-        boolean isUp = Objects.equals(Move.UP, vo.getMove());
+        boolean isUp = Objects.equals(Move.UP, vo.move());
         int index = IntStream.range(0, sysRoles.size())
                 .filter(i -> Objects.equals(sysRole.getId(), sysRoles.get(i).getId()))
                 .findFirst().orElse(-1);

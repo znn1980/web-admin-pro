@@ -18,7 +18,7 @@ public class ServerResponseException extends RuntimeException {
     }
 
     public ServerResponseException(ServerResponse<?> serverResponse) {
-        super(serverResponse.getMsg());
+        super(serverResponse.msg());
         this.serverResponse = serverResponse;
     }
 

@@ -1,7 +1,5 @@
 package com.admin.web.aspect;
 
-import com.admin.web.exception.ServerResponseException;
-import com.admin.web.exception.SysLicenseException;
 import com.admin.web.model.SysLicense;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -25,14 +23,10 @@ public class SysLicenseAspect {
 
     @Before("login()")
     public void doBefore() {
-        try {
-            byte[] bytes = SysLicense.readSysLicense(Paths.get("license.dat"));
-            SysLicense license = SysLicense.asSysLicense(bytes);
-            logger.info("SYS-ASPECT => {}", license.tips());
-            SysLicense.hasSysLicense(license);
-        } catch (SysLicenseException e) {
-            throw new ServerResponseException(e.getMessage());
-        }
+        byte[] bytes = SysLicense.readSysLicense(Paths.get("license.dat"));
+        SysLicense license = SysLicense.asSysLicense(bytes);
+        logger.info("SYS-ASPECT => {}", license.tips());
+        SysLicense.hasSysLicense(license);
     }
 
     @Pointcut("execution(* com.admin.web.service.SysUserService.login(..))")

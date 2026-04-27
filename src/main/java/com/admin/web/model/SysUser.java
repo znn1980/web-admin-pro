@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -16,7 +18,9 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "SYS_USER")
-public class SysUser extends SysBase {
+public class SysUser extends SysBase implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     @Column(name = "USERNAME")
     @NotBlank(message = "用户名不能为空！", groups = {SysCreate.class})
     @Size(min = 2, max = 20, message = "用户名长度应在2~20位之间！", groups = {SysCreate.class})

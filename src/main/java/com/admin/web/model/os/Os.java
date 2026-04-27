@@ -1,11 +1,9 @@
 package com.admin.web.model.os;
 
-import java.io.Serializable;
-
 /**
  * @author znn
  */
-public class Os implements Serializable {
+public class Os {
 
     public String getTips() {
         return this.toString();

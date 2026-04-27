@@ -13,11 +13,9 @@ public enum ResponseCode {
     DENIED("4003", "抱歉，您无权访问！"),
     NOT_FOUND("4004", "抱歉，资源不存在！"),
     ERROR("9999", "抱歉，服务器出错了！");
-    private final String code;
+    private final String code, msg;
 
-    private final String msg;
-
-    public String value() {
+    public String code() {
         return code;
     }
 
@@ -28,14 +26,5 @@ public enum ResponseCode {
     ResponseCode(String code, String msg) {
         this.code = code;
         this.msg = msg;
-    }
-
-    @Override
-    public String toString() {
-        return "ResponseCode{"
-                + "code='" + this.value() + '\''
-                + ", msg='" + this.msg() + '\''
-                + "} "
-                + super.toString();
     }
 }

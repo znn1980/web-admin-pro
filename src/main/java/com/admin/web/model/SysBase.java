@@ -11,6 +11,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -21,6 +22,8 @@ import java.util.Objects;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public class SysBase implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

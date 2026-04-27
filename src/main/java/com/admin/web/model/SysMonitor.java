@@ -3,12 +3,10 @@ package com.admin.web.model;
 import com.admin.web.model.os.*;
 import com.admin.web.utils.NetUtils;
 
-import java.io.Serializable;
-
 /**
  * @author znn
  */
-public class SysMonitor implements Serializable {
+public class SysMonitor {
     private final OsSys osSys;
     private final OsSysMem osSysMem;
     private final OsJvm osJvm;

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -12,7 +11,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "SYS_USER_LOG")
-public class SysUserLog implements Serializable {
+public class SysUserLog {
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

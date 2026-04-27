@@ -1,6 +1,7 @@
 package com.admin.web.service;
 
 import com.admin.web.annotation.SysLog;
+import com.admin.web.model.vo.PageVo;
 import com.admin.web.repository.SysUserLogRepository;
 import com.admin.web.exception.ServerResponseException;
 import com.admin.web.model.SysUserLog;
@@ -36,21 +37,21 @@ public class SysUserLogService {
     public Page<SysUserLog> all(UserLogVo vo) {
         return this.sysUserLogRepository.findAll((root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            if (StringUtils.hasText(vo.getUsername())) {
-                predicates.add(builder.equal(root.get("username"), vo.getUsername()));
+            if (StringUtils.hasText(vo.username())) {
+                predicates.add(builder.equal(root.get("username"), vo.username()));
             }
-            if (Objects.nonNull(vo.getStartTimestamp()) && Objects.nonNull(vo.getEndTimestamp())) {
-                predicates.add(builder.between(root.get("timestamp"), vo.getStartTimestamp(), vo.getEndTimestamp()));
-            } else if (Objects.nonNull(vo.getStartTimestamp())) {
-                predicates.add(builder.greaterThanOrEqualTo(root.get("timestamp"), vo.getStartTimestamp()));
-            } else if (Objects.nonNull(vo.getEndTimestamp())) {
-                predicates.add(builder.lessThanOrEqualTo(root.get("timestamp"), vo.getEndTimestamp()));
+            if (Objects.nonNull(vo.startTimestamp()) && Objects.nonNull(vo.endTimestamp())) {
+                predicates.add(builder.between(root.get("timestamp"), vo.startTimestamp(), vo.endTimestamp()));
+            } else if (Objects.nonNull(vo.startTimestamp())) {
+                predicates.add(builder.greaterThanOrEqualTo(root.get("timestamp"), vo.startTimestamp()));
+            } else if (Objects.nonNull(vo.endTimestamp())) {
+                predicates.add(builder.lessThanOrEqualTo(root.get("timestamp"), vo.endTimestamp()));
             }
             return Objects.requireNonNull(query)
                     .where(predicates.toArray(new Predicate[0]))
                     .orderBy(builder.desc(root.get("timestamp")))
                     .getRestriction();
-        }, UserLogVo.of(vo));
+        }, PageVo.of(vo.page(), vo.limit(), vo.sort()));
     }
 
     public void delete(List<Long> id) {

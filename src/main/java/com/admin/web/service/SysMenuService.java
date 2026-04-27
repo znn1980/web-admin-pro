@@ -45,13 +45,13 @@ public class SysMenuService {
 
     @Transactional(rollbackFor = Exception.class)
     public void move(MoveVo vo) {
-        SysMenu sysMenu = this.sysMenuRepository.findById(vo.getId())
+        SysMenu sysMenu = this.sysMenuRepository.findById(vo.id())
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         List<SysMenu> sysMenus = this.sysMenuRepository.findByPidOrderBySort(sysMenu.getPid());
         int index = IntStream.range(0, sysMenus.size())
                 .filter(i -> Objects.equals(sysMenu.getId(), sysMenus.get(i).getId()))
                 .findFirst().orElse(-1);
-        boolean isUp = Objects.equals(Move.UP, vo.getMove());
+        boolean isUp = Objects.equals(Move.UP, vo.move());
         if (index == -1 || (isUp ? index <= 0 : index >= sysMenus.size() - 1)) {
             return;
         }

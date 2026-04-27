@@ -1,6 +1,9 @@
 package com.admin.web.model.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
@@ -8,52 +11,21 @@ import java.time.LocalDateTime;
 /**
  * @author znn
  */
-public class UserLogVo extends PageVo {
-    private String username;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime startTimestamp;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime endTimestamp;
-
-    public UserLogVo() {
-        this.setUsername(null);
-        this.setStartTimestamp(null);
-        this.setEndTimestamp(null);
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public LocalDateTime getStartTimestamp() {
-        return startTimestamp;
-    }
-
-    public void setStartTimestamp(LocalDateTime startTimestamp) {
-        this.startTimestamp = startTimestamp;
-    }
-
-    public LocalDateTime getEndTimestamp() {
-        return endTimestamp;
-    }
-
-    public void setEndTimestamp(LocalDateTime endTimestamp) {
-        this.endTimestamp = endTimestamp;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + System.lineSeparator() +
-                "UserLog{" +
-                "username='" + this.getUsername() + '\'' +
-                ", startTimestamp=" + this.getStartTimestamp() +
-                ", endTimestamp=" + this.getEndTimestamp() +
-                '}';
-    }
+public record UserLogVo(
+        String username,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+        @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        LocalDateTime startTimestamp,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+        @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        LocalDateTime endTimestamp,
+        @NotNull(message = "页码不能为空！")
+        @Min(value = 1, message = "页码不得小于壹！")
+        Integer page,
+        @NotNull(message = "每页数据不能为空！")
+        @Min(value = 1, message = "每页数据不得小于壹！")
+        @Max(value = 100, message = "每页数据不得大于壹佰！")
+        Integer limit,
+        SortVo sort
+) {
 }

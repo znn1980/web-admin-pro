@@ -1,6 +1,7 @@
 package com.admin.web.configuration;
 
 import com.admin.web.exception.ServerResponseException;
+import com.admin.web.exception.SysLicenseException;
 import com.admin.web.model.enums.ResponseCode;
 import com.admin.web.model.ServerResponse;
 import com.admin.web.model.os.Os;
@@ -31,12 +32,15 @@ public class ControllerAdviceConfiguration {
     @ExceptionHandler(Exception.class)
     public Object exceptionHandler(HttpServletRequest request, Exception e) {
         logger.error("SYS-ERROR => {} => URL => {}", request.getMethod(), request.getRequestURI());
-        if (!(e instanceof ServerResponseException)) {
+        if (!(e instanceof ServerResponseException || e instanceof SysLicenseException)) {
             logger.error("SYS-ERROR => {}", e, e);
         }
         if (WebUtils.isRequestRest(request)) {
             if (e instanceof ServerResponseException ex) {
                 return ResponseEntity.ok(ex.getServerResponse());
+            }
+            if (e instanceof SysLicenseException ex) {
+                return ResponseEntity.ok(ServerResponse.fail(ex.getMessage()));
             }
             if (e instanceof BindException ex) {
                 return ResponseEntity.ok(ServerResponse.fail(ex.getBindingResult()));

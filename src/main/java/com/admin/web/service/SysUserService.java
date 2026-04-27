@@ -41,14 +41,14 @@ public class SysUserService {
     }
 
     public SysUser login(UserLoginVo vo, String sysCode) {
-        if (!Objects.equals(vo.getSysCode(), sysCode)) {
+        if (!Objects.equals(vo.sysCode(), sysCode)) {
             throw new ServerResponseException("验证码输入不正确！");
         }
-        SysUser sysUser = Optional.ofNullable(this.sysUserRepository.findByUsername(vo.getUsername()))
-                .orElseGet(() -> Optional.ofNullable(this.sysUserRepository.findByPhone(vo.getUsername()))
-                        .orElseGet(() -> this.sysUserRepository.findByEmail(vo.getUsername())));
+        SysUser sysUser = Optional.ofNullable(this.sysUserRepository.findByUsername(vo.username()))
+                .orElseGet(() -> Optional.ofNullable(this.sysUserRepository.findByPhone(vo.username()))
+                        .orElseGet(() -> this.sysUserRepository.findByEmail(vo.username())));
         if (Objects.isNull(sysUser) || !Objects.equals(sysUser.getPassword()
-                , SecurityUtils.hexPassword(vo.getPassword()))) {
+                , SecurityUtils.hexPassword(vo.password()))) {
             throw new ServerResponseException("登录失败，请检查用户名密码是否正确！");
         }
         if (!SecurityUtils.isSuperAdmin(sysUser) && sysUser.isDisable()) {
@@ -139,19 +139,19 @@ public class SysUserService {
     }
 
     public void pass(UserPassVo vo) {
-        if (!Objects.equals(vo.getNewPassword(), vo.getConfirmPassword())) {
+        if (!Objects.equals(vo.newPassword(), vo.confirmPassword())) {
             throw new ServerResponseException("新密码与确认密码输入不一致！");
         }
-        if (Objects.equals(vo.getNewPassword(), vo.getOldPassword())) {
+        if (Objects.equals(vo.newPassword(), vo.oldPassword())) {
             throw new ServerResponseException("新密码不能与原密码重复！");
         }
         SysUser sysUser = this.sysUserRepository.findById(this.getSysUser().getId())
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
-        if (!Objects.equals(sysUser.getPassword(), SecurityUtils.hexPassword(vo.getOldPassword()))) {
+        if (!Objects.equals(sysUser.getPassword(), SecurityUtils.hexPassword(vo.oldPassword()))) {
             throw new ServerResponseException("原密码输入不正确！");
         }
         sysUser.setPassTimestamp(LocalDateTime.now());
-        sysUser.setPassword(SecurityUtils.hexPassword(vo.getNewPassword()));
+        sysUser.setPassword(SecurityUtils.hexPassword(vo.newPassword()));
         this.sysUserRepository.save(sysUser);
     }
 

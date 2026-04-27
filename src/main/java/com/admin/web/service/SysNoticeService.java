@@ -28,7 +28,7 @@ public class SysNoticeService {
     }
 
     public Page<SysNotice> all(NoticeVo vo, SysUser sysUser) {
-        if (Objects.equals(NoticeVo.State.UNREAD, vo.getState())) {
+        if (Objects.equals(NoticeVo.State.UNREAD, vo.state())) {
             //未读
             return this.sysNoticeRepository.findAll((root, query, builder) -> {
                 Subquery<Long> subQuery = Objects.requireNonNull(query).subquery(Long.class);
@@ -38,22 +38,23 @@ public class SysNoticeService {
                 return query.where(builder.not(root.get("id").in(subQuery)))
                         .orderBy(builder.desc(root.get("createTimestamp")))
                         .getRestriction();
-            }, PageVo.of(vo));
-        } else if (Objects.equals(NoticeVo.State.READ, vo.getState())) {
+            }, PageVo.of(vo.page(), vo.limit(), vo.sort()));
+        } else if (Objects.equals(NoticeVo.State.READ, vo.state())) {
             //已读
             return this.sysNoticeRepository.findAll((root, query, builder) ->
                     Objects.requireNonNull(query)
                             .where(builder.equal(root.join("users").get("id"), sysUser.getId()))
                             .orderBy(builder.desc(root.get("createTimestamp")))
-                            .getRestriction(), PageVo.of(vo));
-        } else if (Objects.equals(NoticeVo.State.ME, vo.getState())) {
+                            .getRestriction(), PageVo.of(vo.page(), vo.limit(), vo.sort()));
+        } else if (Objects.equals(NoticeVo.State.ME, vo.state())) {
             //我的
-            return this.sysNoticeRepository.findByCreateUsernameOrderByCreateTimestampDesc(sysUser.getUsername(), PageVo.of(vo));
-        } else if (Objects.equals(NoticeVo.State.ALL, vo.getState())) {
+            return this.sysNoticeRepository.findByCreateUsernameOrderByCreateTimestampDesc(sysUser.getUsername()
+                    , PageVo.of(vo.page(), vo.limit(), vo.sort()));
+        } else if (Objects.equals(NoticeVo.State.ALL, vo.state())) {
             //全部
-            return this.sysNoticeRepository.findByOrderByCreateTimestampDesc(PageVo.of(vo));
+            return this.sysNoticeRepository.findByOrderByCreateTimestampDesc(PageVo.of(vo.page(), vo.limit(), vo.sort()));
         }
-        return this.sysNoticeRepository.findAll(PageVo.of(vo));
+        return this.sysNoticeRepository.findAll(PageVo.of(vo.page(), vo.limit(), vo.sort()));
     }
 
     public SysNotice show(Long id, SysUser sysUser) {
