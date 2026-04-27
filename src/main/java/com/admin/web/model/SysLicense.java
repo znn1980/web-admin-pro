@@ -20,10 +20,6 @@ public record SysLicense(String num, LocalDate from, LocalDate to) implements Se
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public String tips() {
-        return String.format("许可证{编号=%s, 有效期=[%s, %s]}", this.num(), this.from(), this.to());
-    }
-
     /**
      * 许可证编号
      */
@@ -41,12 +37,11 @@ public record SysLicense(String num, LocalDate from, LocalDate to) implements Se
         try {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(DigestUtils.md5Digest(license.num().getBytes()), "AES"));
-            try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-                try (ObjectOutputStream oos = new ObjectOutputStream(bos)) {
-                    oos.writeObject(license);
-                    oos.flush();
-                    return cipher.doFinal(bos.toByteArray());
-                }
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
+            try (ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+                oos.writeObject(license);
+                oos.flush();
+                return cipher.doFinal(bos.toByteArray());
             }
         } catch (Exception e) {
             throw new SysLicenseException("许可证加密异常！", e);
@@ -74,10 +69,8 @@ public record SysLicense(String num, LocalDate from, LocalDate to) implements Se
         try {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(DigestUtils.md5Digest(key.getBytes()), "AES"));
-            try (ByteArrayInputStream bis = new ByteArrayInputStream(cipher.doFinal(bytes))) {
-                try (ObjectInputStream ois = new ObjectInputStream(bis)) {
-                    return (SysLicense) ois.readObject();
-                }
+            try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(cipher.doFinal(bytes)))) {
+                return (SysLicense) ois.readObject();
             }
         } catch (Exception e) {
             throw new SysLicenseException("许可证解密异常！", e);

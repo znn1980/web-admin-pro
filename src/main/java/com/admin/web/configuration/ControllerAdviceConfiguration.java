@@ -32,7 +32,7 @@ public class ControllerAdviceConfiguration {
     @ExceptionHandler(Exception.class)
     public Object exceptionHandler(HttpServletRequest request, Exception e) {
         logger.error("SYS-ERROR => {} => URL => {}", request.getMethod(), request.getRequestURI());
-        if (!(e instanceof ServerResponseException || e instanceof SysLicenseException)) {
+        if (!(e instanceof ServerResponseException)) {
             logger.error("SYS-ERROR => {}", e, e);
         }
         if (WebUtils.isRequestRest(request)) {

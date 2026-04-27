@@ -25,7 +25,7 @@ public class SysLicenseAspect {
     public void doBefore() {
         byte[] bytes = SysLicense.readSysLicense(Paths.get("license.dat"));
         SysLicense license = SysLicense.asSysLicense(bytes);
-        logger.info("SYS-ASPECT => {}", license.tips());
+        logger.info("SYS-ASPECT => 许可证[编号={}, 有效期=[{}, {}]]", license.num(), license.from(), license.to());
         SysLicense.hasSysLicense(license);
     }
 

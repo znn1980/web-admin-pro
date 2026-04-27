@@ -35,7 +35,6 @@ spring:
             enabled: true
   servlet:
     multipart:
-      location: ${config.upload.location}
       max-file-size: 5MB
       max-request-size: 5MB
       file-size-threshold: 5KB
