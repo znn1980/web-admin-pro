@@ -29,8 +29,6 @@ import java.time.format.DateTimeFormatter;
  */
 @Service
 public class SysUploadService {
-    private static final DateTimeFormatter UPLOAD_PATH = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-    private static final DateTimeFormatter UPLOAD_NAME = DateTimeFormatter.ofPattern("HHmmssSSS");
     private final ConfigProperties.Upload upload;
 
     public SysUploadService(ConfigProperties configProperties) {
@@ -76,8 +74,8 @@ public class SysUploadService {
 
     public String uploadFilename(MultipartFile file) {
         return String.format("%s/%s_%s",
-                LocalDate.now().format(UPLOAD_PATH),
-                LocalTime.now().format(UPLOAD_NAME),
+                LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")),
+                LocalTime.now().format(DateTimeFormatter.ofPattern("HHmmssSSS")),
                 file.getOriginalFilename()
         );
     }
