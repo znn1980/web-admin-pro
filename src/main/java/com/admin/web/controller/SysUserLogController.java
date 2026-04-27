@@ -26,8 +26,7 @@ public class SysUserLogController extends BaseController {
     @SysPermissions(SysLogin.class)
     @PostMapping("/me.json")
     public ServerResponse<List<SysUserLog>> me(@RequestBody @Validated UserLogVo vo) {
-        vo = new UserLogVo(super.getSysUser().getUsername(), vo.startTimestamp(), vo.endTimestamp(), vo.page(), vo.limit(), vo.sort());
-        Page<SysUserLog> logs = this.sysUserLogService.all(vo);
+        Page<SysUserLog> logs = this.sysUserLogService.all(vo.username(super.getSysUser().getUsername()));
         return ServerResponse.ok(logs.getTotalElements(), logs.getContent());
     }
 

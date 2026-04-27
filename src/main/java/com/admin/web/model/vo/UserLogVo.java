@@ -28,4 +28,7 @@ public record UserLogVo(
         Integer limit,
         SortVo sort
 ) {
+    public UserLogVo username(String username) {
+        return new UserLogVo(username, this.startTimestamp(), this.endTimestamp(), this.page(), this.limit(), this.sort());
+    }
 }
