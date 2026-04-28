@@ -45,19 +45,23 @@ layui.define(['layim', 'common'], function (exports) {
 
     exports('chat', {
         asChat: function (id) {
-            conversationId = id || layui.common.asUuid();
+            conversationId = (id = id || layui.common.asUuid());
             layui.layim.chat({
-                type: 'ai'
-                , id: config.name
+                type: 'ai', id: config.name
                 , username: `${config.name} v${config.version}`
                 , avatar: `${config.base}style/imgs/logo.png`
-                , new: true
-                , enableLocalChatlog: false
+                , new: true, enableLocalChatlog: false
                 , layer: {
                     end: () => {
                         if (abortController) abortController.abort();
                         conversationId = layui.common.asUuid();
-                        this.asReload();
+                        layui.common.req(`${config.base}ai/chat/${id}`, 'GET', null, {
+                            done: (data) => {
+                                this.asChatFlow(data.data, (html) => {
+                                    layui.$('#chat-flow').prepend(html);
+                                });
+                            }
+                        });
                     }
                 }
             });
@@ -78,8 +82,10 @@ layui.define(['layim', 'common'], function (exports) {
                         if (layui.$.trim(value) === '') return elem.focus();
                         layer.close(index);
                         layui.common.req(`${config.base}ai/chat/${id}`, 'PUT', value, {
-                            done: () => {
-                                this.asReload();
+                            done: (data) => {
+                                this.asFlow(data.data, (html) => {
+                                    layui.$(`#chat-${id}`).html(html);
+                                });
                             }
                         });
                     });
@@ -93,10 +99,77 @@ layui.define(['layim', 'common'], function (exports) {
                 layui.layer.close(index);
                 layui.common.req(`${config.base}ai/chat/${id ? id : 'all'}`, 'DELETE', null, {
                     done: () => {
-                        this.asReload();
+                        if (id) {
+                            layui.$(`#chat-${id}`).remove();
+                        } else {
+                            this.asReload();
+                        }
                     }
                 });
             });
+        }
+        , asReload: function () {
+            layui.$('#chat-flow').empty();
+            layui.flow.reload('chat-flow');
+        }
+        , asFlow: function (data, callback) {
+            if (!data) return;
+            typeof callback === 'function' && callback(`
+                <div class="layuiadmin-card-text">
+                    <div class="layui-text-top">
+                        <i class="layui-icon layui-icon-dialogue"></i>
+                    </div>
+                    <p class="layui-text-center" lay-tips="${data.content}">${data.content}</p>
+                    <p class="layui-text-bottom">
+                        <a href="javascript:" class="layui-icon layui-icon-edit"></a>
+                        <a href="javascript:" class="layui-icon layui-icon-delete" style="color: red;"></a>
+                        <span class="layui-icon layui-icon-time" lay-tips="${data.timestamp}">${layui.util.timeAgo(data.timestamp)}</span>
+                    </p>
+                </div>
+            `);
+            layui.$(`#chat-${data.conversationId}`).find('.layui-text-center').on('click', () => {
+                this.asChat(data.conversationId);
+            });
+            layui.$(`#chat-${data.conversationId}`).find('.layui-icon-edit').on('click', () => {
+                this.asUpdate(data.conversationId);
+            });
+            layui.$(`#chat-${data.conversationId}`).find('.layui-icon-delete').on('click', () => {
+                this.asDelete(data.conversationId);
+            });
+        }
+        , asMike: function (callback, end) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) return layui.layer.msg('当前浏览器不支持语音识别');
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'zh-CN';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.maxAlternatives = 1;
+            let loading;
+            recognition.onstart = function () {
+                loading = layui.layer.load(2, {
+                    time: 0, shade: 0.1, shadeClose: true
+                    , content: `<span style="position:absolute;left:-35px;width:150px;">语音识别中...<span>`
+                    , end: function () {
+                        recognition.stop();
+                        typeof end === 'function' && end();
+                    }
+                });
+            }
+            recognition.onend = function () {
+                layui.layer.close(loading);
+                typeof end === 'function' && end();
+            }
+            recognition.onerror = function (event) {
+                layui.layer.close(loading);
+                layui.layer.msg(`语音识别错误：${event.error}`);
+                typeof end === 'function' && end();
+            }
+            recognition.onresult = function (event) {
+                const text = Array.from(event.results).map(result => result[0].transcript).join('');
+                typeof callback === 'function' && callback(text);
+            }
+            recognition.start();
         }
         , asChatInit: function (data) {
             layui.$(data.elem).find('.layim-chat-tool').empty().html(`
@@ -218,92 +291,33 @@ layui.define(['layim', 'common'], function (exports) {
             }
         }
         , asBackgroundImage: function (data) {
+            if (layui.$('.layui-layim-chat').length === 0) this.asChat();
             layui.$('.layui-layim-chat').css({
                 'background-image': data.src ? 'url(' + data.src + ')' : 'none'
             });
         }
-        , asMike: function (callback, end) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) return layui.layer.msg('当前浏览器不支持语音识别');
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'zh-CN';
-            recognition.continuous = true;
-            recognition.interimResults = true;
-            recognition.maxAlternatives = 1;
-            let loading;
-            recognition.onstart = function () {
-                loading = layui.layer.load(2, {
-                    time: 0, shade: 0.1, shadeClose: true
-                    , content: `<span style="position:absolute;left:-35px;width:150px;">语音识别中...<span>`
-                    , end: function () {
-                        recognition.stop();
-                        typeof end === 'function' && end();
-                    }
-                });
-            }
-            recognition.onend = function () {
-                layui.layer.close(loading);
-                typeof end === 'function' && end();
-            }
-            recognition.onerror = function (event) {
-                layui.layer.close(loading);
-                layui.layer.msg(`语音识别错误：${event.error}`);
-                typeof end === 'function' && end();
-            }
-            recognition.onresult = function (event) {
-                const text = Array.from(event.results).map(result => result[0].transcript).join('');
-                typeof callback === 'function' && callback(text);
-            }
-            recognition.start();
+        , asChatFlow: function (data, callback) {
+            if (!data || layui.$(`#chat-${data.conversationId}`).length > 0) return;
+            this.asFlow(data, (html) => {
+                typeof callback === 'function' && callback(`
+                    <div id="chat-${data.conversationId}" class="layui-col-xs6 layui-col-sm4 layui-col-md3 layui-col-lg3 layui-col-xl2">
+                        ${html}
+                    </div>
+                `);
+            });
         }
-        , asFlow: function (page, next) {
-            layui.common.req(`${config.base}ai/chat/all?page=${page - 1}&limit=24`, 'GET', null, {
+        , asChatFlows: function (page, limit, next, callback) {
+            layui.common.req(`${config.base}ai/chat/all?page=${page}&limit=${limit}`, 'GET', null, {
                 done: (data) => {
                     data.data.forEach((item) => {
-                        next(`
-                            <div class="layui-col-xs6 layui-col-sm4 layui-col-md3 layui-col-lg3 layui-col-xl2">
-                              <div class="layuiadmin-card-text">
-                                <div class="layui-text-top">
-                                  <i class="layui-icon layui-icon-dialogue"></i>
-                                </div>
-                                <p class="layui-text-center" id="chat-${item.conversationId}" lay-tips="${item.content}">${item.content}</p>
-                                <p class="layui-text-bottom">
-                                  <a id="chat-more-${item.conversationId}" href="javascript:" class="layui-icon layui-icon-more"></a>
-                                  <span lay-tips="${item.timestamp}">${layui.util.timeAgo(item.timestamp)}</span>
-                                </p>
-                              </div>
-                            </div>`, data.count > 0);
-                        layui.$(`#chat-${item.conversationId}`).on('click', () => {
-                            this.asChat(item.conversationId);
-                        });
-                        layui.dropdown.render({
-                            elem: `#chat-more-${item.conversationId}`
-                            , data: [
-                                {
-                                    id: `${item.conversationId}`, title: 'update'
-                                    , templet: '<span><i class="layui-icon layui-icon-edit"></i> 重命名</span>'
-                                }
-                                , {
-                                    id: `${item.conversationId}`, title: 'delete'
-                                    , templet: '<span style="color: red;"><i class="layui-icon layui-icon-delete"></i> 删除</span>'
-                                }]
-                            , click: (data) => {
-                                if (data.title === 'update') {
-                                    this.asUpdate(data.id)
-                                }
-                                if (data.title === 'delete') {
-                                    this.asDelete(data.id)
-                                }
-                            }
+                        this.asChatFlow(item, (html) => {
+                            next(html, data.count > 0);
                         });
                     });
                     next('', data.count > 0);
+                    typeof callback === 'function' && callback();
                 }
             });
-        }
-        , asReload: function () {
-            layui.$('#chat-flow').empty();
-            layui.flow.reload('chat-flow');
         }
     });
 });

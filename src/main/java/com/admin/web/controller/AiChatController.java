@@ -80,15 +80,15 @@ public class AiChatController extends BaseController {
     @SysLog("AI对话重命名")
     @SysPermissions(SysLogin.class)
     @PutMapping("/{conversationId}")
-    public ServerResponse<?> update(@PathVariable String conversationId, @RequestBody String content) {
-        this.sysUserChatService.update(super.getSysUser(), conversationId, content);
-        return ServerResponse.ok();
+    public ServerResponse<SysUserChat> update(@PathVariable String conversationId, @RequestBody String content) {
+        SysUserChat sysUserChat = this.sysUserChatService.update(super.getSysUser(), conversationId, content);
+        return ServerResponse.ok(sysUserChat);
     }
 
     @SysLog("AI对话删除")
     @SysPermissions(SysLogin.class)
     @DeleteMapping("/{conversationId}")
-    public ServerResponse<?> delete(@PathVariable String conversationId) {
+    public ServerResponse<Void> delete(@PathVariable String conversationId) {
         this.sysUserChatService.delete(super.getSysUser(), conversationId);
         return ServerResponse.ok();
     }

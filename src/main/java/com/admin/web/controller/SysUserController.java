@@ -25,7 +25,7 @@ public class SysUserController extends BaseController {
 
     @SysLog("用户登录")
     @PostMapping("/login.json")
-    public ServerResponse<?> login(@RequestBody @Validated UserLoginVo vo) {
+    public ServerResponse<SessionVo> login(@RequestBody @Validated UserLoginVo vo) {
         SysUser sysUser = this.sysUserService.login(vo, super.getSysCode());
         super.setSysUser(sysUser);
         super.setSysCode(null);
@@ -33,7 +33,7 @@ public class SysUserController extends BaseController {
     }
 
     @GetMapping("/logout.json")
-    public ServerResponse<?> logout() {
+    public ServerResponse<Void> logout() {
         super.setSysUser(null);
         super.setSysCode(null);
         return ServerResponse.ok();
@@ -41,7 +41,7 @@ public class SysUserController extends BaseController {
 
     @SysPermissions(SysLogin.class)
     @PostMapping("/unlock.json")
-    public ServerResponse<?> unlock(@RequestBody SysUser sysUser) {
+    public ServerResponse<Void> unlock(@RequestBody SysUser sysUser) {
         this.sysUserService.unlock(sysUser);
         return ServerResponse.ok();
     }
@@ -78,7 +78,7 @@ public class SysUserController extends BaseController {
     @SysLog("删除用户")
     @SysPermissions
     @DeleteMapping("/delete.json")
-    public ServerResponse<?> delete(@RequestBody Long id) {
+    public ServerResponse<Void> delete(@RequestBody Long id) {
         this.sysUserService.delete(id);
         return ServerResponse.ok();
     }
@@ -86,7 +86,7 @@ public class SysUserController extends BaseController {
     @SysLog("修改密码")
     @SysPermissions
     @PutMapping("/pass.json")
-    public ServerResponse<?> pass(@RequestBody @Validated UserPassVo vo) {
+    public ServerResponse<Void> pass(@RequestBody @Validated UserPassVo vo) {
         this.sysUserService.pass(vo);
         return ServerResponse.ok();
     }
@@ -94,7 +94,7 @@ public class SysUserController extends BaseController {
     @SysLog("重置密码")
     @SysPermissions
     @PutMapping("/reset.json")
-    public ServerResponse<?> reset(@RequestBody Long id) {
+    public ServerResponse<Void> reset(@RequestBody Long id) {
         this.sysUserService.reset(id);
         return ServerResponse.ok();
     }

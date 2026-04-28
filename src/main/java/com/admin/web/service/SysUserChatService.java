@@ -53,12 +53,15 @@ public class SysUserChatService {
         this.sysUserChatRepository.save(sysUserChat);
     }
 
-    public void update(SysUser sysUser, String conversationId, String content) {
+    public SysUserChat update(SysUser sysUser, String conversationId, String content) {
         SysUserChat sysUserChat = Optional.ofNullable(this.sysUserChatRepository.findByUsernameAndConversationId(sysUser.getUsername(), conversationId))
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
+        if (Objects.equals(sysUserChat.getContent(), content)) {
+            return sysUserChat;
+        }
         sysUserChat.setContent(content);
         sysUserChat.setTimestamp(LocalDateTime.now());
-        this.sysUserChatRepository.save(sysUserChat);
+        return this.sysUserChatRepository.save(sysUserChat);
     }
 
     @Transactional(rollbackFor = Exception.class)

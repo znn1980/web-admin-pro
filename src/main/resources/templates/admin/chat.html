@@ -48,11 +48,10 @@
                     if (type === 'delete') layui.chat.asDelete();
                 }
                 , mouseenter: function (type) {
-                    let tips;
-                    if (type === 'chat') tips = '新对话';
-                    if (type === 'set') tips = '设置';
-                    if (type === 'delete') tips = '删除';
-                    layui.layer.tips(tips, this, {tips: 4, fixed: true});
+                    layui.layer.tips(type === 'chat'
+                        ? '新对话' : type === 'set'
+                            ? '设置' : type === 'delete'
+                                ? '删除' : '', this, {tips: 4, fixed: true});
                 }
                 , mouseleave: function (type) {
                     layui.layer.closeAll('tips');
@@ -63,7 +62,9 @@
         layui.flow.load({
             elem: '#chat-flow'
             , done: function (page, next) {
-                layui.chat.asFlow(page, next)
+                layui.chat.asChatFlows(page - 1, 24, next, function () {
+                    if (layui.$('#chat-flow').find('[id^=\'chat-\']').length === 0) layui.chat.asChat();
+                });
             }
         });
 
@@ -82,10 +83,6 @@
         layui.layim.on('backgroundImage', function (data) {
             layui.chat.asBackgroundImage(data);
         });
-        window.setTimeout(function () {
-            layui.chat.asChat();
-        }, 100)
-
     });
 </script>
 </body>

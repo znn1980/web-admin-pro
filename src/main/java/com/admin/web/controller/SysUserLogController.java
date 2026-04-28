@@ -39,7 +39,7 @@ public class SysUserLogController extends BaseController {
 
     @SysPermissions
     @DeleteMapping("/delete.json")
-    public ServerResponse<?> delete(@RequestBody List<Long> id) {
+    public ServerResponse<Void> delete(@RequestBody List<Long> id) {
         this.sysUserLogService.delete(id);
         return ServerResponse.ok();
     }

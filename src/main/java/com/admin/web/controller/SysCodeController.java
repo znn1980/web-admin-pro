@@ -20,7 +20,7 @@ public class SysCodeController extends BaseController {
         this.sysCodeService = sysCodeService;
     }
 
-    @GetMapping("/sys/code.jpeg")
+    @GetMapping("/sys/code.jpg")
     public ResponseEntity<StreamingResponseBody> sysCode() {
         SysCode sysCode = this.sysCodeService.sysCode();
         super.setSysCode(sysCode.code());
