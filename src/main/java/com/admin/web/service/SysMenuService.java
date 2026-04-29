@@ -31,11 +31,11 @@ public class SysMenuService {
     }
 
     public List<SysMenu> all(SysUser sysUser) {
-        if (SecurityUtils.isSuperAdmin(sysUser)) {
+        if (SecurityUtils.hasSuperAdmin(sysUser)) {
             //超级管理员可以看到所有菜单
             return this.sysMenuRepository.findBySysMenuOrderBySort(true);
         }
-        if (SecurityUtils.isSysAdmin(sysUser)) {
+        if (SecurityUtils.hasSysAdmin(sysUser)) {
             //普通管理员可以看到所有权限菜单，但是禁用的菜单任然不能操作
             return this.sysMenuRepository.findByUserIdOrderBySort(sysUser.getId());
         }

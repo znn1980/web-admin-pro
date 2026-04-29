@@ -66,6 +66,40 @@ layui.define(['layim', 'common'], function (exports) {
                 }
             });
         }
+        , asMike: function (callback, end) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) return layui.layer.msg('当前浏览器不支持语音识别');
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'zh-CN';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.maxAlternatives = 1;
+            let loading;
+            recognition.onstart = function () {
+                loading = layui.layer.load(2, {
+                    time: 0, shade: 0.1, shadeClose: true
+                    , content: `<span style="position:absolute;left:-35px;width:150px;">语音识别中...<span>`
+                    , end: function () {
+                        recognition.stop();
+                        typeof end === 'function' && end();
+                    }
+                });
+            }
+            recognition.onend = function () {
+                layui.layer.close(loading);
+                typeof end === 'function' && end();
+            }
+            recognition.onerror = function (event) {
+                layui.layer.close(loading);
+                layui.layer.msg(`语音识别错误：${event.error}`);
+                typeof end === 'function' && end();
+            }
+            recognition.onresult = function (event) {
+                const text = Array.from(event.results).map(result => result[0].transcript).join('');
+                typeof callback === 'function' && callback(text);
+            }
+            recognition.start();
+        }
         , asUpdate: function (id) {
             layui.common.req(`${config.base}ai/chat/${id}`, 'GET', null, {
                 done: (data) => {
@@ -137,39 +171,28 @@ layui.define(['layim', 'common'], function (exports) {
                 this.asDelete(data.conversationId);
             });
         }
-        , asMike: function (callback, end) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) return layui.layer.msg('当前浏览器不支持语音识别');
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'zh-CN';
-            recognition.continuous = true;
-            recognition.interimResults = true;
-            recognition.maxAlternatives = 1;
-            let loading;
-            recognition.onstart = function () {
-                loading = layui.layer.load(2, {
-                    time: 0, shade: 0.1, shadeClose: true
-                    , content: `<span style="position:absolute;left:-35px;width:150px;">语音识别中...<span>`
-                    , end: function () {
-                        recognition.stop();
-                        typeof end === 'function' && end();
-                    }
-                });
-            }
-            recognition.onend = function () {
-                layui.layer.close(loading);
-                typeof end === 'function' && end();
-            }
-            recognition.onerror = function (event) {
-                layui.layer.close(loading);
-                layui.layer.msg(`语音识别错误：${event.error}`);
-                typeof end === 'function' && end();
-            }
-            recognition.onresult = function (event) {
-                const text = Array.from(event.results).map(result => result[0].transcript).join('');
-                typeof callback === 'function' && callback(text);
-            }
-            recognition.start();
+        , asChatFlow: function (data, callback) {
+            if (!data || layui.$(`#chat-${data.conversationId}`).length > 0) return;
+            this.asFlow(data, (html) => {
+                typeof callback === 'function' && callback(`
+                    <div id="chat-${data.conversationId}" class="layui-col-xs6 layui-col-sm4 layui-col-md3 layui-col-lg3 layui-col-xl2">
+                        ${html}
+                    </div>
+                `);
+            });
+        }
+        , asChatFlows: function (page, limit, next, callback) {
+            layui.common.req(`${config.base}ai/chat/all?page=${page}&limit=${limit}`, 'GET', null, {
+                done: (data) => {
+                    data.data.forEach((item) => {
+                        this.asChatFlow(item, (html) => {
+                            next(html, data.count > 0);
+                        });
+                    });
+                    next('', data.count > 0);
+                    typeof callback === 'function' && callback();
+                }
+            });
         }
         , asChatInit: function (data) {
             layui.$(data.elem).find('.layim-chat-tool').empty().html(`
@@ -294,29 +317,6 @@ layui.define(['layim', 'common'], function (exports) {
             if (layui.$('.layui-layim-chat').length === 0) this.asChat();
             layui.$('.layui-layim-chat').css({
                 'background-image': data.src ? 'url(' + data.src + ')' : 'none'
-            });
-        }
-        , asChatFlow: function (data, callback) {
-            if (!data || layui.$(`#chat-${data.conversationId}`).length > 0) return;
-            this.asFlow(data, (html) => {
-                typeof callback === 'function' && callback(`
-                    <div id="chat-${data.conversationId}" class="layui-col-xs6 layui-col-sm4 layui-col-md3 layui-col-lg3 layui-col-xl2">
-                        ${html}
-                    </div>
-                `);
-            });
-        }
-        , asChatFlows: function (page, limit, next, callback) {
-            layui.common.req(`${config.base}ai/chat/all?page=${page}&limit=${limit}`, 'GET', null, {
-                done: (data) => {
-                    data.data.forEach((item) => {
-                        this.asChatFlow(item, (html) => {
-                            next(html, data.count > 0);
-                        });
-                    });
-                    next('', data.count > 0);
-                    typeof callback === 'function' && callback();
-                }
             });
         }
     });

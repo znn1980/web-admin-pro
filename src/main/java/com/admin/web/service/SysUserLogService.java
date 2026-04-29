@@ -62,7 +62,7 @@ public class SysUserLogService {
         SysUserLog logs = new SysUserLog();
         logs.setUsername(Objects.requireNonNullElse(
                 SecurityUtils.getSysUser(WebUtils.getRequest()),
-                SecurityUtils.getSysUser()
+                SecurityUtils.getSuperAdmin()
         ).getUsername());
         logs.setIp(WebUtils.getClientIp(WebUtils.getRequest()));
         logs.setOs(UserAgentUtils.getOs(UserAgentUtils.getUserAgent(WebUtils.getRequest())));

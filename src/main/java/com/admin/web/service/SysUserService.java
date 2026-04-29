@@ -47,19 +47,18 @@ public class SysUserService {
         SysUser sysUser = Optional.ofNullable(this.sysUserRepository.findByUsername(vo.username()))
                 .orElseGet(() -> Optional.ofNullable(this.sysUserRepository.findByPhone(vo.username()))
                         .orElseGet(() -> this.sysUserRepository.findByEmail(vo.username())));
-        if (Objects.isNull(sysUser) || !Objects.equals(sysUser.getPassword()
-                , SecurityUtils.hexPassword(vo.password()))) {
-            throw new ServerResponseException("登录失败，请检查用户名密码是否正确！");
-        }
-        if (!SecurityUtils.isSuperAdmin(sysUser) && sysUser.isDisable()) {
+
+        if (!SecurityUtils.hasSuperAdmin(sysUser) && sysUser.isDisable()) {
             throw new ServerResponseException("账号未启用，请联系管理员！");
+        }
+        if (!SecurityUtils.hasPassword(sysUser, vo.password())) {
+            throw new ServerResponseException("登录失败，请检查用户名密码是否正确！");
         }
         return sysUser;
     }
 
     public void unlock(SysUser sysUser) {
-        if (!Objects.equals(this.getSysUser().getPassword()
-                , SecurityUtils.hexPassword(sysUser.getPassword()))) {
+        if (!SecurityUtils.hasPassword(this.getSysUser(), sysUser.getPassword())) {
             throw new ServerResponseException("密码输入不正确！");
         }
     }
@@ -74,7 +73,7 @@ public class SysUserService {
     }
 
     public void create(SysUser sysUser) {
-        if (!SecurityUtils.isSuperAdmin(this.getSysUser()) && sysUser.isSysAdmin()) {
+        if (!SecurityUtils.hasSuperAdmin(this.getSysUser()) && sysUser.isSysAdmin()) {
             throw new ServerResponseException("您不是超级管理员，不能创建管理员用户！");
         }
         if (Objects.nonNull(this.sysUserRepository.findByUsername(sysUser.getUsername()))) {
@@ -93,13 +92,13 @@ public class SysUserService {
     public SysUser update(SysUser sysUser) {
         SysUser oldSysUser = this.sysUserRepository.findById(sysUser.getId())
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
-        if (!SecurityUtils.isSuperAdmin(this.getSysUser()) && SecurityUtils.isSuperAdmin(oldSysUser)) {
+        if (!SecurityUtils.hasSuperAdmin(this.getSysUser()) && SecurityUtils.hasSuperAdmin(oldSysUser)) {
             throw new ServerResponseException("您不是超级管理员，不能修改超级管理员的信息！");
         }
-        if (!SecurityUtils.isSuperAdmin(this.getSysUser()) && !Objects.equals(oldSysUser.isSysAdmin(), sysUser.isSysAdmin())) {
+        if (!SecurityUtils.hasSuperAdmin(this.getSysUser()) && !Objects.equals(oldSysUser.isSysAdmin(), sysUser.isSysAdmin())) {
             throw new ServerResponseException("您不是超级管理员，不能修改管理员状态！");
         }
-        if (!SecurityUtils.isSysAdmin(this.getSysUser()) && SecurityUtils.isSysAdmin(oldSysUser)) {
+        if (!SecurityUtils.hasSysAdmin(this.getSysUser()) && SecurityUtils.hasSysAdmin(oldSysUser)) {
             throw new ServerResponseException("您不是管理员，不能修改管理员的信息！");
         }
         if (!Objects.equals(oldSysUser.isSysAdmin(), sysUser.isSysAdmin())
@@ -132,7 +131,7 @@ public class SysUserService {
         if (Objects.equals(this.getSysUser().getId(), sysUser.getId())) {
             throw new ServerResponseException("不能删除自己！");
         }
-        if (SecurityUtils.isSuperAdmin(sysUser)) {
+        if (SecurityUtils.hasSuperAdmin(sysUser)) {
             throw new ServerResponseException("超级管理员不能删除！");
         }
         this.sysUserRepository.deleteById(id);
@@ -147,7 +146,7 @@ public class SysUserService {
         }
         SysUser sysUser = this.sysUserRepository.findById(this.getSysUser().getId())
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
-        if (!Objects.equals(sysUser.getPassword(), SecurityUtils.hexPassword(vo.oldPassword()))) {
+        if (!SecurityUtils.hasPassword(sysUser, vo.oldPassword())) {
             throw new ServerResponseException("原密码输入不正确！");
         }
         sysUser.setPassTimestamp(LocalDateTime.now());
@@ -161,7 +160,7 @@ public class SysUserService {
         if (Objects.equals(this.getSysUser().getId(), sysUser.getId())) {
             throw new ServerResponseException("不能重置自己的密码！");
         }
-        if (SecurityUtils.isSuperAdmin(sysUser)) {
+        if (SecurityUtils.hasSuperAdmin(sysUser)) {
             throw new ServerResponseException("超级管理员的密码不能重置！");
         }
         sysUser.setPassword(SecurityUtils.hexPassword(sysUser));
@@ -171,7 +170,7 @@ public class SysUserService {
     public void hasPermissions(SysPermissions sysPermissions) {
         SysUser sysUser = Optional.ofNullable(this.getSysUser())
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.LOGOUT));
-        if (!SecurityUtils.isSuperAdmin(sysUser)
+        if (!SecurityUtils.hasSuperAdmin(sysUser)
                 && !Arrays.asList(sysPermissions.value()).contains(SysLogin.class)) {
             if (!this.hasPermissions(this.sysUserRepository.findById(sysUser.getId()).orElseThrow(() ->
                     new ServerResponseException(ResponseCode.NOT_FOUND)).getRoles())) {

@@ -22,7 +22,7 @@ public class AuditorAwareConfiguration {
         return () -> Optional.of(
                 Objects.requireNonNullElse(
                         SecurityUtils.getSysUser(WebUtils.getRequest()),
-                        SecurityUtils.getSysUser()
+                        SecurityUtils.getSuperAdmin()
                 ).getUsername()
         );
     }

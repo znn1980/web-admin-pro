@@ -61,7 +61,7 @@ public class SysNoticeService {
         SysNotice sysNotice = this.sysNoticeRepository.findById(id)
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         if (!Objects.equals(sysNotice.getCreateUsername(), sysUser.getUsername())
-                && !SecurityUtils.isSuperAdmin(sysUser) && sysNotice.isDisable()) {
+                && !SecurityUtils.hasSuperAdmin(sysUser) && sysNotice.isDisable()) {
             throw new ServerResponseException("您不能查看已禁用通知公告！");
         }
         Set<SysUser> sysUsers = sysNotice.getUsers();
@@ -79,7 +79,7 @@ public class SysNoticeService {
     public void update(SysNotice sysNotice, SysUser sysUser) {
         SysNotice oldSysNotice = this.sysNoticeRepository.findById(sysNotice.getId())
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
-        if (!SecurityUtils.isSuperAdmin(sysUser)
+        if (!SecurityUtils.hasSuperAdmin(sysUser)
                 && !Objects.equals(oldSysNotice.getCreateUsername(), sysUser.getUsername())) {
             throw new ServerResponseException("您只能修改自己发布的通知公告！");
         }
@@ -92,7 +92,7 @@ public class SysNoticeService {
     public void delete(Long id, SysUser sysUser) {
         SysNotice sysNotice = this.sysNoticeRepository.findById(id)
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
-        if (!SecurityUtils.isSuperAdmin(sysUser)
+        if (!SecurityUtils.hasSuperAdmin(sysUser)
                 && !Objects.equals(sysNotice.getCreateUsername(), sysUser.getUsername())) {
             throw new ServerResponseException("您只能删除自己发布的通知公告！");
         }
