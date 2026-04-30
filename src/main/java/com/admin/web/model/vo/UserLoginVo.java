@@ -13,4 +13,10 @@ public record UserLoginVo(
         @NotBlank(message = "验证码不能为空！")
         String sysCode
 ) {
+    @SuppressWarnings("NullableProblems")
+    @Override
+    public String toString() {
+        return String.format("UserLoginVo[username=%s, password=******, sysCode=%s]"
+                , this.username(), this.sysCode());
+    }
 }

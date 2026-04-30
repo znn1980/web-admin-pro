@@ -18,4 +18,9 @@ public record UserPassVo(
         @NotBlank(message = "确认密码不能为空！")
         String confirmPassword
 ) {
+    @SuppressWarnings("NullableProblems")
+    @Override
+    public String toString() {
+        return "UserPassVo[oldPassword=******, newPassword=******, confirmPassword=******]";
+    }
 }
