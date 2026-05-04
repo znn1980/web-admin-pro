@@ -20,9 +20,8 @@ spring:
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
+    generate-ddl: true
     show-sql: true
-    hibernate:
-      ddl-auto: update
     open-in-view: true
   session:
     jdbc:

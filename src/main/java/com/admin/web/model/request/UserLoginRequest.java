@@ -16,7 +16,7 @@ public record UserLoginRequest(
     @SuppressWarnings("NullableProblems")
     @Override
     public String toString() {
-        return String.format("LoginRequest[username=%s, password=******, sysCode=%s]"
+        return String.format("UserLoginRequest[username=%s, password=******, sysCode=%s]"
                 , this.username(), this.sysCode());
     }
 }

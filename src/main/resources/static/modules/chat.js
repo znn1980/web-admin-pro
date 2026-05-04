@@ -182,7 +182,7 @@ layui.define(['layim', 'common'], function (exports) {
             });
         }
         , asChatFlows: function (page, limit, next, callback) {
-            layui.common.req(`${config.base}ai/chat/all?page=${page}&limit=${limit}`, 'GET', null, {
+            layui.common.req(`${config.base}ai/chat/all`, 'POST', {page: page, limit: limit}, {
                 done: (data) => {
                     data.data.forEach((item) => {
                         this.asChatFlow(item, (html) => {

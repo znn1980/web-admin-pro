@@ -21,6 +21,6 @@ public record UserPassRequest(
     @SuppressWarnings("NullableProblems")
     @Override
     public String toString() {
-        return "UserPassVo[oldPassword=******, newPassword=******, confirmPassword=******]";
+        return "UserPassRequest[oldPassword=******, newPassword=******, confirmPassword=******]";
     }
 }

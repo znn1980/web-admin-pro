@@ -5,15 +5,16 @@ import com.admin.web.annotation.SysLogin;
 import com.admin.web.annotation.SysPermissions;
 import com.admin.web.model.ChatMemory;
 import com.admin.web.model.request.ChatRequest;
+import com.admin.web.model.request.PageRequest;
 import com.admin.web.model.response.ServerResponse;
 import com.admin.web.model.entity.SysUserChat;
 import com.admin.web.service.SysUserChatService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.openai.OpenAiChatOptions;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
@@ -63,10 +64,10 @@ public class AiChatController extends BaseController {
     }
 
     @SysPermissions(SysLogin.class)
-    @GetMapping("/all")
-    public ServerResponse<List<SysUserChat>> all(@RequestParam Integer page, @RequestParam Integer limit) {
+    @PostMapping("/all")
+    public ServerResponse<List<SysUserChat>> all(@RequestBody @Validated PageRequest request) {
         Slice<SysUserChat> sysUserChats = this.sysUserChatService
-                .findByUsername(super.getSysUser(), PageRequest.of(page, limit));
+                .findByUsername(super.getSysUser(), request);
         return ServerResponse.ok(sysUserChats.hasNext() ? 1L : 0L, sysUserChats.getContent());
     }
 
