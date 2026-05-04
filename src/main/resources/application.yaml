@@ -15,10 +15,9 @@ spring:
     name: ${config.name}
     version: ${config.version}
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/web-admin-pro
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:postgresql://127.0.0.1:5432/web-admin-pro
+    username: postgres
+    password: postgres
   jpa:
     generate-ddl: true
     show-sql: true
