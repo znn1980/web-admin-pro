@@ -82,6 +82,25 @@ layui.define(function (exports) {
             return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
                 (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
             );
+        }, asFlatToTree: function (data, options) {
+            options = Object.assign({idKey: 'id', parentKey: 'parentId', childrenKey: 'children'}, options);
+            data = JSON.parse(JSON.stringify(data));
+            const map = data.reduce(function (acc, curr) {
+                const id = curr[options.idKey];
+                acc[id] = curr;
+                acc[id][options.childrenKey] = [];
+                return acc;
+            }, {});
+            return data.reduce(function (acc, curr) {
+                const id = curr[options.idKey];
+                const parentId = curr[options.parentKey];
+                if (parentId === null || !map[parentId]) {
+                    acc.push(map[id]);
+                } else {
+                    map[parentId][options.childrenKey].push(curr);
+                }
+                return acc;
+            }, []);
         }
     });
 });

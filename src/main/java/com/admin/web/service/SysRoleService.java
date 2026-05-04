@@ -2,10 +2,10 @@ package com.admin.web.service;
 
 import com.admin.web.repository.SysRoleRepository;
 import com.admin.web.exception.ServerResponseException;
-import com.admin.web.model.SysRole;
+import com.admin.web.model.entity.SysRole;
 import com.admin.web.model.enums.Move;
 import com.admin.web.model.enums.ResponseCode;
-import com.admin.web.model.vo.MoveVo;
+import com.admin.web.model.request.MoveRequest;
 import com.admin.web.utils.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,11 +31,11 @@ public class SysRoleService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void move(MoveVo vo) {
-        SysRole sysRole = this.sysRoleRepository.findById(vo.id())
+    public void move(MoveRequest request) {
+        SysRole sysRole = this.sysRoleRepository.findById(request.id())
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         List<SysRole> sysRoles = this.sysRoleRepository.findByOrderBySort();
-        boolean isUp = Objects.equals(Move.UP, vo.move());
+        boolean isUp = Objects.equals(Move.UP, request.move());
         int index = IntStream.range(0, sysRoles.size())
                 .filter(i -> Objects.equals(sysRole.getId(), sysRoles.get(i).getId()))
                 .findFirst().orElse(-1);

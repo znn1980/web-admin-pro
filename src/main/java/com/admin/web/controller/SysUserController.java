@@ -1,9 +1,12 @@
 package com.admin.web.controller;
 
 import com.admin.web.annotation.*;
-import com.admin.web.model.ServerResponse;
-import com.admin.web.model.SysUser;
-import com.admin.web.model.vo.*;
+import com.admin.web.model.SysSession;
+import com.admin.web.model.request.UserLoginRequest;
+import com.admin.web.model.request.PageRequest;
+import com.admin.web.model.request.UserPassRequest;
+import com.admin.web.model.response.ServerResponse;
+import com.admin.web.model.entity.SysUser;
 import com.admin.web.service.SysUserService;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
@@ -25,11 +28,11 @@ public class SysUserController extends BaseController {
 
     @SysLog("用户登录")
     @PostMapping("/login.json")
-    public ServerResponse<SessionVo> login(@RequestBody @Validated UserLoginVo vo) {
-        SysUser sysUser = this.sysUserService.login(vo, super.getSysCode());
+    public ServerResponse<SysSession> login(@RequestBody @Validated UserLoginRequest request) {
+        SysUser sysUser = this.sysUserService.login(request, super.getSysCode());
         super.setSysUser(sysUser);
         super.setSysCode(null);
-        return ServerResponse.ok(new SessionVo(super.getSessionId()));
+        return ServerResponse.ok(new SysSession(super.getSessionId()));
     }
 
     @GetMapping("/logout.json")
@@ -55,8 +58,8 @@ public class SysUserController extends BaseController {
 
     @SysPermissions
     @PostMapping("/all.json")
-    public ServerResponse<List<SysUser>> all(@RequestBody @Validated PageVo vo) {
-        Page<SysUser> sysUsers = this.sysUserService.all(vo);
+    public ServerResponse<List<SysUser>> all(@RequestBody @Validated PageRequest request) {
+        Page<SysUser> sysUsers = this.sysUserService.all(request);
         return ServerResponse.ok(sysUsers.getTotalElements(), sysUsers.getContent());
     }
 
@@ -86,8 +89,8 @@ public class SysUserController extends BaseController {
     @SysLog("修改密码")
     @SysPermissions
     @PutMapping("/pass.json")
-    public ServerResponse<Void> pass(@RequestBody @Validated UserPassVo vo) {
-        this.sysUserService.pass(vo);
+    public ServerResponse<Void> pass(@RequestBody @Validated UserPassRequest request) {
+        this.sysUserService.pass(request);
         return ServerResponse.ok();
     }
 

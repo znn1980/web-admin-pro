@@ -1,4 +1,4 @@
-package com.admin.web.model;
+package com.admin.web.model.response;
 
 import com.admin.web.model.enums.ResponseCode;
 import org.springframework.validation.BindingResult;

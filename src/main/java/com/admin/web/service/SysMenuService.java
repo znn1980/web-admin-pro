@@ -2,11 +2,11 @@ package com.admin.web.service;
 
 import com.admin.web.repository.SysMenuRepository;
 import com.admin.web.exception.ServerResponseException;
-import com.admin.web.model.SysMenu;
-import com.admin.web.model.SysUser;
+import com.admin.web.model.entity.SysMenu;
+import com.admin.web.model.entity.SysUser;
 import com.admin.web.model.enums.Move;
 import com.admin.web.model.enums.ResponseCode;
-import com.admin.web.model.vo.MoveVo;
+import com.admin.web.model.request.MoveRequest;
 import com.admin.web.utils.BeanUtils;
 import com.admin.web.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
@@ -44,14 +44,14 @@ public class SysMenuService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void move(MoveVo vo) {
-        SysMenu sysMenu = this.sysMenuRepository.findById(vo.id())
+    public void move(MoveRequest request) {
+        SysMenu sysMenu = this.sysMenuRepository.findById(request.id())
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         List<SysMenu> sysMenus = this.sysMenuRepository.findByPidOrderBySort(sysMenu.getPid());
         int index = IntStream.range(0, sysMenus.size())
                 .filter(i -> Objects.equals(sysMenu.getId(), sysMenus.get(i).getId()))
                 .findFirst().orElse(-1);
-        boolean isUp = Objects.equals(Move.UP, vo.move());
+        boolean isUp = Objects.equals(Move.UP, request.move());
         if (index == -1 || (isUp ? index <= 0 : index >= sysMenus.size() - 1)) {
             return;
         }

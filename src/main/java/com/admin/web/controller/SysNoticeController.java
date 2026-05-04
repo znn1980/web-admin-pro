@@ -1,9 +1,9 @@
 package com.admin.web.controller;
 
 import com.admin.web.annotation.*;
-import com.admin.web.model.ServerResponse;
-import com.admin.web.model.SysNotice;
-import com.admin.web.model.vo.NoticeVo;
+import com.admin.web.model.response.ServerResponse;
+import com.admin.web.model.entity.SysNotice;
+import com.admin.web.model.request.NoticeRequest;
 import com.admin.web.service.SysNoticeService;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
@@ -25,8 +25,8 @@ public class SysNoticeController extends BaseController {
 
     @SysPermissions(SysLogin.class)
     @PostMapping("/all.json")
-    public ServerResponse<List<SysNotice>> all(@RequestBody @Validated NoticeVo vo) {
-        Page<SysNotice> sysNotices = this.sysNoticeService.all(vo, super.getSysUser());
+    public ServerResponse<List<SysNotice>> all(@RequestBody @Validated NoticeRequest request) {
+        Page<SysNotice> sysNotices = this.sysNoticeService.all(request, super.getSysUser());
         return ServerResponse.ok(sysNotices.getTotalElements(), sysNotices.getContent());
     }
 

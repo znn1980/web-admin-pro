@@ -1,6 +1,6 @@
 package com.admin.web.controller;
 
-import com.admin.web.model.SysUser;
+import com.admin.web.model.entity.SysUser;
 import com.admin.web.utils.SecurityUtils;
 import com.admin.web.utils.WebUtils;
 import jakarta.servlet.http.HttpServletRequest;

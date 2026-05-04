@@ -1,4 +1,4 @@
-package com.admin.web.model.vo;
+package com.admin.web.model.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 /**
  * @author znn
  */
-public record UserPassVo(
+public record UserPassRequest(
         @NotBlank(message = "旧密码不能为空！")
         String oldPassword,
         @NotBlank(message = "新密码不能为空！")

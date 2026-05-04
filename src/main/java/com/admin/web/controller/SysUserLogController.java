@@ -2,8 +2,9 @@ package com.admin.web.controller;
 
 import com.admin.web.annotation.SysLogin;
 import com.admin.web.annotation.SysPermissions;
-import com.admin.web.model.*;
-import com.admin.web.model.vo.UserLogVo;
+import com.admin.web.model.entity.SysUserLog;
+import com.admin.web.model.response.ServerResponse;
+import com.admin.web.model.request.UserLogRequest;
 import com.admin.web.service.SysUserLogService;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
@@ -25,15 +26,15 @@ public class SysUserLogController extends BaseController {
 
     @SysPermissions(SysLogin.class)
     @PostMapping("/me.json")
-    public ServerResponse<List<SysUserLog>> me(@RequestBody @Validated UserLogVo vo) {
-        Page<SysUserLog> logs = this.sysUserLogService.all(vo.username(super.getSysUser().getUsername()));
+    public ServerResponse<List<SysUserLog>> me(@RequestBody @Validated UserLogRequest request) {
+        Page<SysUserLog> logs = this.sysUserLogService.all(request.username(super.getSysUser().getUsername()));
         return ServerResponse.ok(logs.getTotalElements(), logs.getContent());
     }
 
     @SysPermissions
     @PostMapping("/all.json")
-    public ServerResponse<List<SysUserLog>> all(@RequestBody @Validated UserLogVo vo) {
-        Page<SysUserLog> logs = this.sysUserLogService.all(vo);
+    public ServerResponse<List<SysUserLog>> all(@RequestBody @Validated UserLogRequest request) {
+        Page<SysUserLog> logs = this.sysUserLogService.all(request);
         return ServerResponse.ok(logs.getTotalElements(), logs.getContent());
     }
 

@@ -1,9 +1,9 @@
-package com.admin.web.configuration;
+package com.admin.web.exception.handler;
 
 import com.admin.web.exception.ServerResponseException;
 import com.admin.web.exception.SysLicenseException;
 import com.admin.web.model.enums.ResponseCode;
-import com.admin.web.model.ServerResponse;
+import com.admin.web.model.response.ServerResponse;
 import com.admin.web.model.os.Os;
 import com.admin.web.utils.ExceptionUtils;
 import com.admin.web.utils.WebUtils;
@@ -26,8 +26,8 @@ import java.util.Objects;
  * @author znn
  */
 @ControllerAdvice
-public class ControllerAdviceConfiguration {
-    private static final Logger logger = LoggerFactory.getLogger(ControllerAdviceConfiguration.class);
+public class DefaultExceptionHandler {
+    private static final Logger logger = LoggerFactory.getLogger(DefaultExceptionHandler.class);
 
     @ExceptionHandler(Exception.class)
     public Object exceptionHandler(HttpServletRequest request, Exception e) {

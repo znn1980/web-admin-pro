@@ -1,4 +1,4 @@
-package com.admin.web.model.vo;
+package com.admin.web.model.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Max;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 /**
  * @author znn
  */
-public record UserLogVo(
+public record UserLogRequest(
         String username,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -26,9 +26,9 @@ public record UserLogVo(
         @Min(value = 1, message = "每页数据不得小于壹！")
         @Max(value = 100, message = "每页数据不得大于壹佰！")
         Integer limit,
-        SortVo sort
+        SortRequest sort
 ) {
-    public UserLogVo username(String username) {
-        return new UserLogVo(username, this.startTimestamp(), this.endTimestamp(), this.page(), this.limit(), this.sort());
+    public UserLogRequest username(String username) {
+        return new UserLogRequest(username, this.startTimestamp(), this.endTimestamp(), this.page(), this.limit(), this.sort());
     }
 }

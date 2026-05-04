@@ -2,11 +2,11 @@ package com.admin.web.service;
 
 import com.admin.web.repository.SysNoticeRepository;
 import com.admin.web.exception.ServerResponseException;
-import com.admin.web.model.SysNotice;
-import com.admin.web.model.SysUser;
+import com.admin.web.model.entity.SysNotice;
+import com.admin.web.model.entity.SysUser;
 import com.admin.web.model.enums.ResponseCode;
-import com.admin.web.model.vo.NoticeVo;
-import com.admin.web.model.vo.PageVo;
+import com.admin.web.model.request.NoticeRequest;
+import com.admin.web.model.request.PageRequest;
 import com.admin.web.utils.BeanUtils;
 import com.admin.web.utils.SecurityUtils;
 import jakarta.persistence.criteria.Root;
@@ -27,8 +27,8 @@ public class SysNoticeService {
         this.sysNoticeRepository = sysNoticeRepository;
     }
 
-    public Page<SysNotice> all(NoticeVo vo, SysUser sysUser) {
-        if (Objects.equals(NoticeVo.State.UNREAD, vo.state())) {
+    public Page<SysNotice> all(NoticeRequest request, SysUser sysUser) {
+        if (Objects.equals(NoticeRequest.State.UNREAD, request.state())) {
             //未读
             return this.sysNoticeRepository.findAll((root, query, builder) -> {
                 Subquery<Long> subQuery = Objects.requireNonNull(query).subquery(Long.class);
@@ -38,23 +38,23 @@ public class SysNoticeService {
                 return query.where(builder.not(root.get("id").in(subQuery)))
                         .orderBy(builder.desc(root.get("createTimestamp")))
                         .getRestriction();
-            }, PageVo.of(vo.page(), vo.limit(), vo.sort()));
-        } else if (Objects.equals(NoticeVo.State.READ, vo.state())) {
+            }, PageRequest.of(request.page(), request.limit(), request.sort()));
+        } else if (Objects.equals(NoticeRequest.State.READ, request.state())) {
             //已读
             return this.sysNoticeRepository.findAll((root, query, builder) ->
                     Objects.requireNonNull(query)
                             .where(builder.equal(root.join("users").get("id"), sysUser.getId()))
                             .orderBy(builder.desc(root.get("createTimestamp")))
-                            .getRestriction(), PageVo.of(vo.page(), vo.limit(), vo.sort()));
-        } else if (Objects.equals(NoticeVo.State.ME, vo.state())) {
+                            .getRestriction(), PageRequest.of(request.page(), request.limit(), request.sort()));
+        } else if (Objects.equals(NoticeRequest.State.ME, request.state())) {
             //我的
             return this.sysNoticeRepository.findByCreateUsernameOrderByCreateTimestampDesc(sysUser.getUsername()
-                    , PageVo.of(vo.page(), vo.limit(), vo.sort()));
-        } else if (Objects.equals(NoticeVo.State.ALL, vo.state())) {
+                    , PageRequest.of(request.page(), request.limit(), request.sort()));
+        } else if (Objects.equals(NoticeRequest.State.ALL, request.state())) {
             //全部
-            return this.sysNoticeRepository.findByOrderByCreateTimestampDesc(PageVo.of(vo.page(), vo.limit(), vo.sort()));
+            return this.sysNoticeRepository.findByOrderByCreateTimestampDesc(PageRequest.of(request.page(), request.limit(), request.sort()));
         }
-        return this.sysNoticeRepository.findAll(PageVo.of(vo.page(), vo.limit(), vo.sort()));
+        return this.sysNoticeRepository.findAll(PageRequest.of(request.page(), request.limit(), request.sort()));
     }
 
     public SysNotice show(Long id, SysUser sysUser) {

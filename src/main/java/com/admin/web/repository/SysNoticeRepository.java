@@ -1,6 +1,6 @@
 package com.admin.web.repository;
 
-import com.admin.web.model.SysNotice;
+import com.admin.web.model.entity.SysNotice;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

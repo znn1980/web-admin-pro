@@ -1,4 +1,4 @@
-package com.admin.web.model;
+package com.admin.web.model.request;
 
 /**
  * @author znn

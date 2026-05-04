@@ -1,6 +1,6 @@
 package com.admin.web.utils;
 
-import com.admin.web.model.SysUser;
+import com.admin.web.model.entity.SysUser;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.util.DigestUtils;
 

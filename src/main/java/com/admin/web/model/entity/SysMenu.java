@@ -1,4 +1,4 @@
-package com.admin.web.model;
+package com.admin.web.model.entity;
 
 import com.admin.web.annotation.SysCreate;
 import com.admin.web.annotation.SysUpdate;

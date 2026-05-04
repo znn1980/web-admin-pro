@@ -1,7 +1,7 @@
 package com.admin.web.aspect;
 
 import com.admin.web.annotation.SysLog;
-import com.admin.web.model.SysUserLog;
+import com.admin.web.model.entity.SysUserLog;
 import com.admin.web.service.SysUserLogService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;

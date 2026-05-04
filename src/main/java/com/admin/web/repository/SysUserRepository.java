@@ -1,7 +1,7 @@
 package com.admin.web.repository;
 
-import com.admin.web.model.SysMenu;
-import com.admin.web.model.SysUser;
+import com.admin.web.model.entity.SysMenu;
+import com.admin.web.model.entity.SysUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

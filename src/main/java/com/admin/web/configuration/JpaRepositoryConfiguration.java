@@ -15,7 +15,7 @@ import java.util.Optional;
  */
 @Configuration
 @EnableJpaAuditing
-public class AuditorAwareConfiguration {
+public class JpaRepositoryConfiguration {
 
     @Bean
     public AuditorAware<String> auditorAware() {

@@ -3,7 +3,7 @@ package com.admin.web.controller;
 import com.admin.web.annotation.SysLog;
 import com.admin.web.annotation.SysLogin;
 import com.admin.web.annotation.SysPermissions;
-import com.admin.web.model.ServerResponse;
+import com.admin.web.model.response.ServerResponse;
 import com.admin.web.model.SysUpload;
 import com.admin.web.service.SysUploadService;
 import org.springframework.core.io.Resource;

@@ -4,9 +4,9 @@ import com.admin.web.annotation.SysCreate;
 import com.admin.web.annotation.SysLog;
 import com.admin.web.annotation.SysPermissions;
 import com.admin.web.annotation.SysUpdate;
-import com.admin.web.model.ServerResponse;
-import com.admin.web.model.SysRole;
-import com.admin.web.model.vo.MoveVo;
+import com.admin.web.model.response.ServerResponse;
+import com.admin.web.model.entity.SysRole;
+import com.admin.web.model.request.MoveRequest;
 import com.admin.web.service.SysRoleService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -35,8 +35,8 @@ public class SysRoleController extends BaseController {
     @SysLog("移动角色")
     @SysPermissions
     @PutMapping("/move.json")
-    public ServerResponse<Void> move(@RequestBody MoveVo vo) {
-        this.sysRoleService.move(vo);
+    public ServerResponse<Void> move(@RequestBody MoveRequest request) {
+        this.sysRoleService.move(request);
         return ServerResponse.ok();
     }
 

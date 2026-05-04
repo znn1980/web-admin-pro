@@ -4,13 +4,13 @@ import com.admin.web.annotation.SysLogin;
 import com.admin.web.annotation.SysPermissions;
 import com.admin.web.repository.SysUserRepository;
 import com.admin.web.exception.ServerResponseException;
-import com.admin.web.model.SysMenu;
-import com.admin.web.model.SysRole;
-import com.admin.web.model.SysUser;
+import com.admin.web.model.entity.SysMenu;
+import com.admin.web.model.entity.SysRole;
+import com.admin.web.model.entity.SysUser;
 import com.admin.web.model.enums.ResponseCode;
-import com.admin.web.model.vo.PageVo;
-import com.admin.web.model.vo.UserLoginVo;
-import com.admin.web.model.vo.UserPassVo;
+import com.admin.web.model.request.PageRequest;
+import com.admin.web.model.request.UserLoginRequest;
+import com.admin.web.model.request.UserPassRequest;
 import com.admin.web.utils.BeanUtils;
 import com.admin.web.utils.SecurityUtils;
 import com.admin.web.utils.WebUtils;
@@ -40,18 +40,18 @@ public class SysUserService {
         this.sysUserRepository = sysUserRepository;
     }
 
-    public SysUser login(UserLoginVo vo, String sysCode) {
-        if (!Objects.equals(vo.sysCode(), sysCode)) {
+    public SysUser login(UserLoginRequest request, String sysCode) {
+        if (!Objects.equals(request.sysCode(), sysCode)) {
             throw new ServerResponseException("验证码输入不正确！");
         }
-        SysUser sysUser = Optional.ofNullable(this.sysUserRepository.findByUsername(vo.username()))
-                .orElseGet(() -> Optional.ofNullable(this.sysUserRepository.findByPhone(vo.username()))
-                        .orElseGet(() -> this.sysUserRepository.findByEmail(vo.username())));
+        SysUser sysUser = Optional.ofNullable(this.sysUserRepository.findByUsername(request.username()))
+                .orElseGet(() -> Optional.ofNullable(this.sysUserRepository.findByPhone(request.username()))
+                        .orElseGet(() -> this.sysUserRepository.findByEmail(request.username())));
 
         if (!SecurityUtils.hasSuperAdmin(sysUser) && sysUser.isDisable()) {
             throw new ServerResponseException("账号未启用，请联系管理员！");
         }
-        if (!SecurityUtils.hasPassword(sysUser, vo.password())) {
+        if (!SecurityUtils.hasPassword(sysUser, request.password())) {
             throw new ServerResponseException("登录失败，请检查用户名密码是否正确！");
         }
         return sysUser;
@@ -68,8 +68,8 @@ public class SysUserService {
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
     }
 
-    public Page<SysUser> all(PageVo vo) {
-        return this.sysUserRepository.findAll(PageVo.of(vo));
+    public Page<SysUser> all(PageRequest request) {
+        return this.sysUserRepository.findAll(PageRequest.of(request));
     }
 
     public void create(SysUser sysUser) {
@@ -137,20 +137,20 @@ public class SysUserService {
         this.sysUserRepository.deleteById(id);
     }
 
-    public void pass(UserPassVo vo) {
-        if (!Objects.equals(vo.newPassword(), vo.confirmPassword())) {
+    public void pass(UserPassRequest request) {
+        if (!Objects.equals(request.newPassword(), request.confirmPassword())) {
             throw new ServerResponseException("新密码与确认密码输入不一致！");
         }
-        if (Objects.equals(vo.newPassword(), vo.oldPassword())) {
+        if (Objects.equals(request.newPassword(), request.oldPassword())) {
             throw new ServerResponseException("新密码不能与原密码重复！");
         }
         SysUser sysUser = this.sysUserRepository.findById(this.getSysUser().getId())
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
-        if (!SecurityUtils.hasPassword(sysUser, vo.oldPassword())) {
+        if (!SecurityUtils.hasPassword(sysUser, request.oldPassword())) {
             throw new ServerResponseException("原密码输入不正确！");
         }
         sysUser.setPassTimestamp(LocalDateTime.now());
-        sysUser.setPassword(SecurityUtils.hexPassword(vo.newPassword()));
+        sysUser.setPassword(SecurityUtils.hexPassword(request.newPassword()));
         this.sysUserRepository.save(sysUser);
     }
 

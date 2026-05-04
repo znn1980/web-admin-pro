@@ -1,11 +1,11 @@
 package com.admin.web.service;
 
 import com.admin.web.annotation.SysLog;
-import com.admin.web.model.vo.PageVo;
+import com.admin.web.model.request.PageRequest;
 import com.admin.web.repository.SysUserLogRepository;
 import com.admin.web.exception.ServerResponseException;
-import com.admin.web.model.SysUserLog;
-import com.admin.web.model.vo.UserLogVo;
+import com.admin.web.model.entity.SysUserLog;
+import com.admin.web.model.request.UserLogRequest;
 
 import com.admin.web.utils.ExceptionUtils;
 import com.admin.web.utils.SecurityUtils;
@@ -34,24 +34,24 @@ public class SysUserLogService {
         this.sysUserLogRepository = sysUserLogRepository;
     }
 
-    public Page<SysUserLog> all(UserLogVo vo) {
+    public Page<SysUserLog> all(UserLogRequest request) {
         return this.sysUserLogRepository.findAll((root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            if (StringUtils.hasText(vo.username())) {
-                predicates.add(builder.equal(root.get("username"), vo.username()));
+            if (StringUtils.hasText(request.username())) {
+                predicates.add(builder.equal(root.get("username"), request.username()));
             }
-            if (Objects.nonNull(vo.startTimestamp()) && Objects.nonNull(vo.endTimestamp())) {
-                predicates.add(builder.between(root.get("timestamp"), vo.startTimestamp(), vo.endTimestamp()));
-            } else if (Objects.nonNull(vo.startTimestamp())) {
-                predicates.add(builder.greaterThanOrEqualTo(root.get("timestamp"), vo.startTimestamp()));
-            } else if (Objects.nonNull(vo.endTimestamp())) {
-                predicates.add(builder.lessThanOrEqualTo(root.get("timestamp"), vo.endTimestamp()));
+            if (Objects.nonNull(request.startTimestamp()) && Objects.nonNull(request.endTimestamp())) {
+                predicates.add(builder.between(root.get("timestamp"), request.startTimestamp(), request.endTimestamp()));
+            } else if (Objects.nonNull(request.startTimestamp())) {
+                predicates.add(builder.greaterThanOrEqualTo(root.get("timestamp"), request.startTimestamp()));
+            } else if (Objects.nonNull(request.endTimestamp())) {
+                predicates.add(builder.lessThanOrEqualTo(root.get("timestamp"), request.endTimestamp()));
             }
             return Objects.requireNonNull(query)
                     .where(predicates.toArray(new Predicate[0]))
                     .orderBy(builder.desc(root.get("timestamp")))
                     .getRestriction();
-        }, PageVo.of(vo.page(), vo.limit(), vo.sort()));
+        }, PageRequest.of(request.page(), request.limit(), request.sort()));
     }
 
     public void delete(List<Long> id) {

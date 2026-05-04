@@ -1,9 +1,9 @@
 package com.admin.web.controller;
 
 import com.admin.web.annotation.*;
-import com.admin.web.model.ServerResponse;
-import com.admin.web.model.SysMenu;
-import com.admin.web.model.vo.MoveVo;
+import com.admin.web.model.response.ServerResponse;
+import com.admin.web.model.entity.SysMenu;
+import com.admin.web.model.request.MoveRequest;
 import com.admin.web.service.SysMenuService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -39,8 +39,8 @@ public class SysMenuController extends BaseController {
     @SysLog("移动菜单")
     @SysPermissions
     @PutMapping("/move.json")
-    public ServerResponse<Void> move(@RequestBody MoveVo vo) {
-        this.sysMenuService.move(vo);
+    public ServerResponse<Void> move(@RequestBody MoveRequest request) {
+        this.sysMenuService.move(request);
         return ServerResponse.ok();
     }
 
