@@ -1,6 +1,6 @@
 package com.admin.web.service;
 
-import com.admin.web.model.SysCode;
+import com.admin.web.model.SysCaptcha;
 import com.google.code.kaptcha.Producer;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -13,19 +13,19 @@ import java.io.OutputStream;
  * @author znn
  */
 @Service
-public class SysCodeService {
+public class SysCaptchaService {
     private final Producer producer;
 
-    public SysCodeService(Producer producer) {
+    public SysCaptchaService(Producer producer) {
         this.producer = producer;
     }
 
-    public SysCode sysCode() {
-        String sysCode = this.producer.createText();
-        return new SysCode(sysCode, this.producer.createImage(sysCode));
+    public SysCaptcha sysCaptcha() {
+        String sysCaptcha = this.producer.createText();
+        return new SysCaptcha(sysCaptcha, this.producer.createImage(sysCaptcha));
     }
 
-    public void write(SysCode sysCode, MediaType mediaType, OutputStream os) throws IOException {
+    public void write(SysCaptcha sysCode, MediaType mediaType, OutputStream os) throws IOException {
         ImageIO.write(sysCode.image(), mediaType.getSubtype(), os);
     }
 }

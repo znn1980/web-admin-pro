@@ -30,12 +30,12 @@ public class BaseController {
         SecurityUtils.setSysUser(this.getRequest(), sysUser);
     }
 
-    public String getSysCode() {
-        return SecurityUtils.getSysCode(this.getRequest());
+    public String getSysCaptcha() {
+        return SecurityUtils.getSysCaptcha(this.getRequest());
     }
 
-    public void setSysCode(String sysCode) {
-        SecurityUtils.setSysCode(this.getRequest(), sysCode);
+    public void setSysCaptcha(String sysCaptcha) {
+        SecurityUtils.setSysCaptcha(this.getRequest(), sysCaptcha);
     }
 
 }

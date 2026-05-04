@@ -13,7 +13,7 @@ public class SecurityUtils {
     static final Long SYS_USER_ID = 1L;
     static final String SYS_USER_NAME = "admin";
     static final String SYS_USER_SESSION = "SYS_USER_SESSION";
-    static final String SYS_CODE_SESSION = "SYS_CODE_SESSION";
+    static final String SYS_CAPTCHA_SESSION = "SYS_CAPTCHA_SESSION";
     static final String SYS_PASSWORD_SALT = "$%s$";
 
     public static SysUser getSuperAdmin() {
@@ -39,12 +39,12 @@ public class SecurityUtils {
                 && Objects.equals(SYS_USER_NAME, sysUser.getUsername());
     }
 
-    public static String getSysCode(HttpServletRequest request) {
-        return WebUtils.getSession(request, SYS_CODE_SESSION, String.class);
+    public static String getSysCaptcha(HttpServletRequest request) {
+        return WebUtils.getSession(request, SYS_CAPTCHA_SESSION, String.class);
     }
 
-    public static void setSysCode(HttpServletRequest request, String sysUserCode) {
-        WebUtils.setSession(request, SYS_CODE_SESSION, sysUserCode);
+    public static void setSysCaptcha(HttpServletRequest request, String sysUserCode) {
+        WebUtils.setSession(request, SYS_CAPTCHA_SESSION, sysUserCode);
     }
 
     public static boolean hasPassword(SysUser sysUser, String password) {

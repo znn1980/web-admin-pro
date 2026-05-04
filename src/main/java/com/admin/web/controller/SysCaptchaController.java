@@ -1,7 +1,7 @@
 package com.admin.web.controller;
 
-import com.admin.web.model.SysCode;
-import com.admin.web.service.SysCodeService;
+import com.admin.web.model.SysCaptcha;
+import com.admin.web.service.SysCaptchaService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,21 +13,21 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
  * @author znn
  */
 @RestController
-public class SysCodeController extends BaseController {
-    private final SysCodeService sysCodeService;
+public class SysCaptchaController extends BaseController {
+    private final SysCaptchaService sysCaptchaService;
 
-    public SysCodeController(SysCodeService sysCodeService) {
-        this.sysCodeService = sysCodeService;
+    public SysCaptchaController(SysCaptchaService sysCaptchaService) {
+        this.sysCaptchaService = sysCaptchaService;
     }
 
-    @GetMapping("/sys/code.jpg")
-    public ResponseEntity<StreamingResponseBody> sysCode() {
-        SysCode sysCode = this.sysCodeService.sysCode();
-        super.setSysCode(sysCode.code());
+    @GetMapping("/sys/captcha.jpg")
+    public ResponseEntity<StreamingResponseBody> sysCaptcha() {
+        SysCaptcha sysCaptcha = this.sysCaptchaService.sysCaptcha();
+        super.setSysCaptcha(sysCaptcha.captcha());
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG)
                 .header(HttpHeaders.EXPIRES, "0")
                 .header(HttpHeaders.PRAGMA, "no-cache")
                 .header(HttpHeaders.CACHE_CONTROL, "no-store, no-cache, must-revalidate, max-age=0")
-                .body(os -> this.sysCodeService.write(sysCode, MediaType.IMAGE_JPEG, os));
+                .body(os -> this.sysCaptchaService.write(sysCaptcha, MediaType.IMAGE_JPEG, os));
     }
 }

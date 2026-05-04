@@ -40,8 +40,8 @@ public class SysUserService {
         this.sysUserRepository = sysUserRepository;
     }
 
-    public SysUser login(UserLoginRequest request, String sysCode) {
-        if (!Objects.equals(request.sysCode(), sysCode)) {
+    public SysUser login(UserLoginRequest request, String captcha) {
+        if (!Objects.equals(request.captcha(), captcha)) {
             throw new ServerResponseException("验证码输入不正确！");
         }
         SysUser sysUser = Optional.ofNullable(this.sysUserRepository.findByUsername(request.username()))

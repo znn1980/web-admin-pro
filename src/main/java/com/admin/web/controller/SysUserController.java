@@ -29,16 +29,16 @@ public class SysUserController extends BaseController {
     @SysLog("用户登录")
     @PostMapping("/login.json")
     public ServerResponse<SysSession> login(@RequestBody @Validated UserLoginRequest request) {
-        SysUser sysUser = this.sysUserService.login(request, super.getSysCode());
+        SysUser sysUser = this.sysUserService.login(request, super.getSysCaptcha());
         super.setSysUser(sysUser);
-        super.setSysCode(null);
+        super.setSysCaptcha(null);
         return ServerResponse.ok(new SysSession(super.getSessionId()));
     }
 
     @GetMapping("/logout.json")
     public ServerResponse<Void> logout() {
         super.setSysUser(null);
-        super.setSysCode(null);
+        super.setSysCaptcha(null);
         return ServerResponse.ok();
     }
 

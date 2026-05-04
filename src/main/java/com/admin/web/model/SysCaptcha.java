@@ -5,5 +5,5 @@ import java.awt.image.BufferedImage;
 /**
  * @author znn
  */
-public record SysCode(String code, BufferedImage image) {
+public record SysCaptcha(String captcha, BufferedImage image) {
 }

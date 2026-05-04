@@ -46,15 +46,15 @@
                             <div class="layui-input-prefix">
                                 <i class="layui-icon layui-icon-vercode"></i>
                             </div>
-                            <label for="sysCode"></label>
-                            <input type="text" id="sysCode" name="sysCode" value="" lay-verify="required" placeholder="验证码" lay-reqtext="请填写验证码" autocomplete="off" class="layui-input" lay-affix="clear">
+                            <label for="captcha"></label>
+                            <input type="text" id="captcha" name="captcha" value="" lay-verify="required" placeholder="验证码" lay-reqtext="请填写验证码" autocomplete="off" class="layui-input" lay-affix="clear">
                         </div>
                     </div>
                     <div class="layui-col-xs5">
                         <div style="margin-left: 10px;">
-                            <img class="layadmin-user-login-codeimg" id="sys-code" alt="" src="" width="120" height="40"
-                                 th:src="@{/sys/code.jpg(t=${#dates.createNow().getTime()})}"
-                                 th:onclick="|this.src='@{/sys/code.jpg}?t='+Date.now()|">
+                            <img class="layadmin-user-login-codeimg" alt="" src="" width="120" height="40"
+                                 th:src="@{/sys/captcha.jpg(t=${#dates.createNow().getTime()})}"
+                                 th:onclick="|this.src='@{/sys/captcha.jpg}?t='+Date.now()|">
                         </div>
                     </div>
                 </div>
