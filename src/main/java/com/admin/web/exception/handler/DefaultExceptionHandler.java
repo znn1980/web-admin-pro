@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -57,16 +58,16 @@ public class DefaultExceptionHandler {
                         String.format("(%s)", Os.asBytes(ex.getMaxUploadSize())) : ""));
             }
             if (Objects.nonNull(e.getMessage())) {
-                return ResponseEntity.ok(ServerResponse.fail("%s(%s)", ResponseCode.ERROR.msg(), e.getMessage()));
+                return ResponseEntity.ok(ServerResponse.fail("%s(%s)", ResponseCode.SERVER_ERROR.msg(), e.getMessage()));
             }
-            return ResponseEntity.ok(ServerResponse.fail(ResponseCode.ERROR));
+            return ResponseEntity.ok(ServerResponse.fail(ResponseCode.SERVER_ERROR));
         }
         if (e instanceof ServerResponseException) {
-            return new ModelAndView("error/403", HttpStatus.FORBIDDEN);
+            return new ModelAndView("error/401", HttpStatus.UNAUTHORIZED);
         }
         if (e instanceof NoResourceFoundException) {
             return new ModelAndView("error/404", HttpStatus.NOT_FOUND);
         }
-        return new ModelAndView("error/500", "error", ExceptionUtils.getStackTrace(e));
+        return new ModelAndView("error/500", Map.of("error", ExceptionUtils.getStackTrace(e)), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

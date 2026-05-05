@@ -173,7 +173,7 @@ public class SysUserService {
                 && !Arrays.asList(sysPermissions.value()).contains(SysLogin.class)) {
             if (!this.hasPermissions(this.sysUserRepository.findById(sysUser.getId()).orElseThrow(() ->
                     new ServerResponseException(ResponseCode.NOT_FOUND)).getRoles())) {
-                throw new ServerResponseException(ResponseCode.DENIED);
+                throw new ServerResponseException(ResponseCode.UNAUTHORIZED);
             }
         }
     }

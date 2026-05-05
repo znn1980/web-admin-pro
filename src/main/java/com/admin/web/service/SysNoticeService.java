@@ -28,7 +28,7 @@ public class SysNoticeService {
     }
 
     public Page<SysNotice> all(NoticeRequest request, SysUser sysUser) {
-        if (Objects.equals(NoticeRequest.State.UNREAD, request.state())) {
+        if (Objects.equals(NoticeRequest.Status.UNREAD, request.status())) {
             //未读
             return this.sysNoticeRepository.findAll((root, query, builder) -> {
                 Subquery<Long> subQuery = Objects.requireNonNull(query).subquery(Long.class);
@@ -39,18 +39,18 @@ public class SysNoticeService {
                         .orderBy(builder.desc(root.get("createTimestamp")))
                         .getRestriction();
             }, PageRequest.of(request.page(), request.limit(), request.sort()));
-        } else if (Objects.equals(NoticeRequest.State.READ, request.state())) {
+        } else if (Objects.equals(NoticeRequest.Status.READ, request.status())) {
             //已读
             return this.sysNoticeRepository.findAll((root, query, builder) ->
                     Objects.requireNonNull(query)
                             .where(builder.equal(root.join("users").get("id"), sysUser.getId()))
                             .orderBy(builder.desc(root.get("createTimestamp")))
                             .getRestriction(), PageRequest.of(request.page(), request.limit(), request.sort()));
-        } else if (Objects.equals(NoticeRequest.State.ME, request.state())) {
+        } else if (Objects.equals(NoticeRequest.Status.ME, request.status())) {
             //我的
             return this.sysNoticeRepository.findByCreateUsernameOrderByCreateTimestampDesc(sysUser.getUsername()
                     , PageRequest.of(request.page(), request.limit(), request.sort()));
-        } else if (Objects.equals(NoticeRequest.State.ALL, request.state())) {
+        } else if (Objects.equals(NoticeRequest.Status.ALL, request.status())) {
             //全部
             return this.sysNoticeRepository.findByOrderByCreateTimestampDesc(PageRequest.of(request.page(), request.limit(), request.sort()));
         }
