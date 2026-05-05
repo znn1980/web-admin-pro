@@ -34,8 +34,8 @@ public class BaseController {
         return SecurityUtils.getSysCaptcha(this.getRequest());
     }
 
-    public void setSysCaptcha(String sysCaptcha) {
-        SecurityUtils.setSysCaptcha(this.getRequest(), sysCaptcha);
+    public void setSysCaptcha(String captcha) {
+        SecurityUtils.setSysCaptcha(this.getRequest(), captcha);
     }
 
 }

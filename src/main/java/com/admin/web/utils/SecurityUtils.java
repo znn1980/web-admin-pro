@@ -43,8 +43,8 @@ public class SecurityUtils {
         return WebUtils.getSession(request, SYS_CAPTCHA_SESSION, String.class);
     }
 
-    public static void setSysCaptcha(HttpServletRequest request, String sysUserCode) {
-        WebUtils.setSession(request, SYS_CAPTCHA_SESSION, sysUserCode);
+    public static void setSysCaptcha(HttpServletRequest request, String captcha) {
+        WebUtils.setSession(request, SYS_CAPTCHA_SESSION, captcha);
     }
 
     public static boolean hasPassword(SysUser sysUser, String password) {

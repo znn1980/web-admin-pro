@@ -3,7 +3,6 @@ package com.admin.web.controller;
 import com.admin.web.model.SysCaptcha;
 import com.admin.web.service.SysCaptchaService;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,10 +23,10 @@ public class SysCaptchaController extends BaseController {
     public ResponseEntity<StreamingResponseBody> sysCaptcha() {
         SysCaptcha sysCaptcha = this.sysCaptchaService.sysCaptcha();
         super.setSysCaptcha(sysCaptcha.captcha());
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG)
+        return ResponseEntity.ok().contentType(sysCaptcha.mediaType())
                 .header(HttpHeaders.EXPIRES, "0")
                 .header(HttpHeaders.PRAGMA, "no-cache")
                 .header(HttpHeaders.CACHE_CONTROL, "no-store, no-cache, must-revalidate, max-age=0")
-                .body(os -> this.sysCaptchaService.write(sysCaptcha, MediaType.IMAGE_JPEG, os));
+                .body(os -> this.sysCaptchaService.write(sysCaptcha, os));
     }
 }

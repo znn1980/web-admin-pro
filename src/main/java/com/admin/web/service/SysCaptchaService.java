@@ -21,11 +21,11 @@ public class SysCaptchaService {
     }
 
     public SysCaptcha sysCaptcha() {
-        String sysCaptcha = this.producer.createText();
-        return new SysCaptcha(sysCaptcha, this.producer.createImage(sysCaptcha));
+        String captcha = this.producer.createText();
+        return new SysCaptcha(captcha, this.producer.createImage(captcha), MediaType.IMAGE_JPEG);
     }
 
-    public void write(SysCaptcha sysCode, MediaType mediaType, OutputStream os) throws IOException {
-        ImageIO.write(sysCode.image(), mediaType.getSubtype(), os);
+    public void write(SysCaptcha sysCaptcha, OutputStream os) throws IOException {
+        ImageIO.write(sysCaptcha.image(), sysCaptcha.mediaType().getSubtype(), os);
     }
 }

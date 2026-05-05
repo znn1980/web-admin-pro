@@ -47,12 +47,11 @@ public class SysUserService {
         SysUser sysUser = Optional.ofNullable(this.sysUserRepository.findByUsername(request.username()))
                 .orElseGet(() -> Optional.ofNullable(this.sysUserRepository.findByPhone(request.username()))
                         .orElseGet(() -> this.sysUserRepository.findByEmail(request.username())));
-
-        if (!SecurityUtils.hasSuperAdmin(sysUser) && sysUser.isDisable()) {
-            throw new ServerResponseException("账号未启用，请联系管理员！");
-        }
         if (!SecurityUtils.hasPassword(sysUser, request.password())) {
             throw new ServerResponseException("登录失败，请检查用户名密码是否正确！");
+        }
+        if (!SecurityUtils.hasSuperAdmin(sysUser) && sysUser.isDisable()) {
+            throw new ServerResponseException("账号未启用，请联系管理员！");
         }
         return sysUser;
     }
