@@ -36,15 +36,15 @@ public class SysLogAspect {
 
     @AfterReturning(pointcut = "@annotation(sysLog)", returning = "result")
     public void doAfterReturning(JoinPoint joinPoint, SysLog sysLog, Object result) {
-        this.doAround(sysLog, joinPoint.getArgs(), result, null);
+        this.log(sysLog, joinPoint.getArgs(), result, null);
     }
 
     @AfterThrowing(value = "@annotation(sysLog)", throwing = "e")
     public void doAfterThrowing(JoinPoint joinPoint, SysLog sysLog, Throwable e) {
-        this.doAround(sysLog, joinPoint.getArgs(), null, e);
+        this.log(sysLog, joinPoint.getArgs(), null, e);
     }
 
-    private void doAround(SysLog sysLog, Object[] args, Object result, Throwable e) {
+    void log(SysLog sysLog, Object[] args, Object result, Throwable e) {
         try {
             SysUserLog log = this.sysUserLogService.log(sysLog, args, result, e, THREAD_LOCAL.get());
             logger.info("SYS-REQUEST => {}", log.getParams());

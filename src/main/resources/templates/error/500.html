@@ -23,9 +23,9 @@
         </div>
     </div>
 </div>
-<div class="layui-hide">
+<script type="text/html" id="log-code">
     <pre class="layui-code" th:text="${error}"></pre>
-</div>
+</script>
 <script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
 <script th:inline="javascript">
     const config = {
@@ -36,12 +36,15 @@
         base: config.base, version: true
     }).use(['index', 'common'], function () {
 
-        layui.code({elem: '.layui-code', theme: 'dark', header: false, wordWrap: false});
-
         layui.$('.layui-bg-red').on('click', function () {
             layui.layer.open({
-                type: 1, shade: false, title: false, area: 'auto'
-                , content: layui.$('.layui-hide').html()
+                type: 1, shade: false, maxmin: true
+                , id: 'e500', area: 'auto'
+                , title: '抱歉，服务器出错了！'
+                , content: layui.$('#log-code').html()
+                , success: function () {
+                    layui.code({elem: '.layui-code', theme: 'dark', header: false, wordWrap: false});
+                }
             });
         });
     });

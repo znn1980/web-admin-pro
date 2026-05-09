@@ -32,6 +32,9 @@
     <input type="checkbox" value="{{ d.id }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" title="是|否" lay-skin="switch" lay-filter="sys-admin-switch">
     {{# } }}
 </script>
+<script type="text/html" id="sys-user-phone">
+    <span class="layui-badge-rim">{{ d.phone }}</span>
+</script>
 <script type="text/html" id="sys-user-disable">
     {{# if(d.disable){ }}
     <input type="checkbox" value="{{ d.id }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" title="启用|禁用" lay-skin="switch" lay-filter="sys-disable-switch">
@@ -136,7 +139,7 @@
                 [
                     {fixed: 'left', type: 'checkbox'}
                     , {field: 'username', title: '用户', sort: true, minWidth: 120, templet: '#sys-user-username'}
-                    , {field: 'phone', title: '手机', sort: true, minWidth: 130}
+                    , {field: 'phone', title: '手机', sort: true, minWidth: 130, maxWidth: 130, width: 130, templet: '#sys-user-phone'}
                     , {field: 'email', title: '邮箱', sort: true, minWidth: 180}
                     , {field: 'sysAdmin', title: '管理', sort: true, align: 'center', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-user-admin'}
                     , {field: 'disable', title: '状态', sort: true, align: 'center', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-user-disable'}

@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -28,4 +29,11 @@ public class SysCaptchaService {
     public void write(SysCaptcha sysCaptcha, OutputStream os) throws IOException {
         ImageIO.write(sysCaptcha.image(), sysCaptcha.mediaType().getSubtype(), os);
     }
+
+    public byte[] read(SysCaptcha sysCaptcha) throws IOException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream(512);
+        this.write(sysCaptcha, os);
+        return os.toByteArray();
+    }
+
 }

@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties({ConfigProperties.class})
 public class AutoConfiguration {
-
     @Bean
     public SysMonitor sysMonitor() {
         return new SysMonitor();

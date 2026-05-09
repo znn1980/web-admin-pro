@@ -42,7 +42,7 @@
                         <hr>
                         <li class="list-group-item">
                             <i class="layui-icon layui-icon-location"></i>登录地址
-                            <span style="float: right;" th:text="${ip}"></span>
+                            <a href="javascript:" style="float: right;" class="layui-badge-rim" id="sys-ip" th:text="${ip}"></a>
                         </li>
                         <hr>
                         <li class="list-group-item">
@@ -182,8 +182,11 @@
     <span lay-tips="{{ d.url }}" class="layui-badge-rim">{{ d.method?d.method:'未知' }}</span>
     {{# } }}
 </script>
+<script type="text/html" id="sys-log-ip">
+    <a href="javascript:" class="layui-badge-rim" lay-event="sys-ip-whois">{{ d.ip }}</a>
+</script>
 <script type="text/html" id="sys-log-ms">
-    <span class="layui-badge layui-bg-orange">{{ d.ms/1000 }}</span>
+    <span class="layui-badge layui-bg-orange">{{ (d.ms/1000).toFixed(3) }}</span>
 </script>
 <script type="text/html" id="sys-log-code">
     {{# if(d.params){ }}
@@ -231,6 +234,10 @@
             });
         });
 
+        layui.$('#sys-ip').on('click', function () {
+            layui.common.asWhois(layui.$(this).text());
+        });
+
         layui.$('#sys-pass').on('click', function () {
             layui.tabs.change('sys-tabs', 'pass');
         });
@@ -252,7 +259,7 @@
                     , {field: 'name', title: '描述', minWidth: 100, templet: '#sys-log-name'}
                     , {field: 'method', title: '请求', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-log-method'}
                     , {field: 'url', title: '地址', hide: true}
-                    , {field: 'ip', title: 'IP', maxWidth: 150, width: 150}
+                    , {field: 'ip', title: 'IP', minWidth: 140, maxWidth: 140, width: 140, templet: '#sys-log-ip'}
                     , {field: 'os', title: '系统', width: 120, hide: true}
                     , {field: 'browser', title: '浏览器', width: 120, hide: true}
                     , {field: 'ms', title: '耗时', align: 'right', minWidth: 80, maxWidth: 80, width: 80, templet: '#sys-log-ms'}
@@ -319,6 +326,9 @@
                         }
                     });
                 });
+            }
+            if (data.event === 'sys-ip-whois') {
+                layui.common.asWhois(data.data.ip);
             }
         });
 

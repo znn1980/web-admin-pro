@@ -82,7 +82,8 @@ layui.define(function (exports) {
             return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
                 (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
             );
-        }, asFlatToTree: function (data, options) {
+        }
+        , asFlatToTree: function (data, options) {
             options = Object.assign({idKey: 'id', parentKey: 'parentId', childrenKey: 'children'}, options);
             data = JSON.parse(JSON.stringify(data));
             const map = data.reduce(function (acc, curr) {
@@ -101,6 +102,16 @@ layui.define(function (exports) {
                 }
                 return acc;
             }, []);
+        }
+        , asWhois: function (ip, callback) {
+            this.req(`${config.base}sys/whois?ip=${ip}`, 'GET', null, {
+                done: function (data) {
+                    let whois = data.data;
+                    whois = (whois.pro || whois.city || whois.region)
+                        ? [whois.pro, whois.city, whois.region].join('') : whois.addr
+                    layui.layer.msg(whois);
+                }
+            });
         }
     });
 });
