@@ -16,6 +16,9 @@ public class SecurityUtils {
     static final String SYS_CAPTCHA_SESSION = "SYS_CAPTCHA_SESSION";
     static final String SYS_PASSWORD_SALT = "$%s$";
 
+    private SecurityUtils() {
+    }
+
     public static SysUser getSuperAdmin() {
         return new SysUser(SYS_USER_ID, SYS_USER_NAME);
     }

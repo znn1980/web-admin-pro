@@ -1,5 +1,6 @@
 package com.admin.web.utils;
 
+import eu.bitwalker.useragentutils.UserAgent;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -7,12 +8,16 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 /**
  * @author znn
  */
 public class WebUtils extends org.springframework.web.util.WebUtils {
+    private WebUtils() {
+    }
 
     public static String getClientIp(HttpServletRequest request) {
         String ip = request.getHeader("X-Forwarded-For");
@@ -43,7 +48,7 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
         return (Objects.equals("0:0:0:0:0:0:0:1", ip) || Objects.equals("::1", ip)) ? "127.0.0.1" : ip;
     }
 
-    public static boolean isRequestRest(HttpServletRequest request) {
+    public static boolean hasRestRequest(HttpServletRequest request) {
         return StringUtils.startsWithIgnoreCase(request.getHeader(HttpHeaders.ACCEPT)
                 , MediaType.APPLICATION_JSON_VALUE)
                 || StringUtils.startsWithIgnoreCase(request.getHeader(HttpHeaders.CONTENT_TYPE)
@@ -64,5 +69,33 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
 
     public static ServletRequestAttributes getRequestAttributes() {
         return (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+    }
+
+    public static MediaType getContentType(HttpHeaders httpHeaders) {
+        return getContentType(httpHeaders, MediaType.APPLICATION_JSON);
+    }
+
+    public static MediaType getContentType(HttpHeaders httpHeaders, MediaType defaultMediaType) {
+        return Objects.requireNonNullElse(httpHeaders.getContentType(), defaultMediaType);
+    }
+
+    public static Charset getCharset(MediaType mediaType) {
+        return getCharset(mediaType, StandardCharsets.UTF_8);
+    }
+
+    public static Charset getCharset(MediaType mediaType, Charset defaultCharset) {
+        return Objects.requireNonNullElse(mediaType.getCharset(), defaultCharset);
+    }
+
+    public static UserAgent getUserAgent(HttpServletRequest request) {
+        return UserAgent.parseUserAgentString(request.getHeader(HttpHeaders.USER_AGENT));
+    }
+
+    public static String getOs(UserAgent userAgent) {
+        return userAgent.getOperatingSystem().getName();
+    }
+
+    public static String getBrowser(UserAgent userAgent) {
+        return userAgent.getBrowser().getName();
     }
 }

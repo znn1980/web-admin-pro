@@ -3,6 +3,7 @@ package com.admin.web.model.request;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Objects;
 
@@ -19,13 +20,13 @@ public record PageRequest(
         Integer limit,
         SortRequest sort
 ) {
-    public static org.springframework.data.domain.PageRequest of(PageRequest request) {
+    public static Pageable of(PageRequest request) {
         return Objects.isNull(request)
                 ? org.springframework.data.domain.PageRequest.ofSize(10)
                 : of(request.page(), request.limit(), request.sort());
     }
 
-    public static org.springframework.data.domain.PageRequest of(Integer page, Integer limit, SortRequest sort) {
+    public static Pageable of(Integer page, Integer limit, SortRequest sort) {
         return org.springframework.data.domain.PageRequest.of(Objects.requireNonNullElse(page, 1) - 1,
                 Objects.requireNonNullElse(limit, 10), SortRequest.by(sort));
     }

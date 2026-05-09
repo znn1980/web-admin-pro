@@ -9,6 +9,8 @@ import java.io.StringWriter;
  * @author znn
  */
 public class ExceptionUtils extends NestedExceptionUtils {
+    private ExceptionUtils() {
+    }
 
     public static <T extends Throwable> T getCause(Throwable original, Class<T> clazz) {
         if (original == null || clazz == null) {

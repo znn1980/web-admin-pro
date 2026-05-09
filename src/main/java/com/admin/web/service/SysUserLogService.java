@@ -9,7 +9,6 @@ import com.admin.web.model.request.UserLogRequest;
 
 import com.admin.web.utils.ExceptionUtils;
 import com.admin.web.utils.SecurityUtils;
-import com.admin.web.utils.UserAgentUtils;
 import com.admin.web.utils.WebUtils;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.servlet.http.HttpServletRequest;
@@ -65,8 +64,8 @@ public class SysUserLogService {
                 SecurityUtils.getSuperAdmin()
         ).getUsername());
         logs.setIp(WebUtils.getClientIp(WebUtils.getRequest()));
-        logs.setOs(UserAgentUtils.getOs(UserAgentUtils.getUserAgent(WebUtils.getRequest())));
-        logs.setBrowser(UserAgentUtils.getBrowser(UserAgentUtils.getUserAgent(WebUtils.getRequest())));
+        logs.setOs(WebUtils.getOs(WebUtils.getUserAgent(WebUtils.getRequest())));
+        logs.setBrowser(WebUtils.getBrowser(WebUtils.getUserAgent(WebUtils.getRequest())));
         logs.setMethod(WebUtils.getRequest().getMethod());
         logs.setUrl(WebUtils.getRequest().getRequestURI());
         logs.setName(sysLog.value());

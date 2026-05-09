@@ -9,6 +9,8 @@ import java.util.*;
  * @author znn
  */
 public class BeanUtils extends org.springframework.beans.BeanUtils {
+    private BeanUtils() {
+    }
 
     public static void copyNonNullProperties(Object source, Object target) {
         copyProperties(source, target, getNullProperties(source));

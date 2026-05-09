@@ -36,7 +36,7 @@ public class DefaultExceptionHandler {
         if (!(e instanceof ServerResponseException)) {
             logger.error("SYS-ERROR => {}", e, e);
         }
-        if (WebUtils.isRequestRest(request)) {
+        if (WebUtils.hasRestRequest(request)) {
             if (e instanceof ServerResponseException ex) {
                 return ResponseEntity.ok(ex.getServerResponse());
             }

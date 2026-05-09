@@ -10,6 +10,8 @@ import java.util.StringJoiner;
  * @author znn
  */
 public class NetUtils {
+    private NetUtils() {
+    }
 
     public static InetAddress getLocalHost() {
         try {
