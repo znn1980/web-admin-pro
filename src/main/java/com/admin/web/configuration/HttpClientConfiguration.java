@@ -1,6 +1,5 @@
 package com.admin.web.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
@@ -11,13 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.MediaType;
 import org.springframework.http.client.ReactorClientHttpRequestFactory;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
-import org.springframework.http.codec.json.Jackson2JsonDecoder;
-import org.springframework.http.codec.json.Jackson2JsonEncoder;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.resources.ConnectionProvider;
@@ -31,6 +26,8 @@ import java.time.Duration;
 @Configuration
 public class HttpClientConfiguration {
     private final static Logger logger = LoggerFactory.getLogger(HttpClientConfiguration.class);
+    private final static int TIMEOUT_SECONDS = 10;
+    private final static int ONE_SECONDS = 1000;
 
     @Bean
     public SslContext sslContext() throws SSLException {
@@ -42,11 +39,11 @@ public class HttpClientConfiguration {
     @Bean
     public HttpClient httpClient(SslContext sslContext) {
         return HttpClient.create(ConnectionProvider.create("custom"))
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1000 * 10)
-                .responseTimeout(Duration.ofSeconds(10))
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, TIMEOUT_SECONDS * ONE_SECONDS)
+                .responseTimeout(Duration.ofSeconds(TIMEOUT_SECONDS))
                 .doOnConnected(conn -> conn
-                        .addHandlerFirst(new ReadTimeoutHandler(10))
-                        .addHandlerFirst(new WriteTimeoutHandler(10)))
+                        .addHandlerFirst(new ReadTimeoutHandler(TIMEOUT_SECONDS))
+                        .addHandlerFirst(new WriteTimeoutHandler(TIMEOUT_SECONDS)))
                 .doOnRequest((request, conn) ->
                         logger.info("Request: {} {} {}", request.version(), request.method(), request.uri()))
                 .doOnResponse((response, conn) ->
@@ -55,14 +52,9 @@ public class HttpClientConfiguration {
     }
 
     @Bean
-    public WebClient webClient(HttpClient httpClient, ObjectMapper objectMapper) {
+    public WebClient webClient(HttpClient httpClient) {
         return WebClient.builder()
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
-                .exchangeStrategies(ExchangeStrategies.builder()
-                        .codecs(configurer -> {
-                            configurer.defaultCodecs().jackson2JsonEncoder(new Jackson2JsonEncoder(objectMapper, MediaType.APPLICATION_JSON));
-                            configurer.defaultCodecs().jackson2JsonDecoder(new Jackson2JsonDecoder(objectMapper, MediaType.APPLICATION_JSON));
-                        }).build())
                 .build();
     }
 
