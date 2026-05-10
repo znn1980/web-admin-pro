@@ -38,10 +38,10 @@
                     <i class="layui-icon layui-icon-refresh"></i>重置
                 </button>
                 <!-- 展开/收起，更多查询条件。 -->
-                <button data-local-more="sys-log-query-more" class="layui-btn layui-btn-primary layui-btn-xs sys-query-more">
+                <button data-query-more="sys-log-query-more" class="layui-btn layui-btn-primary layui-btn-xs sys-query-more">
                     <i class="layui-icon layui-icon-down"></i>展开筛选项
                 </button>
-                <button data-local-more="sys-log-query-more" class="layui-btn layui-btn-primary layui-btn-xs sys-query-more" style="display: none;">
+                <button data-query-more="sys-log-query-more" class="layui-btn layui-btn-primary layui-btn-xs sys-query-more" style="display: none;">
                     <i class="layui-icon layui-icon-up"></i>收起筛选项
                 </button>
             </div>
@@ -66,7 +66,7 @@
     {{# } }}
 </script>
 <script type="text/html" id="sys-log-ip">
-    <a href="javascript:" class="layui-badge-rim" lay-event="sys-ip-whois">{{ d.ip }}</a>
+    <a href="javascript:" class="layui-badge-rim" lay-on="Whois">{{ d.ip }}</a>
 </script>
 <script type="text/html" id="sys-log-ms">
     <span class="layui-badge layui-bg-orange">{{ (d.ms/1000).toFixed(3) }}</span>
@@ -187,10 +187,6 @@
                         }
                     });
                 });
-            }
-            if (data.event === 'sys-ip-whois') {
-                console.log(data.tr[data.index]);
-                layui.common.asWhois(data.data.ip);
             }
         });
 

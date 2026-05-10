@@ -42,7 +42,7 @@
                         <hr>
                         <li class="list-group-item">
                             <i class="layui-icon layui-icon-location"></i>登录地址
-                            <a href="javascript:" style="float: right;" class="layui-badge-rim" id="sys-ip" th:text="${ip}"></a>
+                            <a href="javascript:" style="float: right;" class="layui-badge-rim" lay-on="Whois" th:text="${ip}"></a>
                         </li>
                         <hr>
                         <li class="list-group-item">
@@ -183,7 +183,7 @@
     {{# } }}
 </script>
 <script type="text/html" id="sys-log-ip">
-    <a href="javascript:" class="layui-badge-rim" lay-event="sys-ip-whois">{{ d.ip }}</a>
+    <a href="javascript:" class="layui-badge-rim" lay-on="Whois">{{ d.ip }}</a>
 </script>
 <script type="text/html" id="sys-log-ms">
     <span class="layui-badge layui-bg-orange">{{ (d.ms/1000).toFixed(3) }}</span>
@@ -232,10 +232,6 @@
                     if (avatar !== layui.$('#avatar').val()) layui.$('#sys-user-submit').trigger("click");
                 }
             });
-        });
-
-        layui.$('#sys-ip').on('click', function () {
-            layui.common.asWhois(layui.$(this).text());
         });
 
         layui.$('#sys-pass').on('click', function () {
@@ -326,9 +322,6 @@
                         }
                     });
                 });
-            }
-            if (data.event === 'sys-ip-whois') {
-                layui.common.asWhois(data.data.ip);
             }
         });
 

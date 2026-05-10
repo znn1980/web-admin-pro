@@ -83,7 +83,7 @@
             <td>系统架构</td>
             <td>{{ d.osSys.arch }}</td>
             <td>服务器地址</td>
-            <td><a href="javascript:" class="layui-badge-rim" id="sys-ip">{{ d.osIp }}</a></td>
+            <td><a href="javascript:" class="layui-badge-rim" lay-on="Whois">{{ d.osIp }}</a></td>
         </tr>
         <tr>
             <td>启动时间</td>
@@ -176,9 +176,6 @@
 
                     layui.laytpl(layui.$('#os-table').html()).render(data.data, function (html) {
                         layui.$('#os-info').html(html);
-                        layui.$('#sys-ip').on('click', function () {
-                            layui.common.asWhois(layui.$(this).text());
-                        });
                     });
                     layui.$('#os-sys').attr('lay-tips', data.data.osSys.tips.replaceAll(',', '<br>'));
                     layui.$('#os-sys-mem').attr('lay-tips', data.data.osSysMem.tips.replaceAll(',', '<br>'));
