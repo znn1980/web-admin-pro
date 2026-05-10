@@ -83,27 +83,14 @@ layui.define(function (exports) {
                 (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
             );
         }
-        , asFlatToTree: function (data, options) {
-            options = Object.assign({idKey: 'id', parentKey: 'parentId', childrenKey: 'children'}, options);
-            data = JSON.parse(JSON.stringify(data));
-            const map = data.reduce(function (acc, curr) {
-                const id = curr[options.idKey];
-                acc[id] = curr;
-                acc[id][options.childrenKey] = [];
-                return acc;
-            }, {});
-            return data.reduce(function (acc, curr) {
-                const id = curr[options.idKey];
-                const parentId = curr[options.parentKey];
-                if (parentId === null || !map[parentId]) {
-                    acc.push(map[id]);
-                } else {
-                    map[parentId][options.childrenKey].push(curr);
-                }
-                return acc;
-            }, []);
+        , asFlatToTree: function (data) {
+            data = data.map(function (data) {
+                if (!data.children) data.children = [];
+                return data;
+            });
+            return layui.lay.flatToTree(data, {parentKey: 'pid'});
         }
-        , asWhois: function (ip, callback) {
+        , asWhois: function (ip) {
             this.req(`${config.base}sys/whois?ip=${ip}`, 'GET', null, {
                 done: function (data) {
                     let whois = data.data;
