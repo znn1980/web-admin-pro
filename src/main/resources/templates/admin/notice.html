@@ -146,12 +146,12 @@
                     , {fixed: 'right', title: '操作', align: 'center', toolbar: '#sys-notice-tool', minWidth: 60, maxWidth: 60, width: 60}
                 ]
             ]
-            , where: {state: 'UNREAD', sort: {field: 'createTimestamp', order: 'desc'}}
+            , where: {status: 'UNREAD', sort: {field: 'createTimestamp', order: 'desc'}}
             , initSort: {field: 'createTimestamp', type: 'desc'}
             , done: function (data) {
                 layui.common.asCols(this);
                 load(data);
-                if ('UNREAD' === layui.table.getOptions('sys-notice-table').where.state) {
+                if ('UNREAD' === layui.table.getOptions('sys-notice-table').where.status) {
                     if (data.count === 0) {
                         layui.tabs.change('sys-notice-tabs', 'all');
                     }
@@ -166,7 +166,7 @@
 
         layui.table.on('sort(sys-notice-table)', function (data) {
             layui.table.reload('sys-notice-table', {
-                where: {state: data.config.where.state, sort: {field: data.field, order: data.type}}
+                where: {status: data.config.where.status, sort: {field: data.field, order: data.type}}
                 , initSort: data
             });
         });
@@ -247,7 +247,7 @@
             layui.table.reload('sys-notice-table', {
                 page: {curr: 1}
                 , where: {
-                    state: data.index === 0 ? 'UNREAD' :
+                    status: data.index === 0 ? 'UNREAD' :
                         data.index === 1 ? 'READ' :
                             data.index === 2 ? 'ME' :
                                 data.index === 3 ? 'ALL' : 'ALL'
@@ -261,7 +261,7 @@
         });
 
         function load(data) {
-            if ('UNREAD' === layui.table.getOptions('sys-notice-table').where.state) {
+            if ('UNREAD' === layui.table.getOptions('sys-notice-table').where.status) {
                 unRead(data.count);
             } else {
                 layui.common.req(`${config.base}sys/notice/unRead.json`, 'GET', null, {

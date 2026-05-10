@@ -168,12 +168,12 @@ public class SysUserService {
 
     public void hasPermissions(SysPermissions sysPermissions) {
         SysUser sysUser = Optional.ofNullable(this.getSysUser())
-                .orElseThrow(() -> new ServerResponseException(ResponseCode.LOGOUT));
+                .orElseThrow(() -> new ServerResponseException(ResponseCode.UNAUTHORIZED));
         if (!SecurityUtils.hasSuperAdmin(sysUser)
                 && !Arrays.asList(sysPermissions.value()).contains(SysLogin.class)) {
             if (!this.hasPermissions(this.sysUserRepository.findById(sysUser.getId()).orElseThrow(() ->
                     new ServerResponseException(ResponseCode.NOT_FOUND)).getRoles())) {
-                throw new ServerResponseException(ResponseCode.UNAUTHORIZED);
+                throw new ServerResponseException(ResponseCode.FORBIDDEN);
             }
         }
     }

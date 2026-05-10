@@ -1,7 +1,6 @@
 package com.admin.web.model.response;
 
 import com.admin.web.model.enums.ResponseCode;
-import org.springframework.validation.BindingResult;
 
 import java.util.Objects;
 
@@ -36,10 +35,5 @@ public record ServerResponse<T>(String code, String msg, Long count, T data) {
 
     public static <T> ServerResponse<T> fail(ResponseCode responseCode) {
         return new ServerResponse<>(responseCode.code(), responseCode.msg(), null, null);
-    }
-
-    public static <T> ServerResponse<T> fail(BindingResult bindingResult) {
-        return new ServerResponse<>(ResponseCode.FAIL.code(), Objects.isNull(bindingResult.getFieldError())
-                ? ResponseCode.FAIL.msg() : bindingResult.getFieldError().getDefaultMessage(), null, null);
     }
 }

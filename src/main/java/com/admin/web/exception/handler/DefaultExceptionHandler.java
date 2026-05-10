@@ -8,12 +8,17 @@ import com.admin.web.model.os.Os;
 import com.admin.web.utils.ExceptionUtils;
 import com.admin.web.utils.WebUtils;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.apache.tomcat.util.http.fileupload.impl.SizeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
@@ -22,6 +27,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author znn
@@ -43,11 +49,22 @@ public class DefaultExceptionHandler {
             if (e instanceof SysLicenseException ex) {
                 return ResponseEntity.ok(ServerResponse.fail(ex.getMessage()));
             }
+            if (e instanceof ConstraintViolationException ex) {
+                return ResponseEntity.ok(ServerResponse.fail(ex.getConstraintViolations().stream()
+                        .map(ConstraintViolation::getMessage).collect(Collectors.joining(", "))));
+            }
             if (e instanceof BindException ex) {
-                return ResponseEntity.ok(ServerResponse.fail(ex.getBindingResult()));
+                return ResponseEntity.ok(ServerResponse.fail(ex.getFieldErrors().stream()
+                        .map(FieldError::getDefaultMessage).collect(Collectors.joining(", "))));
             }
             if (e instanceof NoResourceFoundException ex) {
                 return ResponseEntity.ok(ServerResponse.fail("访问的资源(%s)不存在！", ex.getResourcePath()));
+            }
+            if (e instanceof HttpRequestMethodNotSupportedException ex) {
+                return ResponseEntity.ok(ServerResponse.fail("请求方法(%s)不支持！", ex.getMethod()));
+            }
+            if (e instanceof MissingServletRequestParameterException ex) {
+                return ResponseEntity.ok(ServerResponse.fail("请求参数(%s)缺失！", ex.getParameterName()));
             }
             if (e instanceof MaxUploadSizeExceededException ex) {
                 if (ExceptionUtils.getCause(e, SizeException.class) instanceof SizeException cause) {
@@ -63,7 +80,7 @@ public class DefaultExceptionHandler {
             return ResponseEntity.ok(ServerResponse.fail(ResponseCode.SERVER_ERROR));
         }
         if (e instanceof ServerResponseException) {
-            return new ModelAndView("error/401", HttpStatus.UNAUTHORIZED);
+            return new ModelAndView("error/403", HttpStatus.FORBIDDEN);
         }
         if (e instanceof NoResourceFoundException) {
             return new ModelAndView("error/404", HttpStatus.NOT_FOUND);
