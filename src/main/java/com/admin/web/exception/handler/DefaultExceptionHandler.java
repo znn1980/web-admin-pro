@@ -51,11 +51,11 @@ public class DefaultExceptionHandler {
             }
             if (e instanceof ConstraintViolationException ex) {
                 return ResponseEntity.ok(ServerResponse.fail(ex.getConstraintViolations().stream()
-                        .map(ConstraintViolation::getMessage).collect(Collectors.joining(", "))));
+                        .map(ConstraintViolation::getMessage).collect(Collectors.joining(System.lineSeparator()))));
             }
             if (e instanceof BindException ex) {
                 return ResponseEntity.ok(ServerResponse.fail(ex.getFieldErrors().stream()
-                        .map(FieldError::getDefaultMessage).collect(Collectors.joining(", "))));
+                        .map(FieldError::getDefaultMessage).collect(Collectors.joining(System.lineSeparator()))));
             }
             if (e instanceof NoResourceFoundException ex) {
                 return ResponseEntity.ok(ServerResponse.fail("访问的资源(%s)不存在！", ex.getResourcePath()));
