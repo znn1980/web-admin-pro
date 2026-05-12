@@ -26,6 +26,16 @@
     box-sizing: border-box;
 }
 
+.lock-screen-clock {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 60px;
+    font-weight: 300;
+}
+
 .lock-screen .layui-input-suffix {
     pointer-events: auto;
     background-color: rgba(0, 0, 0, .5);
