@@ -3,14 +3,11 @@ package com.admin.web.aspect;
 import com.admin.web.annotation.SysLog;
 import com.admin.web.model.entity.SysUserLog;
 import com.admin.web.service.SysUserLogService;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.NamedThreadLocal;
 import org.springframework.stereotype.Component;
 
 /**
@@ -20,37 +17,30 @@ import org.springframework.stereotype.Component;
 @Component
 public class SysLogAspect {
     private static final Logger logger = LoggerFactory.getLogger(SysLogAspect.class);
-    private static final ThreadLocal<Long> THREAD_LOCAL = new NamedThreadLocal<>("ms");
     private final SysUserLogService sysUserLogService;
 
     public SysLogAspect(SysUserLogService sysUserLogService) {
         this.sysUserLogService = sysUserLogService;
     }
 
-    @Before(value = "@annotation(sysLog)")
-    public void doBefore(JoinPoint joinPoint, SysLog sysLog) {
+    @Around("@annotation(sysLog)")
+    public Object doAround(ProceedingJoinPoint joinPoint, SysLog sysLog) throws Throwable {
         logger.info("SYS-ASPECT => [{}] {}.{}()", sysLog.value()
                 , joinPoint.getTarget().getClass().getName(), joinPoint.getSignature().getName());
-        THREAD_LOCAL.set(System.currentTimeMillis());
-    }
-
-    @AfterReturning(pointcut = "@annotation(sysLog)", returning = "result")
-    public void doAfterReturning(JoinPoint joinPoint, SysLog sysLog, Object result) {
-        this.log(sysLog, joinPoint.getArgs(), result, null);
-    }
-
-    @AfterThrowing(value = "@annotation(sysLog)", throwing = "e")
-    public void doAfterThrowing(JoinPoint joinPoint, SysLog sysLog, Throwable e) {
-        this.log(sysLog, joinPoint.getArgs(), null, e);
-    }
-
-    void log(SysLog sysLog, Object[] args, Object result, Throwable e) {
+        long ms = System.currentTimeMillis();
         try {
-            SysUserLog log = this.sysUserLogService.log(sysLog, args, result, e, THREAD_LOCAL.get());
-            logger.info("SYS-REQUEST => {}", log.getParams());
-            logger.info("SYS-RESPONSE => {}", log.getResult());
-        } finally {
-            THREAD_LOCAL.remove();
+            Object result = joinPoint.proceed();
+            this.log(sysLog, joinPoint.getArgs(), result, null, ms);
+            return result;
+        } catch (Throwable e) {
+            this.log(sysLog, joinPoint.getArgs(), null, e, ms);
+            throw e;
         }
+    }
+
+    void log(SysLog sysLog, Object[] args, Object result, Throwable e, long ms) {
+        SysUserLog log = this.sysUserLogService.log(sysLog, args, result, e, ms);
+        logger.info("SYS-REQUEST => {}", log.getParams());
+        logger.info("SYS-RESPONSE => {}", log.getResult());
     }
 }

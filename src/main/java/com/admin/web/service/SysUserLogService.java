@@ -87,16 +87,16 @@ public class SysUserLogService {
         return this.sysUserLogRepository.save(logs);
     }
 
-    private String getParams(Object[] args) {
+    String getParams(Object[] args) {
         StringJoiner params = new StringJoiner(System.lineSeparator());
         Arrays.asList(args).forEach(arg -> {
             if (Objects.nonNull(arg) && !(arg instanceof HttpServletRequest
                     || arg instanceof HttpServletResponse)) {
                 if (arg instanceof MultipartFile file) {
-                    params.add(this.toMultipartFileString(file));
+                    params.add(this.getMultipartFileString(file));
                 } else if (arg instanceof MultipartFile[] files) {
                     Arrays.asList(files).forEach(file ->
-                            params.add(this.toMultipartFileString(file)));
+                            params.add(this.getMultipartFileString(file)));
                 } else {
                     params.add(ObjectUtils.getDisplayString(arg));
                 }
@@ -106,7 +106,7 @@ public class SysUserLogService {
         return params.toString();
     }
 
-    private String toMultipartFileString(MultipartFile file) {
+    String getMultipartFileString(MultipartFile file) {
         return String.format("MultipartFile{name=%s, originalFilename=%s, contentType=%s}"
                 , file.getName(), file.getOriginalFilename(), file.getContentType());
     }
