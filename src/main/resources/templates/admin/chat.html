@@ -51,9 +51,9 @@
                     layui.layer.tips(type === 'chat'
                         ? '新对话' : type === 'set'
                             ? '设置' : type === 'delete'
-                                ? '删除' : '', this, {tips: 4, fixed: true});
+                                ? '删除' : '置顶', this, {tips: 4, fixed: true});
                 }
-                , mouseleave: function (type) {
+                , mouseleave: function () {
                     layui.layer.closeAll('tips');
                 }
             }
