@@ -284,14 +284,14 @@
                     layui.layer.close(index);
                     layui.layer.prompt({
                         title: '请输入登录密码', closeBtn: 0, formType: 1, skin: 'layui-layer-admin'
-                        , success: function (layero) {
-                            layero.addClass('layui-form').find('input')
+                        , success: function (elem) {
+                            elem.addClass('layui-form').find('input')
                                 .addClass('layui-input').attr('lay-affix', 'eye');
                             layui.form.render();
-                            layero.find('input').focus();
+                            elem.find('input').trigger('focus');
                         }
                     }, function (value, index, elem) {
-                        if (value === '') return elem.focus();
+                        if (value.trim() === '') return elem.trigger('focus');
                         layer.close(index);
                         layui.common.req(`${config.base}sys/user/unlock.json`, 'POST', {password: value}, {
                             done: function () {

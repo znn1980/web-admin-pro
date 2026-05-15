@@ -106,14 +106,14 @@ layui.define(['layim', 'common'], function (exports) {
                     layui.layer.prompt({
                         title: '编辑对话名称', formType: 2, value: data.data.content
                         , skin: 'layui-layer-admin'
-                        , success: function (layero) {
-                            layero.addClass('layui-form').find('textarea')
+                        , success: function (elem) {
+                            elem.addClass('layui-form').find('textarea')
                                 .addClass('layui-textarea').attr('lay-affix', 'clear');
                             layui.form.render();
-                            layero.find('textarea').focus();
+                            elem.find('textarea').trigger('focus');
                         }
                     }, (value, index, elem) => {
-                        if (layui.$.trim(value) === '') return elem.focus();
+                        if (value.trim() === '') return elem.trigger('focus');
                         layer.close(index);
                         layui.common.req(`${config.base}ai/chat/${id}`, 'PUT', value, {
                             done: (data) => {
@@ -281,9 +281,9 @@ layui.define(['layim', 'common'], function (exports) {
                     }
                     , onmessage: function (msg) {
                         const data = JSON.parse(msg.data);
-                        const reasoningContent = data?.result?.output?.metadata?.reasoningContent;
-                        const text = data?.result?.output?.text;
-                        if (layui.$.trim(reasoningContent)) {
+                        const reasoningContent = data?.result?.output?.metadata?.reasoningContent || '';
+                        const text = data?.result?.output?.text || '';
+                        if (reasoningContent && reasoningContent.trim()) {
                             if (thinking === false) {
                                 thinking = true;
                                 periodThinking = Date.now();
@@ -291,7 +291,7 @@ layui.define(['layim', 'common'], function (exports) {
                             }
                             content.push(reasoningContent);
                         }
-                        if (layui.$.trim(text)) {
+                        if (text && text.trim()) {
                             if (thinking === true) {
                                 thinking = false;
                                 periodThinking = Date.now() - periodThinking;
@@ -299,7 +299,7 @@ layui.define(['layim', 'common'], function (exports) {
                             }
                             content.push(text);
                         }
-                        if (layui.$.trim(content.join(''))) {
+                        if (content.join('').trim()) {
                             layui.layim.getMessage({...receiver, content: `${content.join('')} _`, finished: false});
                         }
                     }

@@ -227,9 +227,9 @@
                     elem.find('.lock-screen-clock').html(layui.util.toDateString(Date.now(), 'HH:mm:ss'));
                     elem.find('input').on('keyup', function (e) {
                         if (e.keyCode === 13) elem.find('.layui-icon-right').trigger('click');
-                    }).focus();
+                    }).trigger('focus');
                     elem.find('.layui-icon-right').on('click', function () {
-                        if (elem.find('input').val() === '') return elem.find('input').focus();
+                        if (elem.find('input').val().trim() === '') return elem.find('input').trigger('focus');
                         layui.common.req(`${config.base}sys/user/unlock.json`, 'POST', {
                             password: elem.find('input').val()
                         }, {

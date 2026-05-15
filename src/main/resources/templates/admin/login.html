@@ -78,6 +78,9 @@
         base: config.base, version: true
     }).use(['index', 'common'], function () {
 
+        layui.$('input').on('keyup', function (e) {
+            if (e.keyCode === 13) layui.$('#sys-login-submit').trigger('click');
+        }).first().trigger('focus');
         layui.form.on('submit(sys-login-submit)', function (data) {
             layui.common.req(`${config.base}sys/user/login.json`, 'POST', data.field, {
                 done: function (data) {
