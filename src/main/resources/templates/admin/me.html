@@ -364,7 +364,7 @@
             layui.common.req(`${config.base}sys/user/pass.json`, 'PUT', data.field, {
                 done: function (data) {
                     layui.layer.msg(data.msg);
-                    layui.$('#sys-pass-form')[0].reset();
+                    layui.$('#sys-pass-form').trigger('reset');
                 }
             });
         });

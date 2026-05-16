@@ -174,7 +174,7 @@
         layui.table.on('toolbar(sys-notice-table)', function (data) {
             if (data.event === 'sys-add-toolbar') {
                 layui.$('#id').val('');
-                layui.$('#sys-notice-form')[0].reset();
+                layui.$('#sys-notice-form').trigger('reset');
                 save('创建通知公告', 'POST');
             }
             if (data.event === 'sys-edit-toolbar' || data.event === 'sys-delete-toolbar') {

@@ -221,7 +221,7 @@
         layui.table.on('toolbar(sys-menu-table)', function (data) {
             if (data.event === 'sys-add-toolbar') {
                 layui.$('#id').val('');
-                layui.$('#sys-menu-form')[0].reset();
+                layui.$('#sys-menu-form').trigger('reset');
                 layui.$('#icon-suffix').attr('class', 'layui-icon layui-icon-search');
                 load(function () {
                     xmSelect.get('#sys-menu', true).setValue([]);

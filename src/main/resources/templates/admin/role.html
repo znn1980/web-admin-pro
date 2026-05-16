@@ -145,7 +145,7 @@
         layui.table.on('toolbar(sys-role-table)', function (data) {
             if (data.event === 'sys-add-toolbar') {
                 layui.$('#id').val('');
-                layui.$('#sys-role-form')[0].reset();
+                layui.$('#sys-role-form').trigger('reset');
                 load(function () {
                     xmSelect.get('#sys-menu', true).setValue([]);
                     save('创建角色', 'POST');

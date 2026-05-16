@@ -170,7 +170,7 @@
         layui.table.on('toolbar(sys-user-table)', function (data) {
             if (data.event === 'sys-add-toolbar') {
                 layui.$('#id').val('');
-                layui.$('#sys-user-form')[0].reset();
+                layui.$('#sys-user-form').trigger('reset');
                 layui.$('#sys-username').show();
                 load(function () {
                     xmSelect.get('#sys-role', true).setValue([]);
