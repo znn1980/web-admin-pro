@@ -178,7 +178,7 @@ public class SysUserService {
         }
     }
 
-    private boolean hasPermissions(Set<SysRole> sysRoles) {
+    boolean hasPermissions(Set<SysRole> sysRoles) {
         PathMatcher matcher = new AntPathMatcher();
         for (SysRole sysRole : sysRoles) {
             for (SysMenu sysMenu : sysRole.getMenus()) {

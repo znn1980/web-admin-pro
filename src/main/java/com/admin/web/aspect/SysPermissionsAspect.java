@@ -22,7 +22,7 @@ public class SysPermissionsAspect {
         this.sysUserService = sysUserService;
     }
 
-    @Before(value = "@annotation(sysPermissions)")
+    @Before("@annotation(sysPermissions)")
     public void doBefore(JoinPoint joinPoint, SysPermissions sysPermissions) {
         logger.info("SYS-ASPECT => {}.{}()", joinPoint.getTarget().getClass().getName(), joinPoint.getSignature().getName());
         this.sysUserService.hasPermissions(sysPermissions);

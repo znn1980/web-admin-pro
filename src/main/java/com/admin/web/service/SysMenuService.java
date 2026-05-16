@@ -111,7 +111,7 @@ public class SysMenuService {
         this.sysMenuRepository.deleteById(id);
     }
 
-    private boolean exists(Long id, Long pid) {
+    boolean exists(Long id, Long pid) {
         Set<Long> exists = new HashSet<>();
         SysMenu sysMenu = this.sysMenuRepository.findById(pid).orElse(null);
         while (Objects.nonNull(sysMenu) && Objects.nonNull(sysMenu.getPid())) {

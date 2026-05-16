@@ -73,11 +73,11 @@ public class SysUserLogService {
             logs.setParams(this.getParams(args));
         }
         if (Objects.nonNull(result)) {
-            logs.setResult(ObjectUtils.getDisplayString(result));
+            logs.setResult(this.getDisplayString(result));
         }
         if (Objects.nonNull(e)) {
             if (e instanceof ServerResponseException ex) {
-                logs.setResult(ObjectUtils.getDisplayString(ex.getServerResponse()));
+                logs.setResult(this.getDisplayString(ex.getServerResponse()));
             } else {
                 logs.setErrors(ExceptionUtils.getStackTrace(e));
             }
@@ -92,13 +92,11 @@ public class SysUserLogService {
         Arrays.asList(args).forEach(arg -> {
             if (Objects.nonNull(arg) && !(arg instanceof HttpServletRequest
                     || arg instanceof HttpServletResponse)) {
-                if (arg instanceof MultipartFile file) {
-                    params.add(this.getMultipartFileString(file));
-                } else if (arg instanceof MultipartFile[] files) {
+                if (arg instanceof MultipartFile[] files) {
                     Arrays.asList(files).forEach(file ->
-                            params.add(this.getMultipartFileString(file)));
+                            params.add(this.getDisplayString(file)));
                 } else {
-                    params.add(ObjectUtils.getDisplayString(arg));
+                    params.add(this.getDisplayString(arg));
                 }
 
             }
@@ -106,8 +104,11 @@ public class SysUserLogService {
         return params.toString();
     }
 
-    String getMultipartFileString(MultipartFile file) {
-        return String.format("MultipartFile{name=%s, originalFilename=%s, contentType=%s}"
-                , file.getName(), file.getOriginalFilename(), file.getContentType());
+    String getDisplayString(Object obj) {
+        if (obj instanceof MultipartFile file) {
+            return String.format("MultipartFile{name=%s, originalFilename=%s, contentType=%s}"
+                    , file.getName(), file.getOriginalFilename(), file.getContentType());
+        }
+        return ObjectUtils.getDisplayString(obj);
     }
 }
