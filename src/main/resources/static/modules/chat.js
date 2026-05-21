@@ -34,15 +34,6 @@ layui.define(['layim', 'common'], function (exports) {
         }
     });
 
-    layui.layim.extendChatTools([{
-        name: 'mike', title: '语音输入', icon: 'layui-icon-mike'
-        , onClick: function (data) {
-            layui.chat.asMike(function (text) {
-                layui.$('textarea.layim-scrollbar').val(text);
-            });
-        }
-    }]);
-
     exports('chat', {
         asChat: function (id) {
             conversationId = (id = id || layui.common.asUuid());
@@ -224,7 +215,7 @@ layui.define(['layim', 'common'], function (exports) {
         }
         , asChatlog: function (data) {
             const user = data.user, receiver = data.receiver;
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve) => {
                 const messages = [];
                 layui.common.req(`${config.base}ai/chat/all/${conversationId}`, 'GET', null, {
                     done: function (data) {

@@ -1,18 +1,17 @@
 package com.admin.web.model.os;
 
-import java.lang.management.ManagementFactory;
+import com.sun.management.OperatingSystemMXBean;
 
+import java.lang.management.ManagementFactory;
 
 /**
  * @author znn
  */
 public class OsSys extends Os {
-    private final java.lang.management.OperatingSystemMXBean os;
-    private final com.sun.management.OperatingSystemMXBean cpu;
+    private final OperatingSystemMXBean os;
 
     public OsSys() {
-        this.os = ManagementFactory.getOperatingSystemMXBean();
-        this.cpu = (com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+        this.os = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
     }
 
     public String getName() {
@@ -36,7 +35,7 @@ public class OsSys extends Os {
     }
 
     public double getCpuLoad() {
-        return this.cpu.getCpuLoad() >= 0 ? this.cpu.getCpuLoad() : 0;
+        return this.os.getCpuLoad() >= 0 ? this.os.getCpuLoad() : 0;
     }
 
     @Override

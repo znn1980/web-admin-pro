@@ -133,6 +133,40 @@
         <div class="layadmin-body-shade" layadmin-event="shade"></div>
     </div>
 </div>
+<!-- 锁屏 -->
+<div class="layui-form" id="sys-lock-form" style="display: none;">
+    <div class="lock-screen-clock">00:00:00</div>
+    <div class="layui-input-wrap">
+        <label for="sys-lock-pin"></label>
+        <input id="sys-lock-pin" type="password" class="lock-screen-pin" autocomplete="off" lay-affix="eye" value="">
+        <div class="layui-input-suffix"><i class="layui-icon layui-icon-right"></i></div>
+    </div>
+    <div>请输入登陆密码，即可退出锁屏。</div>
+</div>
+<!-- 修改密码 -->
+<div class="layui-form" id="sys-pass-form" style="display: none;">
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="oldPassword">旧密码</label>
+        <div class="layui-input-block">
+            <input type="password" id="oldPassword" name="oldPassword" value="" lay-verify="required" placeholder="旧密码" lay-reqtext="请输入旧密码" autocomplete="off" class="layui-input" lay-affix="eye">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="newPassword">新密码</label>
+        <div class="layui-input-block">
+            <input type="password" id="newPassword" name="newPassword" value="" lay-verify="required" placeholder="新密码" lay-reqtext="请输入新密码" autocomplete="off" class="layui-input" lay-affix="eye">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="confirmPassword">确认密码</label>
+        <div class="layui-input-block">
+            <input type="password" id="confirmPassword" name="confirmPassword" value="" lay-verify="required" placeholder="确认密码" lay-reqtext="请输入确认密码" autocomplete="off" class="layui-input" lay-affix="eye">
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="sys-pass-submit" id="sys-pass-submit" value="确认">
+    </div>
+</div>
 <script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
 <script th:inline="javascript">
     const config = {
@@ -167,6 +201,7 @@
 
         layui.common.req(`${config.base}sys/user/me.json`, 'GET', null, {
             done: function (data) {
+                pass(data.data.passTimestamp, 90);
                 if (data.data.avatar) layui.$('#sys-avatar').attr('src', data.data.avatar);
                 layui.$('#sys-username').html(data.data.username);
                 layui.common.data({
@@ -206,23 +241,45 @@
             }).join('');
         }
 
+        function pass(date, days) {
+            const ms = 24 * 60 * 60 * 1000;
+            if (date) date = date.replace(' ', 'T') + 'Z';
+            if (!date || Math.round(Math.abs(Date.now() - Date.parse(date)) / ms) > (days ? days : 90)) {
+                layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;${!date ? '请及时修改系统默认初始登录密码！' : `您的登录密码已超${days}天未修改！`}`, {
+                    title: '安全提示', closeBtn: 0, icon: 0, skin: 'layui-layer-admin', btn: ['立即修改', '下次修改'],
+                }, function (index) {
+                    layui.layer.close(index);
+                    pwd();
+                });
+            }
+        }
+
+        function pwd() {
+            layui.admin.popup({
+                id: 'sys-pass', type: 1, title: '修改密码', area: 'auto'
+                , content: layui.$('#sys-pass-form'), btn: ['确定', '取消']
+                , yes: function (index) {
+                    layui.form.on('submit(sys-pass-submit)', function (data) {
+                        layui.common.req(`${config.base}sys/user/pass.json`, 'PUT', data.field, {
+                            done: function (data) {
+                                layui.layer.msg(data.msg);
+                                layui.layer.close(index);
+                            }
+                        });
+                    });
+                    layui.$('#sys-pass-submit').trigger('click');
+                }
+            });
+        }
+
         function lock() {
             layui.layer.open({
                 id: 'sys-lock', skin: 'lock-screen'
                 , type: 1, title: false, closeBtn: false, area: ['100%', '100%']
                 , scrollbar: false, anim: -1, isOutAnim: false, resize: false
-                , content: `
-                  <div class="layui-form">
-                    <div class="lock-screen-clock">00:00:00</div>
-                    <div class="layui-input-wrap">
-                      <input type="password" class="lock-screen-pin" autocomplete="off" lay-affix="eye" value="">
-                      <div class="layui-input-suffix"><i class="layui-icon layui-icon-right"></i></div>
-                    </div>
-                    <div>请输入登陆密码，即可退出锁屏。</div>
-                  </div>
-                  `
+                , content: layui.$('#sys-lock-form')
                 , success: function (elem, index) {
-                    layui.form.render();
+                    //layui.form.render();
                     layui.common.data({'lock-screen': true});
                     elem.find('.lock-screen-clock').html(layui.util.toDateString(Date.now(), 'HH:mm:ss'));
                     elem.find('input').on('keyup', function (e) {

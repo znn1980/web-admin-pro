@@ -6,91 +6,96 @@ SELECT SETVAL('SYS_USER_ID_SEQ', MAX(ID))
 FROM SYS_USER;
 
 INSERT INTO SYS_MENU
-    (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (1, null, '系统管理', null, null, 1, true, false, 'admin', now());
+    (ID, PID, TITLE, METHOD, URL, ICON, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
+VALUES (100, null, 'AI对话', 'GET', '/admin/chat.html', 'layui-icon layui-icon-dialogue', 100, true, false, 'admin', now());
+
 INSERT INTO SYS_MENU
-    (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (2, 1, '用户管理', 'GET', '/admin/user.html', 2, true, false, 'admin', now());
+    (ID, PID, TITLE, METHOD, URL, ICON, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
+VALUES (1000, null, '系统管理', null, null, 'layui-icon layui-icon-app', 1000, true, false, 'admin', now());
+
 INSERT INTO SYS_MENU
-    (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (3, 1, '角色管理', 'GET', '/admin/role.html', 3, true, false, 'admin', now());
+    (ID, PID, TITLE, METHOD, URL, ICON, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
+VALUES (1100, 1000, '用户管理', 'GET', '/admin/user.html', 'layui-icon layui-icon-username', 1100, true, false, 'admin', now());
 INSERT INTO SYS_MENU
-    (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (4, 1, '菜单管理', 'GET', '/admin/menu.html', 4, true, false, 'admin', now());
+    (ID, PID, TITLE, METHOD, URL, ICON, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
+VALUES (1200, 1000, '角色管理', 'GET', '/admin/role.html', 'layui-icon layui-icon-auz', 1200, true, false, 'admin', now());
 INSERT INTO SYS_MENU
-    (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (5, 1, '日志管理', 'GET', '/admin/log.html', 5, true, false, 'admin', now());
+    (ID, PID, TITLE, METHOD, URL, ICON, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
+VALUES (1300, 1000, '菜单管理', 'GET', '/admin/menu.html', 'layui-icon layui-icon-tabs', 1300, true, false, 'admin', now());
+INSERT INTO SYS_MENU
+    (ID, PID, TITLE, METHOD, URL, ICON, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
+VALUES (1800, 1000, '通知公告', 'GET', '/admin/notice.html', 'layui-icon layui-icon-notice', 1800, true, false, 'admin', now());
+INSERT INTO SYS_MENU
+    (ID, PID, TITLE, METHOD, URL, ICON, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
+VALUES (1900, 1000, '日志管理', 'GET', '/admin/log.html', 'layui-icon layui-icon-survey', 1900, true, false, 'admin', now());
 
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (6, 2, '查询用户', 'POST', '/sys/user/all.json', 6, false, false, 'admin', now());
+VALUES (1110, 1100, '查询用户', 'POST', '/sys/user/all.json', 1110, false, false, 'admin', now());
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (7, 2, '创建用户', 'POST', '/sys/user/create.json', 7, false, false, 'admin', now());
+VALUES (1120, 1100, '创建用户', 'POST', '/sys/user/create.json', 1120, false, false, 'admin', now());
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (8, 2, '修改用户', 'PUT', '/sys/user/update.json', 8, false, false, 'admin', now());
+VALUES (1130, 1100, '修改用户', 'PUT', '/sys/user/update.json', 1130, false, false, 'admin', now());
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (9, 2, '删除用户', 'DELETE', '/sys/user/delete.json', 9, false, false, 'admin', now());
+VALUES (1140, 1100, '删除用户', 'DELETE', '/sys/user/delete.json', 1140, false, false, 'admin', now());
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (10, 2, '修改密码', 'PUT', '/sys/user/pass.json', 10, false, false, 'admin', now());
+VALUES (1150, 1100, '修改密码', 'PUT', '/sys/user/pass.json', 1150, false, false, 'admin', now());
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (11, 2, '重置密码', 'PUT', '/sys/user/reset.json', 11, false, false, 'admin', now());
+VALUES (1160, 1100, '重置密码', 'PUT', '/sys/user/reset.json', 1160, false, false, 'admin', now());
 
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (12, 3, '查询角色', 'GET', '/sys/role/all.json', 12, false, false, 'admin', now());
+VALUES (1210, 1200, '查询角色', 'GET', '/sys/role/all.json', 1210, false, false, 'admin', now());
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (13, 3, '移动角色', 'PUT', '/sys/role/move.json', 13, false, false, 'admin', now());
+VALUES (1220, 1200, '移动角色', 'PUT', '/sys/role/move.json', 1220, false, false, 'admin', now());
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (14, 3, '创建角色', 'POST', '/sys/role/create.json', 14, false, false, 'admin', now());
+VALUES (1230, 1200, '创建角色', 'POST', '/sys/role/create.json', 1230, false, false, 'admin', now());
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (15, 3, '修改角色', 'PUT', '/sys/role/update.json', 15, false, false, 'admin', now());
+VALUES (1240, 1200, '修改角色', 'PUT', '/sys/role/update.json', 1240, false, false, 'admin', now());
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (16, 3, '删除角色', 'DELETE', '/sys/role/delete.json', 16, false, false, 'admin', now());
+VALUES (1250, 1200, '删除角色', 'DELETE', '/sys/role/delete.json', 1250, false, false, 'admin', now());
 
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (17, 4, '查询菜单', 'GET', '/sys/menu/all.json', 17, false, false, 'admin', now());
+VALUES (1310, 1300, '查询菜单', 'GET', '/sys/menu/all.json', 1310, false, false, 'admin', now());
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (18, 4, '移动菜单', 'PUT', '/sys/menu/move.json', 18, false, false, 'admin', now());
+VALUES (1320, 1300, '移动菜单', 'PUT', '/sys/menu/move.json', 1320, false, false, 'admin', now());
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (19, 4, '创建菜单', 'POST', '/sys/menu/create.json', 19, false, false, 'admin', now());
+VALUES (1330, 1300, '创建菜单', 'POST', '/sys/menu/create.json', 1330, false, false, 'admin', now());
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (20, 4, '修改菜单', 'PUT', '/sys/menu/update.json', 20, false, false, 'admin', now());
+VALUES (1340, 1300, '修改菜单', 'PUT', '/sys/menu/update.json', 1340, false, false, 'admin', now());
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (21, 4, '删除菜单', 'DELETE', '/sys/menu/delete.json', 21, false, false, 'admin', now());
+VALUES (1350, 1300, '删除菜单', 'DELETE', '/sys/menu/delete.json', 1350, false, false, 'admin', now());
 
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (22, 5, '查询日志', 'POST', '/sys/log/all.json', 22, false, false, 'admin', now());
+VALUES (1810, 1800, '创建通知公告', 'POST', '/sys/notice/create.json', 1810, false, false, 'admin', now());
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (23, 5, '删除日志', 'DELETE', '/sys/log/delete.json', 23, false, false, 'admin', now());
+VALUES (1820, 1800, '修改通知公告', 'PUT', '/sys/notice/update.json', 1820, false, false, 'admin', now());
+INSERT INTO SYS_MENU
+    (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
+VALUES (1823, 1800, '删除通知公告', 'DELETE', '/sys/notice/delete.json', 1823, false, false, 'admin', now());
 
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (24, null, '通知公告', null, null, 24, false, false, 'admin', now());
+VALUES (1910, 1900, '查询日志', 'POST', '/sys/log/all.json', 1910, false, false, 'admin', now());
 INSERT INTO SYS_MENU
     (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (25, 24, '创建通知公告', 'POST', '/sys/notice/create.json', 25, false, false, 'admin', now());
-INSERT INTO SYS_MENU
-    (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (26, 24, '修改通知公告', 'PUT', '/sys/notice/update.json', 26, false, false, 'admin', now());
-INSERT INTO SYS_MENU
-    (ID, PID, TITLE, METHOD, URL, SORT, SYS_MENU, DISABLE, CREATE_USERNAME, CREATE_TIMESTAMP)
-VALUES (27, 24, '删除通知公告', 'DELETE', '/sys/notice/delete.json', 27, false, false, 'admin', now());
+VALUES (1920, 1900, '删除日志', 'DELETE', '/sys/log/delete.json', 1920, false, false, 'admin', now());
 
 SELECT SETVAL('SYS_MENU_ID_SEQ', MAX(ID))
 FROM SYS_MENU;
