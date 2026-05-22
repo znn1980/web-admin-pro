@@ -27,8 +27,8 @@ public class SysRoleController extends BaseController {
 
     @SysPermissions
     @GetMapping("/all.json")
-    public ServerResponse<List<SysRole>> all() {
-        List<SysRole> sysRoles = this.sysRoleService.all();
+    public ServerResponse<List<SysRole>> all(@RequestParam(required = false) String search) {
+        List<SysRole> sysRoles = this.sysRoleService.all(search);
         return ServerResponse.ok(sysRoles);
     }
 

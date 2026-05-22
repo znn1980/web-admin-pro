@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title th:text="|${config.name} v${config.version}|">WEB-ADMIN-PRO</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}" href="../../static/favicon.ico"/>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" href="../../static/layui/css/layui.css" media="all">
+    <link rel="stylesheet" th:href="@{/admin-ui/css/admin.css}" href="../../static/admin-ui/css/admin.css" media="all">
+</head>
+<body class="layui-fluid">
+<div class="layui-card">
+    <div class="layui-card-header">字典管理</div>
+    <div class="layui-card-body">
+        <form class="layui-form layui-form-item layui-form-pane" id="sys-search-form" lay-filter="sys-search-form">
+            <div class="layui-inline">
+                <div class="layui-input-wrap">
+                    <div class="layui-input-prefix">
+                        <label for="search" class="layui-icon layui-icon-read"></label>
+                    </div>
+                    <input type="text" class="layui-input" id="search" name="search" placeholder="字典名称/键名">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <button lay-submit lay-filter="sys-search-submit" class="layui-btn layui-btn-radius layui-btn-sm">
+                    <i class="layui-icon layui-icon-search"></i>查询
+                </button>
+                <button type="reset" class="layui-btn layui-btn-radius layui-btn-sm layui-bg-orange">
+                    <i class="layui-icon layui-icon-refresh"></i>重置
+                </button>
+            </div>
+        </form>
+        <div class="layui-row layui-col-space10">
+            <div class="layui-col-sm6">
+                <table class="layui-hide" id="sys-dict-table" lay-filter="sys-dict-table"></table>
+            </div>
+            <div class="layui-col-sm6">
+                <table class="layui-hide" id="sys-dict-detail-table" lay-filter="sys-dict-detail-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 字典管理 -->
+<script type="text/html" id="sys-dict-name">
+    <span lay-tips="{{ d.remark?d.remark:d.name }}">{{ d.name }}</span>
+</script>
+<script type="text/html" id="sys-dict-key">
+    <span class="layui-badge-rim">{{ d.key }}</span>
+</script>
+<script type="text/html" id="sys-dict-disable">
+    {{# if(d.disable){ }}
+    <input type="checkbox" value="{{ d.id }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" title="启用|禁用" lay-skin="switch" lay-filter="sys-dict-switch">
+    {{# }else{ }}
+    <input type="checkbox" checked value="{{ d.id }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" title="启用|禁用" lay-skin="switch" lay-filter="sys-dict-switch">
+    {{# } }}
+</script>
+<script type="text/html" id="sys-dict-toolbar">
+    <div class="layui-btn-group">
+        <button class="layui-btn layui-btn-sm" lay-event="sys-add-toolbar">
+            <i class="layui-icon layui-icon-add-1" lay-tips="创建"></i>
+        </button>
+        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="sys-edit-toolbar">
+            <i class="layui-icon layui-icon-edit" lay-tips="修改"></i>
+        </button>
+        <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="sys-delete-toolbar">
+            <i class="layui-icon layui-icon-delete" lay-tips="删除"></i>
+        </button>
+        <!--button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="sys-refresh-toolbar">
+            <i class="layui-icon layui-icon-refresh" lay-tips="刷新"></i>
+        </button-->
+    </div>
+</script>
+<script type="text/html" id="sys-dict-tool">
+    <div class="layui-btn-group">
+        <button class="layui-btn layui-btn-xs layui-bg-blue" lay-event="sys-edit-tool">
+            <i class="layui-icon layui-icon-edit" lay-tips="修改"></i>
+        </button>
+        <button class="layui-btn layui-btn-xs layui-bg-red" lay-event="sys-delete-tool">
+            <i class="layui-icon layui-icon-delete" lay-tips="删除"></i>
+        </button>
+    </div>
+</script>
+<form class="layui-form" id="sys-dict-form" lay-filter="sys-dict-form" style="display: none;">
+    <input type="hidden" id="id" name="id">
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="name">字典名称</label>
+        <div class="layui-input-block">
+            <input type="text" id="name" name="name" lay-verify="required" placeholder="字典名称" lay-reqtext="请输入字典名称" autocomplete="off" class="layui-input" lay-affix="clear">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="key">字典键名</label>
+        <div class="layui-input-block">
+            <input type="text" id="key" name="key" lay-verify="required" placeholder="字典键名" lay-reqtext="请输入字典键名" autocomplete="off" class="layui-input" lay-affix="clear">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="remark">字典备注</label>
+        <div class="layui-input-block">
+            <textarea class="layui-textarea" id="remark" name="remark" placeholder="字典备注" lay-affix="clear"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">字典状态</label>
+        <div class="layui-input-block">
+            <input type="checkbox" checked id="disable" name="disable" title="启用|禁用" lay-skin="switch">
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="sys-dict-submit" id="sys-dict-submit" value="确认">
+    </div>
+</form>
+<!-- 字典详情 -->
+<script type="text/html" id="sys-dict-detail-label">
+    <span lay-tips="{{ d.remark?d.remark:d.label }}">{{ d.label }}</span>
+</script>
+<script type="text/html" id="sys-dict-detail-value">
+    <span class="layui-badge-rim">{{ d.value }}</span>
+</script>
+<script type="text/html" id="sys-dict-detail-disable">
+    {{# if(d.disable){ }}
+    <input type="checkbox" value="{{ d.id }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" title="启用|禁用" lay-skin="switch" lay-filter="sys-dict-detail-switch">
+    {{# }else{ }}
+    <input type="checkbox" checked value="{{ d.id }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" title="启用|禁用" lay-skin="switch" lay-filter="sys-dict-detail-switch">
+    {{# } }}
+</script>
+<script type="text/html" id="sys-dict-detail-toolbar">
+    <div class="layui-btn-group">
+        <button class="layui-btn layui-btn-sm" lay-event="sys-add-toolbar">
+            <i class="layui-icon layui-icon-add-1" lay-tips="创建"></i>
+        </button>
+        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="sys-edit-toolbar">
+            <i class="layui-icon layui-icon-edit" lay-tips="修改"></i>
+        </button>
+        <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="sys-delete-toolbar">
+            <i class="layui-icon layui-icon-delete" lay-tips="删除"></i>
+        </button>
+        <!--button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="sys-refresh-toolbar">
+            <i class="layui-icon layui-icon-refresh" lay-tips="刷新"></i>
+        </button-->
+    </div>
+</script>
+<script type="text/html" id="sys-dict-detail-tool">
+    <div class="layui-btn-group">
+        <button class="layui-btn layui-btn-xs layui-bg-blue" lay-event="sys-edit-tool">
+            <i class="layui-icon layui-icon-edit" lay-tips="修改"></i>
+        </button>
+        <button class="layui-btn layui-btn-xs layui-bg-red" lay-event="sys-delete-tool">
+            <i class="layui-icon layui-icon-delete" lay-tips="删除"></i>
+        </button>
+        <button class="layui-btn layui-btn-xs" lay-event="sys-more-tool">
+            <i class="layui-icon layui-icon-more-vertical" lay-tips="更多"></i>
+        </button>
+    </div>
+</script>
+<form class="layui-form" id="sys-dict-detail-form" lay-filter="sys-dict-detail-form" style="display: none;">
+    <input type="hidden" id="detail-id" name="id">
+    <input type="hidden" id="dict" name="dict">
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="detail-label">字典标签</label>
+        <div class="layui-input-block">
+            <input type="text" id="detail-label" name="label" lay-verify="required" placeholder="字典标签" lay-reqtext="请输入字典标签" autocomplete="off" class="layui-input" lay-affix="clear">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="detail-value">字典数值</label>
+        <div class="layui-input-block">
+            <input type="text" id="detail-value" name="value" lay-verify="required" placeholder="字典数值" lay-reqtext="请输入字典数值" autocomplete="off" class="layui-input" lay-affix="clear">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="detail-remark">字典备注</label>
+        <div class="layui-input-block">
+            <textarea class="layui-textarea" id="detail-remark" name="remark" placeholder="字典备注" lay-affix="clear"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">字典状态</label>
+        <div class="layui-input-block">
+            <input type="checkbox" checked id="detail-disable" name="disable" title="启用|禁用" lay-skin="switch">
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="sys-dict-detail-submit" id="sys-dict-detail-submit" value="确认">
+    </div>
+</form>
+<script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
+<script th:inline="javascript">
+    const config = {
+        base:/*[[@{/}]]*/ '../../static/'
+    }
+
+    layui.config({
+        base: config.base, version: true
+    }).use(['index', 'common'], function () {
+
+        layui.table.render({
+            elem: '#sys-dict-table', page: true
+            , url: `${config.base}sys/dict/all.json`
+            , method: 'POST', contentType: "application/json;charset=UTF-8"
+            , toolbar: '#sys-dict-toolbar'
+            , cols: [
+                [
+                    {fixed: 'left', type: 'checkbox'}
+                    , {field: 'name', title: '名称', templet: '#sys-dict-name'}
+                    , {field: 'key', title: '键名', sort: true, templet: '#sys-dict-key'}
+                    , {field: 'disable', title: '状态', sort: true, align: 'center', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-dict-disable'}
+                    , {field: 'createUsername', title: '创建用户', sort: true, minWidth: 110, maxWidth: 110, width: 110, hide: true}
+                    , {field: 'createTimestamp', title: '创建时间', sort: true, minWidth: 120, maxWidth: 180, width: 180, hide: true}
+                    , {field: 'updateUsername', title: '修改用户', sort: true, minWidth: 110, maxWidth: 110, width: 110, hide: true}
+                    , {field: 'updateTimestamp', title: '修改时间', sort: true, minWidth: 120, maxWidth: 180, width: 180, hide: true}
+                    , {field: 'remark', title: '备注', hide: true}
+                    , {fixed: 'right', title: '操作', align: 'center', toolbar: '#sys-dict-tool', minWidth: 90, maxWidth: 90, width: 90}
+                ]
+            ]
+            , where: {sort: {field: 'createTimestamp', order: 'desc'}}
+            , initSort: {field: 'createTimestamp', type: 'desc'}
+            , done: function (data) {
+                layui.common.asCols(this);
+                load(data.data && data.data.length > 0 ? data.data[0] : null);
+            }
+        });
+
+        layui.table.on('row(sys-dict-table)', function (data) {
+            load(data.data);
+        });
+
+        layui.form.on('switch(sys-dict-switch)', function (data) {
+            const dict = JSON.parse(decodeURIComponent(layui.$(this).data('json')));
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否${data.elem.checked ? '启用' : '禁用'}【${dict.name}】字典？`, {
+                title: `${data.elem.checked ? '启用' : '禁用'}`, closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
+            }, function (index) {
+                layui.layer.close(index);
+                dict.disable = !data.elem.checked;
+                layui.common.req(`${config.base}sys/dict/update.json`, 'PUT', dict, {
+                    done: function (data) {
+                        layui.layer.msg(data.msg);
+                    }
+                    , always: function () {
+                        layui.table.reload('sys-dict-table');
+                    }
+                });
+            }, function () {
+                data.elem.checked = !data.elem.checked;
+            });
+        });
+
+        layui.table.on('toolbar(sys-dict-table)', function (data) {
+            if (data.event === 'sys-add-toolbar') {
+                layui.$('#id').val('');
+                layui.$('#sys-dict-form').trigger('reset');
+                save('创建字典', 'POST');
+            }
+            if (data.event === 'sys-edit-toolbar' || data.event === 'sys-delete-toolbar') {
+                const dictionaries = layui.table.checkStatus('sys-dict-table').data;
+                if (dictionaries.length <= 0) return layui.layer.msg("请选择一条纪录！");
+                if (data.event === 'sys-edit-toolbar') {
+                    dictionaries[0].disable = !dictionaries[0].disable;
+                    layui.form.val('sys-dict-form', dictionaries[0]);
+                    save('修改字典', 'PUT');
+                }
+                if (data.event === 'sys-delete-toolbar') {
+                    del(dictionaries);
+                }
+            }
+            if (data.event === 'sys-refresh-toolbar') {
+                layui.table.reload('sys-dict-table');
+            }
+        });
+
+        layui.table.on('tool(sys-dict-table)', function (data) {
+            if (data.event === 'sys-edit-tool') {
+                data.data.disable = !data.data.disable;
+                layui.form.val('sys-dict-form', data.data);
+                save('修改字典', 'PUT');
+            }
+            if (data.event === 'sys-delete-tool') {
+                del([data.data]);
+            }
+        });
+
+        layui.form.on('submit(sys-search-submit)', function (data) {
+            layui.table.reload('sys-dict-table', {
+                page: {curr: 1}, where: data.field
+            });
+            return false;
+        });
+
+        layui.table.render({
+            elem: '#sys-dict-detail-table'
+            , method: 'POST', contentType: "application/json;charset=UTF-8"
+            , toolbar: '#sys-dict-detail-toolbar'
+            , cols: [
+                [
+                    {fixed: 'left', type: 'checkbox'}
+                    , {field: 'label', title: '标签', templet: '#sys-dict-detail-label'}
+                    , {field: 'value', title: '数值', templet: '#sys-dict-detail-value'}
+                    , {field: 'disable', title: '状态', align: 'center', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-dict-detail-disable'}
+                    , {field: 'createUsername', title: '创建用户', minWidth: 110, maxWidth: 110, width: 110, hide: true}
+                    , {field: 'createTimestamp', title: '创建时间', minWidth: 120, maxWidth: 180, width: 180, hide: true}
+                    , {field: 'updateUsername', title: '修改用户', minWidth: 110, maxWidth: 110, width: 110, hide: true}
+                    , {field: 'updateTimestamp', title: '修改时间', minWidth: 120, maxWidth: 180, width: 180, hide: true}
+                    , {field: 'remark', title: '备注', hide: true}
+                    , {fixed: 'right', title: '操作', align: 'center', toolbar: '#sys-dict-detail-tool', minWidth: 120, maxWidth: 120, width: 120}
+                ]
+            ]
+            , data: []
+            , done: function () {
+                layui.common.asCols(this);
+            }
+        });
+
+        layui.form.on('switch(sys-dict-detail-switch)', function (data) {
+            const dict = JSON.parse(decodeURIComponent(layui.$(this).data('json')));
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否${data.elem.checked ? '启用' : '禁用'}【${dict.label}】字典？`, {
+                title: `${data.elem.checked ? '启用' : '禁用'}`, closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
+            }, function (index) {
+                layui.layer.close(index);
+                dict.disable = !data.elem.checked;
+                layui.common.req(`${config.base}sys/dict/detail/update.json`, 'PUT', dict, {
+                    done: function (data) {
+                        layui.layer.msg(data.msg);
+                    }
+                    , always: function () {
+                        layui.table.reload('sys-dict-detail-table');
+                    }
+                });
+            }, function () {
+                data.elem.checked = !data.elem.checked;
+            });
+        });
+
+        layui.table.on('toolbar(sys-dict-detail-table)', function (data) {
+            if (data.event === 'sys-add-toolbar') {
+                layui.$('#detail-id').val('');
+                layui.$('#sys-dict-detail-form').trigger('reset');
+                if (!layui.$('#dict').data('json')) return layui.layer.msg('点击字典查看详情');
+                save('创建字典', 'POST', true);
+            }
+            if (data.event === 'sys-edit-toolbar' || data.event === 'sys-delete-toolbar') {
+                const dictionaries = layui.table.checkStatus('sys-dict-detail-table').data;
+                if (dictionaries.length <= 0) return layui.layer.msg("请选择一条纪录！");
+                if (data.event === 'sys-edit-toolbar') {
+                    dictionaries[0].disable = !dictionaries[0].disable;
+                    layui.form.val('sys-dict-detail-form', dictionaries[0]);
+                    save('修改字典', 'PUT', true);
+                }
+                if (data.event === 'sys-delete-toolbar') {
+                    del(dictionaries, true);
+                }
+            }
+            if (data.event === 'sys-refresh-toolbar') {
+                layui.table.reload('sys-dict-detail-table');
+            }
+        });
+
+        layui.table.on('tool(sys-dict-detail-table)', function (data) {
+            if (data.event === 'sys-edit-tool') {
+                data.data.disable = !data.data.disable;
+                layui.form.val('sys-dict-detail-form', data.data);
+                save('修改字典', 'PUT', true);
+            }
+            if (data.event === 'sys-delete-tool') {
+                del([data.data], true);
+            }
+            if (data.event === 'sys-more-tool') {
+                const id = data.data.id;
+                layui.dropdown.render({
+                    elem: this, show: true
+                    , data: [{id: 'UP', title: '上移'}, {id: 'DOWN', title: '下移'}]
+                    , click: function (data) {
+                        if (data.id === 'UP' || data.id === 'DOWN') {
+                            layui.common.req(`${config.base}sys/dict/detail/move.json`, 'PUT', {
+                                id: id, move: data.id
+                            }, {
+                                done: function (data) {
+                                    layui.layer.msg(data.msg);
+                                    layui.table.reload('sys-dict-detail-table');
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        });
+
+        function load(data) {
+            layui.$('#dict').data('json', data ? encodeURIComponent(JSON.stringify({id: data.id})) : null);
+            layui.table.reload('sys-dict-detail-table', data
+                ? {url: `${config.base}sys/dict/detail/all.json?id=${data.id}`} : {url: null, data: []});
+        }
+
+        function save(title, type, detail) {
+            layui.admin.popup({
+                type: 1, title: title, area: 'auto'
+                , content: layui.$(`#sys-dict-${detail ? 'detail-form' : 'form'}`)
+                , btn: ['确定', '取消']
+                , yes: function (index) {
+                    layui.form.on(`submit(sys-dict-${detail ? 'detail-submit' : 'submit'})`, function (data) {
+                        data.field.disable = data.field.disable !== 'on';
+                        if (detail) data.field.dict = JSON.parse(decodeURIComponent(layui.$('#dict').data('json')));
+                        layui.common.req(`${config.base}sys/dict/${detail ? 'detail/' : ''}${type === 'POST' ? 'create.json' : 'update.json'}`, type, data.field, {
+                            done: function (data) {
+                                layui.layer.close(index);
+                                layui.layer.msg(data.msg);
+                                layui.table.reload(`sys-dict-${detail ? 'detail-table' : 'table'}`);
+                            }
+                        });
+                    });
+                    layui.$(`#sys-dict-${detail ? 'detail-submit' : 'submit'}`).trigger('click');
+                }
+            });
+        }
+
+        function del(dictionaries, detail) {
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否删除【${dictionaries.length}】条字典？`, {
+                title: "删除字典", closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
+            }, function (index) {
+                layui.layer.close(index);
+                layui.common.req(`${config.base}sys/dict/${detail ? 'detail/' : ''}delete.json`, 'DELETE', dictionaries.map(dict => dict.id), {
+                    done: function (data) {
+                        layui.layer.msg(data.msg);
+                        layui.table.reload(`sys-dict-${detail ? 'detail-table' : 'table'}`);
+                    }
+                });
+            });
+        }
+
+    });
+</script>
+</body>
+</html>

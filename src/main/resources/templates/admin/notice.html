@@ -289,9 +289,9 @@
                 , yes: function (index) {
                     layui.form.on('submit(sys-notice-submit)', function (data) {
                         data.field.content = layui.layedit.getContent(editor);
-                        layui.layer.close(index);
                         layui.common.req(`${config.base}sys/notice/${type === 'POST' ? 'create.json' : 'update.json'}`, type, data.field, {
                             done: function (data) {
+                                layui.layer.close(index);
                                 layui.layer.msg(data.msg);
                                 layui.table.reload('sys-notice-table', {
                                     done: function (data) {

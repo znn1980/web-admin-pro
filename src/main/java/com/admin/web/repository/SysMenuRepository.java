@@ -22,13 +22,6 @@ public interface SysMenuRepository extends JpaRepository<SysMenu, Long>, JpaSpec
     /**
      * 查询菜单表
      *
-     * @return 菜单列表
-     */
-    List<SysMenu> findByOrderBySort();
-
-    /**
-     * 查询菜单表
-     *
      * @param sysMenu 是否菜单
      * @return 菜单列表
      */

@@ -31,8 +31,8 @@ public class SysMenuController extends BaseController {
 
     @SysPermissions
     @GetMapping("/all.json")
-    public ServerResponse<List<SysMenu>> all() {
-        List<SysMenu> sysMenus = this.sysMenuService.all();
+    public ServerResponse<List<SysMenu>> all(@RequestParam(required = false) String search) {
+        List<SysMenu> sysMenus = this.sysMenuService.all(search);
         return ServerResponse.ok(sysMenus);
     }
 

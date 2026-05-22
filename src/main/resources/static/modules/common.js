@@ -40,6 +40,9 @@ layui.define(function (exports) {
             const ms = day ? day * (1000 * 60 * 60 * 24) : 0;
             return layui.util.toDateString((Date.now() + ms), 'yyyy-MM-dd');
         }
+        , asDays: function (date, days) {
+            return (date.split(":")[days ? days : 0] || this.asDay(days)).trim() + ' 00:00:00';
+        }
         , asAgo: function (ms) {
             const m = 1000 * 60, h = m * 60, d = h * 24;
             return `${parseInt(ms / d)}天${parseInt(ms % d / h)}小时${parseInt(ms % d % h / m)}分钟`;
@@ -94,6 +97,7 @@ layui.define(function (exports) {
         layui.$('.sys-query-more').toggle();
         const data = layui.$(this).data('queryMore');
         common.data({[data]: !common.data()[data]});
+        return false;
     });
 
     layui.util.on({

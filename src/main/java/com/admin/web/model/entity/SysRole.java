@@ -16,7 +16,7 @@ import java.util.Set;
 public class SysRole extends SysBase {
     @Column(name = "NAME")
     @NotBlank(message = "角色名称不能为空！", groups = {SysCreate.class, SysUpdate.class})
-    @Size(min = 2, max = 32, message = "角色名称长度应在2-32之间！")
+    @Size(min = 2, max = 32, message = "角色名称长度应在2-32之间！", groups = {SysCreate.class, SysUpdate.class})
     private String name;
     @Column(name = "SORT")
     private Long sort;

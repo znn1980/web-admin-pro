@@ -141,23 +141,25 @@
                             </form>
                         </div>
                         <div class="layui-tabs-item">
-                            <div class="layui-form-item layui-form-pane">
+                            <form class="layui-form layui-form-item layui-form-pane" id="sys-search-form" lay-filter="sys-search-form">
                                 <div class="layui-inline">
-                                    <label class="layui-form-label">日期范围</label>
-                                    <div class="layui-input-inline">
-                                        <label for="timestamp"></label>
-                                        <input type="text" class="layui-input" id="timestamp" readonly placeholder="日期范围">
+                                    <div class="layui-input-wrap">
+                                        <div class="layui-input-prefix">
+                                            <label for="timestamp" class="layui-icon layui-icon-date"></label>
+                                        </div>
+                                        <input type="text" class="layui-input" id="timestamp" name="timestamp" readonly placeholder="日期范围"
+                                               th:value="|${#dates.format(#dates.createNow(),'yyyy-MM-dd')} : ${#dates.format(#dates.createNow().getTime()+86400000,'yyyy-MM-dd')}|">
                                     </div>
                                 </div>
                                 <div class="layui-inline">
-                                    <button layadmin-event="search" class="layui-btn layui-btn-radius layui-btn-sm">
+                                    <button lay-submit lay-filter="sys-search-submit" class="layui-btn layui-btn-radius layui-btn-sm">
                                         <i class="layui-icon layui-icon-search"></i>查询
                                     </button>
-                                    <button layadmin-event="refresh" class="layui-btn layui-btn-radius layui-btn-sm layui-bg-orange">
+                                    <button type="reset" class="layui-btn layui-btn-radius layui-btn-sm layui-bg-orange">
                                         <i class="layui-icon layui-icon-refresh"></i>重置
                                     </button>
                                 </div>
-                            </div>
+                            </form>
                             <table class="layui-hide" id="sys-log-table" lay-filter="sys-log-table"></table>
                         </div>
                     </div>
@@ -264,10 +266,8 @@
                 ]
             ]
             , where: {
-                startTimestamp: (layui.$('#timestamp').val().split(":")[0]
-                    || layui.common.asDay()).trim() + ' 00:00:00'
-                , endTimestamp: (layui.$('#timestamp').val().split(":")[1]
-                    || layui.common.asDay(1)).trim() + ' 00:00:00'
+                startTimestamp: layui.common.asDays(layui.$('#timestamp').val(), 0)
+                , endTimestamp: layui.common.asDays(layui.$('#timestamp').val(), 1)
             }
             , done: function () {
                 layui.common.asCols(this, 'sys-user-log-table');
@@ -325,24 +325,14 @@
             }
         });
 
-        layui.admin.events.search = function () {
+        layui.form.on('submit(sys-search-submit)', function (data) {
+            data.field.startTimestamp = layui.common.asDays(data.field.timestamp, 0);
+            data.field.endTimestamp = layui.common.asDays(data.field.timestamp, 1);
             layui.table.reload('sys-log-table', {
-                page: {curr: 1}
-                , where: {
-                    startTimestamp: (layui.$('#timestamp').val().split(":")[0]
-                        || layui.common.asDay()).trim() + ' 00:00:00'
-                    , endTimestamp: (layui.$('#timestamp').val().split(":")[1]
-                        || layui.common.asDay(1)).trim() + ' 00:00:00'
-                }
+                page: {curr: 1}, where: data.field
             });
-        }
-
-        layui.admin.events.refresh = function () {
-            layui.laydate.render({
-                elem: '#timestamp', range: ':'
-                , value: `${layui.common.asDay()} : ${layui.common.asDay(1)}`
-            });
-        }
+            return false;
+        });
 
         layui.form.on('submit(sys-user-submit)', function (data) {
             layui.common.req(`${config.base}sys/user/update.json`, 'PUT', data.field, {

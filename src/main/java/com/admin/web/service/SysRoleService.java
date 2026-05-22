@@ -1,19 +1,21 @@
 package com.admin.web.service;
 
+import com.admin.web.model.SysMove;
 import com.admin.web.repository.SysRoleRepository;
 import com.admin.web.exception.ServerResponseException;
 import com.admin.web.model.entity.SysRole;
-import com.admin.web.model.enums.Move;
 import com.admin.web.model.enums.ResponseCode;
 import com.admin.web.model.request.MoveRequest;
 import com.admin.web.utils.BeanUtils;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.IntStream;
 
 /**
  * @author znn
@@ -26,8 +28,17 @@ public class SysRoleService {
         this.sysRoleRepository = sysRoleRepository;
     }
 
-    public List<SysRole> all() {
-        return this.sysRoleRepository.findByOrderBySort();
+    public List<SysRole> all(String search) {
+        return this.sysRoleRepository.findAll((root, query, builder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (StringUtils.hasText(search)) {
+                predicates.add(builder.like(builder.lower(root.get("name")), String.format("%%%s%%", search.toLowerCase())));
+            }
+            return Objects.requireNonNull(query)
+                    .where(predicates.toArray(new Predicate[0]))
+                    .orderBy(builder.asc(root.get("sort")))
+                    .getRestriction();
+        });
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -35,18 +46,13 @@ public class SysRoleService {
         SysRole sysRole = this.sysRoleRepository.findById(request.id())
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         List<SysRole> sysRoles = this.sysRoleRepository.findByOrderBySort();
-        boolean isUp = Objects.equals(Move.UP, request.move());
-        int index = IntStream.range(0, sysRoles.size())
-                .filter(i -> Objects.equals(sysRole.getId(), sysRoles.get(i).getId()))
-                .findFirst().orElse(-1);
-        if (index == -1 || (isUp ? index <= 0 : index >= sysRoles.size() - 1)) {
-            return;
-        }
-        SysRole oldSysRole = sysRoles.get(isUp ? index - 1 : index + 1);
-        Long oldSysRoleSort = oldSysRole.getSort();
-        oldSysRole.setSort(sysRole.getSort());
-        sysRole.setSort(oldSysRoleSort);
-        this.sysRoleRepository.saveAll(Arrays.asList(sysRole, oldSysRole));
+        SysMove.of(request.move(), sysRole.getId(), sysRoles).move((index) -> {
+            SysRole oldSysRole = sysRoles.get(index);
+            Long oldSysRoleSort = oldSysRole.getSort();
+            oldSysRole.setSort(sysRole.getSort());
+            sysRole.setSort(oldSysRoleSort);
+            this.sysRoleRepository.saveAll(Arrays.asList(sysRole, oldSysRole));
+        });
     }
 
     @Transactional(rollbackFor = Exception.class)

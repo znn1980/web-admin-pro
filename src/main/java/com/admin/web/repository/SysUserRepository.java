@@ -1,6 +1,5 @@
 package com.admin.web.repository;
 
-import com.admin.web.model.entity.SysMenu;
 import com.admin.web.model.entity.SysUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -8,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 /**
  * @author znn
  */
-public interface SysUserRepository extends JpaRepository<SysUser, Long>, JpaSpecificationExecutor<SysMenu> {
+public interface SysUserRepository extends JpaRepository<SysUser, Long>, JpaSpecificationExecutor<SysUser> {
     /**
      * 查询用户表
      *

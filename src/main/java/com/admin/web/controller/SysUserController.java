@@ -3,8 +3,8 @@ package com.admin.web.controller;
 import com.admin.web.annotation.*;
 import com.admin.web.model.SysSession;
 import com.admin.web.model.request.UserLoginRequest;
-import com.admin.web.model.request.PageRequest;
 import com.admin.web.model.request.UserPassRequest;
+import com.admin.web.model.request.SearchRequest;
 import com.admin.web.model.response.ServerResponse;
 import com.admin.web.model.entity.SysUser;
 import com.admin.web.service.SysUserService;
@@ -58,7 +58,7 @@ public class SysUserController extends BaseController {
 
     @SysPermissions
     @PostMapping("/all.json")
-    public ServerResponse<List<SysUser>> all(@RequestBody @Validated PageRequest request) {
+    public ServerResponse<List<SysUser>> all(@RequestBody @Validated SearchRequest request) {
         Page<SysUser> sysUsers = this.sysUserService.all(request);
         return ServerResponse.ok(sysUsers.getTotalElements(), sysUsers.getContent());
     }

@@ -4,12 +4,24 @@ VALUES (1, 'admin', '18888888888', 'admin@admin.com', '37b062c8ebfe6c3480f5c8b57
 
 INSERT INTO `SYS_MENU`
     (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `ICON`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
-VALUES (100, null, 'AI对话', 'GET', '/admin/chat.html', 'layui-icon layui-icon-dialogue', 100, b'1', b'0', 'admin', now());
+VALUES (100, null, '智能助手', 'GET', '/admin/chat.html', 'layui-icon layui-icon-dialogue', 100, b'1', b'0', 'admin', now());
+
+INSERT INTO `SYS_MENU`
+    (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `ICON`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
+VALUES (200, null, '通知公告', 'GET', '/admin/notice.html', 'layui-icon layui-icon-notice', 200, b'1', b'0', 'admin', now());
+INSERT INTO `SYS_MENU`
+    (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
+VALUES (210, 200, '创建通知公告', 'POST', '/sys/notice/create.json', 210, b'0', b'0', 'admin', now());
+INSERT INTO `SYS_MENU`
+    (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
+VALUES (220, 200, '修改通知公告', 'PUT', '/sys/notice/update.json', 220, b'0', b'0', 'admin', now());
+INSERT INTO `SYS_MENU`
+    (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
+VALUES (230, 200, '删除通知公告', 'DELETE', '/sys/notice/delete.json', 230, b'0', b'0', 'admin', now());
 
 INSERT INTO `SYS_MENU`
     (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `ICON`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
 VALUES (1000, null, '系统管理', null, null, 'layui-icon layui-icon-app', 1000, b'1', b'0', 'admin', now());
-
 INSERT INTO `SYS_MENU`
     (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `ICON`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
 VALUES (1100, 1000, '用户管理', 'GET', '/admin/user.html', 'layui-icon layui-icon-username', 1100, b'1', b'0', 'admin', now());
@@ -21,10 +33,10 @@ INSERT INTO `SYS_MENU`
 VALUES (1300, 1000, '菜单管理', 'GET', '/admin/menu.html', 'layui-icon layui-icon-tabs', 1300, b'1', b'0', 'admin', now());
 INSERT INTO `SYS_MENU`
     (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `ICON`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
-VALUES (1800, 1000, '通知公告', 'GET', '/admin/notice.html', 'layui-icon layui-icon-notice', 1800, b'1', b'0', 'admin', now());
+VALUES (1600, 1000, '字典管理', 'GET', '/admin/dict.html', 'layui-icon layui-icon-read', 1600, b'1', b'0', 'admin', now());
 INSERT INTO `SYS_MENU`
     (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `ICON`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
-VALUES (1900, 1000, '日志管理', 'GET', '/admin/log.html', 'layui-icon layui-icon-survey', 1900, b'1', b'0', 'admin', now());
+VALUES (1700, 1000, '参数管理', 'GET', '/admin/config.html', 'layui-icon layui-icon-form', 1700, b'1', b'0', 'admin', now());
 
 INSERT INTO `SYS_MENU`
     (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
@@ -79,17 +91,45 @@ VALUES (1350, 1300, '删除菜单', 'DELETE', '/sys/menu/delete.json', 1350, b'0
 
 INSERT INTO `SYS_MENU`
     (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
-VALUES (1810, 1800, '创建通知公告', 'POST', '/sys/notice/create.json', 1810, b'0', b'0', 'admin', now());
+VALUES (1610, 1600, '查询字典', 'POST', '/sys/dict/**/all.json*', 1610, b'0', b'0', 'admin', now());
 INSERT INTO `SYS_MENU`
     (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
-VALUES (1820, 1800, '修改通知公告', 'PUT', '/sys/notice/update.json', 1820, b'0', b'0', 'admin', now());
+VALUES (1620, 1600, '移动字典', 'PUT', '/sys/dict/**/move.json', 1620, b'0', b'0', 'admin', now());
 INSERT INTO `SYS_MENU`
     (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
-VALUES (1830, 1800, '删除通知公告', 'DELETE', '/sys/notice/delete.json', 1830, b'0', b'0', 'admin', now());
+VALUES (1630, 1600, '创建字典', 'POST', '/sys/dict/**/create.json', 1630, b'0', b'0', 'admin', now());
+INSERT INTO `SYS_MENU`
+    (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
+VALUES (1640, 1600, '修改字典', 'PUT', '/sys/dict/**/update.json', 1640, b'0', b'0', 'admin', now());
+INSERT INTO `SYS_MENU`
+    (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
+VALUES (1650, 1600, '删除字典', 'DELETE', '/sys/dict/**/delete.json', 1650, b'0', b'0', 'admin', now());
 
 INSERT INTO `SYS_MENU`
     (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
-VALUES (1910, 1900, '查询日志', 'POST', '/sys/log/all.json', 1910, b'0', b'0', 'admin', now());
+VALUES (1710, 1700, '查询参数', 'POST', '/sys/config/all.json', 1710, b'0', b'0', 'admin', now());
 INSERT INTO `SYS_MENU`
     (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
-VALUES (1920, 1900, '删除日志', 'DELETE', '/sys/log/delete.json', 1920, b'0', b'0', 'admin', now());
+VALUES (1720, 1700, '创建参数', 'POST', '/sys/config/create.json', 1720, b'0', b'0', 'admin', now());
+INSERT INTO `SYS_MENU`
+    (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
+VALUES (1730, 1700, '修改参数', 'PUT', '/sys/config/update.json', 1730, b'0', b'0', 'admin', now());
+INSERT INTO `SYS_MENU`
+    (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
+VALUES (1740, 1700, '删除参数', 'DELETE', '/sys/config/delete.json', 1740, b'0', b'0', 'admin', now());
+
+INSERT INTO `SYS_MENU`
+    (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `ICON`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
+VALUES (2000, null, '系统监控', null, null, 'layui-icon layui-icon-console', 2000, b'1', b'0', 'admin', now());
+INSERT INTO `SYS_MENU`
+    (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `ICON`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
+VALUES (2100, 2000, '服务监控', 'GET', '/admin/monitor.html', 'layui-icon layui-icon-chart', 2100, b'1', b'0', 'admin', now());
+INSERT INTO `SYS_MENU`
+    (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `ICON`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
+VALUES (2200, 2000, '系统日志', 'GET', '/admin/log.html', 'layui-icon layui-icon-survey', 2200, b'1', b'0', 'admin', now());
+INSERT INTO `SYS_MENU`
+    (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
+VALUES (2210, 2200, '查询日志', 'POST', '/sys/log/all.json', 2210, b'0', b'0', 'admin', now());
+INSERT INTO `SYS_MENU`
+    (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
+VALUES (2220, 2200, '删除日志', 'DELETE', '/sys/log/delete.json', 2220, b'0', b'0', 'admin', now());

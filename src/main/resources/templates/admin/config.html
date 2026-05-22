@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title th:text="|${config.name} v${config.version}|">WEB-ADMIN-PRO</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}" href="../../static/favicon.ico"/>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" href="../../static/layui/css/layui.css" media="all">
+    <link rel="stylesheet" th:href="@{/admin-ui/css/admin.css}" href="../../static/admin-ui/css/admin.css" media="all">
+</head>
+<body class="layui-fluid">
+<div class="layui-card">
+    <div class="layui-card-header">参数管理</div>
+    <div class="layui-card-body">
+        <form class="layui-form layui-form-item layui-form-pane" id="sys-search-form" lay-filter="sys-search-form">
+            <div class="layui-inline">
+                <div class="layui-input-wrap">
+                    <div class="layui-input-prefix">
+                        <label for="search" class="layui-icon layui-icon-form"></label>
+                    </div>
+                    <input type="text" class="layui-input" id="search" name="search" placeholder="参数名称/键名">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <button lay-submit lay-filter="sys-search-submit" class="layui-btn layui-btn-radius layui-btn-sm">
+                    <i class="layui-icon layui-icon-search"></i>查询
+                </button>
+                <button type="reset" class="layui-btn layui-btn-radius layui-btn-sm layui-bg-orange">
+                    <i class="layui-icon layui-icon-refresh"></i>重置
+                </button>
+            </div>
+        </form>
+        <table class="layui-hide" id="sys-config-table" lay-filter="sys-config-table"></table>
+</div>
+</div>
+<script type="text/html" id="sys-config-name">
+    <span lay-tips="{{ d.remark?d.remark:d.name }}">{{ d.name }}</span>
+</script>
+<script type="text/html" id="sys-config-key">
+    <span class="layui-badge-rim">{{ d.key }} = {{ d.value }}</span>
+</script>
+<script type="text/html" id="sys-config-disable">
+    {{# if(d.disable){ }}
+    <input type="checkbox" value="{{ d.id }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" title="启用|禁用" lay-skin="switch" lay-filter="sys-config-switch">
+    {{# }else{ }}
+    <input type="checkbox" checked value="{{ d.id }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" title="启用|禁用" lay-skin="switch" lay-filter="sys-config-switch">
+    {{# } }}
+</script>
+<script type="text/html" id="sys-config-toolbar">
+    <div class="layui-btn-group">
+        <button class="layui-btn layui-btn-sm" lay-event="sys-add-toolbar">
+            <i class="layui-icon layui-icon-add-1" lay-tips="创建"></i>
+        </button>
+        <button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="sys-edit-toolbar">
+            <i class="layui-icon layui-icon-edit" lay-tips="修改"></i>
+        </button>
+        <button class="layui-btn layui-btn-sm layui-bg-red" lay-event="sys-delete-toolbar">
+            <i class="layui-icon layui-icon-delete" lay-tips="删除"></i>
+        </button>
+        <!--button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="sys-refresh-toolbar">
+            <i class="layui-icon layui-icon-refresh" lay-tips="刷新"></i>
+        </button-->
+    </div>
+</script>
+<script type="text/html" id="sys-config-tool">
+    <div class="layui-btn-group">
+        <button class="layui-btn layui-btn-xs layui-bg-blue" lay-event="sys-edit-tool">
+            <i class="layui-icon layui-icon-edit" lay-tips="修改"></i>
+        </button>
+        <button class="layui-btn layui-btn-xs layui-bg-red" lay-event="sys-delete-tool">
+            <i class="layui-icon layui-icon-delete" lay-tips="删除"></i>
+        </button>
+    </div>
+</script>
+<form class="layui-form" id="sys-config-form" lay-filter="sys-config-form" style="display: none;">
+    <input type="hidden" id="id" name="id">
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="name">参数名称</label>
+        <div class="layui-input-block">
+            <input type="text" id="name" name="name" lay-verify="required" placeholder="参数名称" lay-reqtext="请输入参数名称" autocomplete="off" class="layui-input" lay-affix="clear">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="key">参数键名</label>
+        <div class="layui-input-block">
+            <input type="text" id="key" name="key" lay-verify="required" placeholder="参数键名" lay-reqtext="请输入参数键名" autocomplete="off" class="layui-input" lay-affix="clear">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="value">参数键值</label>
+        <div class="layui-input-block">
+            <input type="text" id="value" name="value" lay-verify="required" placeholder="参数键值" lay-reqtext="请输入参数键值" autocomplete="off" class="layui-input" lay-affix="clear">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="remark">参数备注</label>
+        <div class="layui-input-block">
+            <textarea class="layui-textarea" id="remark" name="remark" placeholder="参数备注" lay-affix="clear"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">参数状态</label>
+        <div class="layui-input-block">
+            <input type="checkbox" checked id="disable" name="disable" title="启用|禁用" lay-skin="switch">
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="sys-config-submit" id="sys-config-submit" value="确认">
+    </div>
+</form>
+<script th:src="@{/layui/layui.js}" src="../../static/layui/layui.js"></script>
+<script th:inline="javascript">
+    const config = {
+        base:/*[[@{/}]]*/ '../../static/'
+    }
+
+    layui.config({
+        base: config.base, version: true
+    }).use(['index', 'common'], function () {
+
+        layui.table.render({
+            elem: '#sys-config-table', page: true
+            , url: `${config.base}sys/config/all.json`
+            , method: 'POST', contentType: "application/json;charset=UTF-8"
+            , toolbar: '#sys-config-toolbar'
+            , cols: [
+                [
+                    {fixed: 'left', type: 'checkbox'}
+                    , {field: 'name', title: '名称', templet: '#sys-config-name'}
+                    , {field: 'key', title: '键值', sort: true, templet: '#sys-config-key'}
+                    , {field: 'disable', title: '状态', sort: true, align: 'center', minWidth: 90, maxWidth: 90, width: 90, templet: '#sys-config-disable'}
+                    , {field: 'createUsername', title: '创建用户', sort: true, minWidth: 110, maxWidth: 110, width: 110, hide: true}
+                    , {field: 'createTimestamp', title: '创建时间', sort: true, minWidth: 120, maxWidth: 180, width: 180, hide: true}
+                    , {field: 'updateUsername', title: '修改用户', sort: true, minWidth: 110, maxWidth: 110, width: 110, hide: true}
+                    , {field: 'updateTimestamp', title: '修改时间', sort: true, minWidth: 120, maxWidth: 180, width: 180, hide: true}
+                    , {field: 'remark', title: '备注', hide: true}
+                    , {fixed: 'right', title: '操作', align: 'center', toolbar: '#sys-config-tool', minWidth: 90, maxWidth: 90, width: 90}
+                ]
+            ]
+            , where: {sort: {field: 'createTimestamp', order: 'desc'}}
+            , initSort: {field: 'createTimestamp', type: 'desc'}
+            , done: function () {
+                layui.common.asCols(this);
+            }
+        });
+
+        layui.form.on('switch(sys-config-switch)', function (data) {
+            const configs = JSON.parse(decodeURIComponent(layui.$(this).data('json')));
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否${data.elem.checked ? '启用' : '禁用'}【${configs.name}】参数？`, {
+                title: `${data.elem.checked ? '启用' : '禁用'}`, closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
+            }, function (index) {
+                layui.layer.close(index);
+                configs.disable = !data.elem.checked;
+                layui.common.req(`${config.base}sys/config/update.json`, 'PUT', configs, {
+                    done: function (data) {
+                        layui.layer.msg(data.msg);
+                    }
+                    , always: function () {
+                        layui.table.reload('sys-config-table');
+                    }
+                });
+            }, function () {
+                data.elem.checked = !data.elem.checked;
+            });
+        });
+
+        layui.table.on('toolbar(sys-config-table)', function (data) {
+            if (data.event === 'sys-add-toolbar') {
+                layui.$('#id').val('');
+                layui.$('#sys-config-form').trigger('reset');
+                save('创建参数', 'POST');
+            }
+            if (data.event === 'sys-edit-toolbar' || data.event === 'sys-delete-toolbar') {
+                const configs = layui.table.checkStatus('sys-config-table').data;
+                if (configs.length <= 0) return layui.layer.msg("请选择一条纪录！");
+                if (data.event === 'sys-edit-toolbar') {
+                    configs[0].disable = !configs[0].disable;
+                    layui.form.val('sys-config-form', configs[0]);
+                    save('修改参数', 'PUT');
+                }
+                if (data.event === 'sys-delete-toolbar') {
+                    del(configs);
+                }
+            }
+            if (data.event === 'sys-refresh-toolbar') {
+                layui.table.reload('sys-config-table');
+            }
+        });
+
+        layui.table.on('tool(sys-config-table)', function (data) {
+            if (data.event === 'sys-edit-tool') {
+                data.data.disable = !data.data.disable;
+                layui.form.val('sys-config-form', data.data);
+                save('修改参数', 'PUT');
+            }
+            if (data.event === 'sys-delete-tool') {
+                del([data.data]);
+            }
+        });
+
+        layui.form.on('submit(sys-search-submit)', function (data) {
+            layui.table.reload('sys-config-table', {
+                page: {curr: 1}, where: data.field
+            });
+            return false;
+        });
+
+        function save(title, type) {
+            layui.admin.popup({
+                type: 1, title: title, area: 'auto'
+                , content: layui.$('#sys-config-form')
+                , btn: ['确定', '取消']
+                , yes: function (index) {
+                    layui.form.on('submit(sys-config-submit)', function (data) {
+                        data.field.disable = data.field.disable !== 'on';
+                        layui.common.req(`${config.base}sys/config/${type === 'POST' ? 'create.json' : 'update.json'}`, type, data.field, {
+                            done: function (data) {
+                                layui.layer.close(index);
+                                layui.layer.msg(data.msg);
+                                layui.table.reload('sys-config-table');
+                            }
+                        });
+                    });
+                    layui.$('#sys-config-submit').trigger('click');
+                }
+            });
+        }
+
+        function del(configs) {
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否删除【${configs.length}】条参数？`, {
+                title: '删除参数', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
+            }, function (index) {
+                layui.layer.close(index);
+                layui.common.req(`${config.base}sys/config/delete.json`, 'DELETE', configs.map(config => config.id), {
+                    done: function (data) {
+                        layui.layer.msg(data.msg);
+                        layui.table.reload('sys-config-table');
+                    }
+                });
+            });
+        }
+
+    });
+</script>
+</body>
+</html>
