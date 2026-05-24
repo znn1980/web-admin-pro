@@ -181,7 +181,7 @@
     }).use(['index', 'common'], function () {
 
         layui.admin.events.logout = function () {
-            layer.confirm('&ensp;&ensp;&ensp;&ensp;是否退出系统？', {
+            layer.confirm('&ensp;&ensp;&ensp;&ensp;&ensp;是否退出系统？', {
                 title: '退出系统', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layer.close(index);
@@ -245,7 +245,7 @@
             const ms = 24 * 60 * 60 * 1000;
             if (date) date = date.replace(' ', 'T') + 'Z';
             if (!date || Math.round(Math.abs(Date.now() - Date.parse(date)) / ms) > (days ? days : 90)) {
-                layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;${!date ? '请及时修改系统默认初始登录密码！' : `您的登录密码已超${days}天未修改！`}`, {
+                layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;&ensp;${!date ? '请及时修改系统默认初始登录密码！' : `您的登录密码已超${days}天未修改！`}`, {
                     title: '安全提示', closeBtn: 0, icon: 0, skin: 'layui-layer-admin', btn: ['立即修改', '下次修改'],
                 }, function (index) {
                     layui.layer.close(index);

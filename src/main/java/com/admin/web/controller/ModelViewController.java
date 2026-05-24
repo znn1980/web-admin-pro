@@ -49,7 +49,7 @@ public class ModelViewController extends BaseController {
         return new ModelAndView("admin/me");
     }
 
-    @SysPermissions(SysLogin.class)
+    @SysPermissions
     @GetMapping("/admin/chat.html")
     public ModelAndView chat() {
         return new ModelAndView("admin/chat");

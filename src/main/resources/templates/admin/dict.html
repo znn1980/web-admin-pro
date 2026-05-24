@@ -238,7 +238,7 @@
 
         layui.form.on('switch(sys-dict-switch)', function (data) {
             const dict = JSON.parse(decodeURIComponent(layui.$(this).data('json')));
-            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否${data.elem.checked ? '启用' : '禁用'}【${dict.name}】字典？`, {
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;&ensp;是否${data.elem.checked ? '启用' : '禁用'}（${dict.name}）字典？`, {
                 title: `${data.elem.checked ? '启用' : '禁用'}`, closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);
@@ -322,7 +322,7 @@
 
         layui.form.on('switch(sys-dict-detail-switch)', function (data) {
             const dict = JSON.parse(decodeURIComponent(layui.$(this).data('json')));
-            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否${data.elem.checked ? '启用' : '禁用'}【${dict.label}】字典？`, {
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;&ensp;是否${data.elem.checked ? '启用' : '禁用'}（${dict.label}）字典？`, {
                 title: `${data.elem.checked ? '启用' : '禁用'}`, closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);
@@ -422,7 +422,7 @@
         }
 
         function del(dicts, detail) {
-            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否删除【${dicts.length}】条字典？`, {
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;&ensp;是否删除（${dicts.length === 1 ? dicts[0][detail ? 'label' : 'name'] : dicts.length + '条'}）字典？`, {
                 title: "删除字典", closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);

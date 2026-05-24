@@ -147,7 +147,7 @@
 
         layui.form.on('switch(sys-disable-switch)', function (data) {
             const role = JSON.parse(decodeURIComponent(layui.$(this).data('json')));
-            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否${data.elem.checked ? '启用' : '禁用'}【${role.name}】角色？`, {
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;&ensp;是否${data.elem.checked ? '启用' : '禁用'}（${role.name}）角色？`, {
                 title: `${data.elem.checked ? '启用' : '禁用'}`, closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);
@@ -270,7 +270,7 @@
         }
 
         function del(role) {
-            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否删除【${role.name}】角色？`, {
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;&ensp;是否删除（${role.name}）角色？`, {
                 title: '删除角色', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);

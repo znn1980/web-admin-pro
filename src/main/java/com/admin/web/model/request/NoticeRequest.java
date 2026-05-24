@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
  * @author znn
  */
 public record NoticeRequest(
+        String search,
         Status status,
         @NotNull(message = "页码不能为空！")
         @Min(value = 1, message = "页码不得小于壹！")

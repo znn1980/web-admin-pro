@@ -307,7 +307,7 @@
 
         layui.form.on('switch(sys-menu-switch)', function (data) {
             const menu = JSON.parse(decodeURIComponent(layui.$(this).data('json')));
-            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否${data.elem.checked ? '设置' : '取消'}【${menu.title}】菜单？`, {
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;&ensp;是否${data.elem.checked ? '设置' : '取消'}（${menu.title}）菜单？`, {
                 title: '菜单', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);
@@ -327,7 +327,7 @@
 
         layui.form.on('switch(sys-disable-switch)', function (data) {
             const menu = JSON.parse(decodeURIComponent(layui.$(this).data('json')));
-            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否${data.elem.checked ? '启用' : '禁用'}【${menu.title}】菜单？`, {
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;&ensp;是否${data.elem.checked ? '启用' : '禁用'}（${menu.title}）菜单？`, {
                 title: `${data.elem.checked ? '启用' : '禁用'}`, closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);
@@ -394,7 +394,7 @@
         }
 
         function del(menu) {
-            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否删除【${menu.title}】菜单？`, {
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;&ensp;是否删除（${menu.title}）菜单？`, {
                 title: '删除菜单', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);

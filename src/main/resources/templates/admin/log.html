@@ -144,7 +144,7 @@
             if (data.event === 'sys-delete-toolbar') {
                 const logs = layui.table.checkStatus('sys-log-table').data;
                 if (logs.length <= 0) return layui.layer.msg("请选择一条纪录！");
-                layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否删除【${logs.length}】条日志？`, {
+                layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;&ensp;是否删除（${logs.length}条）日志？`, {
                     title: '删除', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
                 }, function (index) {
                     layui.layer.close(index);

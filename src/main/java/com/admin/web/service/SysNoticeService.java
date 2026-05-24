@@ -9,10 +9,12 @@ import com.admin.web.model.request.NoticeRequest;
 import com.admin.web.model.request.PageRequest;
 import com.admin.web.utils.BeanUtils;
 import com.admin.web.utils.SecurityUtils;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -28,33 +30,31 @@ public class SysNoticeService {
     }
 
     public Page<SysNotice> all(NoticeRequest request, SysUser sysUser) {
-        if (Objects.equals(NoticeRequest.Status.UNREAD, request.status())) {
-            //未读
-            return this.sysNoticeRepository.findAll((root, query, builder) -> {
+        return this.sysNoticeRepository.findAll((root, query, builder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (Objects.equals(NoticeRequest.Status.UNREAD, request.status())) {
+                //未读
                 Subquery<Long> subQuery = Objects.requireNonNull(query).subquery(Long.class);
                 Root<SysNotice> subRoot = subQuery.from(SysNotice.class);
                 subQuery.select(subRoot.get("id"))
                         .where(builder.equal(subRoot.join("users").get("id"), sysUser.getId()));
-                return query.where(builder.not(root.get("id").in(subQuery)))
-                        .orderBy(builder.desc(root.get("createTimestamp")))
-                        .getRestriction();
-            }, PageRequest.of(request.page(), request.limit(), request.sort()));
-        } else if (Objects.equals(NoticeRequest.Status.READ, request.status())) {
-            //已读
-            return this.sysNoticeRepository.findAll((root, query, builder) ->
-                    Objects.requireNonNull(query)
-                            .where(builder.equal(root.join("users").get("id"), sysUser.getId()))
-                            .orderBy(builder.desc(root.get("createTimestamp")))
-                            .getRestriction(), PageRequest.of(request.page(), request.limit(), request.sort()));
-        } else if (Objects.equals(NoticeRequest.Status.ME, request.status())) {
-            //我的
-            return this.sysNoticeRepository.findByCreateUsernameOrderByCreateTimestampDesc(sysUser.getUsername()
-                    , PageRequest.of(request.page(), request.limit(), request.sort()));
-        } else if (Objects.equals(NoticeRequest.Status.ALL, request.status())) {
-            //全部
-            return this.sysNoticeRepository.findByOrderByCreateTimestampDesc(PageRequest.of(request.page(), request.limit(), request.sort()));
-        }
-        return this.sysNoticeRepository.findAll(PageRequest.of(request.page(), request.limit(), request.sort()));
+                predicates.add(builder.not(root.get("id").in(subQuery)));
+            } else if (Objects.equals(NoticeRequest.Status.READ, request.status())) {
+                //已读
+                predicates.add(builder.equal(root.join("users").get("id"), sysUser.getId()));
+            } else if (Objects.equals(NoticeRequest.Status.ME, request.status())) {
+                //我的
+                predicates.add(builder.equal(root.get("createUsername"), sysUser.getUsername()));
+            }
+            if (StringUtils.hasText(request.search())) {
+                String search = String.format("%%%s%%", request.search().toLowerCase());
+                predicates.add(builder.like(builder.lower(root.get("title")), search));
+            }
+            return Objects.requireNonNull(query)
+                    .where(predicates.toArray(new Predicate[0]))
+                    .orderBy(builder.desc(root.get("createTimestamp")))
+                    .getRestriction();
+        }, PageRequest.of(request.page(), request.limit(), request.sort()));
     }
 
     public SysNotice show(Long id, SysUser sysUser) {

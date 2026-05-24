@@ -153,7 +153,7 @@
 
         layui.form.on('switch(sys-config-switch)', function (data) {
             const configs = JSON.parse(decodeURIComponent(layui.$(this).data('json')));
-            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否${data.elem.checked ? '启用' : '禁用'}【${configs.name}】参数？`, {
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;&ensp;是否${data.elem.checked ? '启用' : '禁用'}（${configs.name}）参数？`, {
                 title: `${data.elem.checked ? '启用' : '禁用'}`, closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);
@@ -233,7 +233,7 @@
         }
 
         function del(configs) {
-            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否删除【${configs.length}】条参数？`, {
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;&ensp;是否删除（${configs.length === 1 ? configs[0].name : configs.length + '条'}）参数？`, {
                 title: '删除参数', closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);
