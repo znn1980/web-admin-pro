@@ -90,11 +90,16 @@
     </div>
 </script>
 <form class="layui-form" id="sys-user-form" lay-filter="sys-user-form" style="display: none;">
-    <input type="hidden" id="id" name="id">
-    <div class="layui-form-item" id="sys-username">
+    <div class="layui-form-item" style="display: none;">
+        <label class="layui-form-label" for="id">用户编码</label>
+        <div class="layui-input-block">
+            <input type="text" id="id" name="id" disabled class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
         <label class="layui-form-label" for="username">用户名称</label>
         <div class="layui-input-block">
-            <input type="text" id="username" name="username" lay-verify="required" placeholder="用户名称" lay-reqtext="请输入用户名称" autocomplete="off" class="layui-input" lay-affix="clear">
+            <input type="text" id="username" name="username" lay-verify="required" placeholder="用户名称" lay-reqtext="请输入用户名称" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
@@ -187,9 +192,8 @@
 
         layui.table.on('toolbar(sys-user-table)', function (data) {
             if (data.event === 'sys-add-toolbar') {
-                layui.$('#id').val('');
                 layui.$('#sys-user-form').trigger('reset');
-                layui.$('#sys-username').show();
+                layui.$('#username').attr('disabled', false);
                 load(function () {
                     xmSelect.get('#sys-role', true).setValue([]);
                     save('创建用户', 'POST');
@@ -201,7 +205,7 @@
                 if (data.event === 'sys-edit-toolbar') {
                     users[0].disable = !users[0].disable;
                     layui.form.val('sys-user-form', users[0]);
-                    layui.$('#sys-username').hide();
+                    layui.$('#username').attr('disabled', true);
                     load(function () {
                         xmSelect.get('#sys-role', true).setValue(users[0].roles ? users[0].roles : []);
                         save('修改用户', 'PUT');
@@ -232,7 +236,7 @@
             if (data.event === 'sys-edit-tool') {
                 data.data.disable = !data.data.disable;
                 layui.form.val('sys-user-form', data.data);
-                layui.$('#sys-user').hide();
+                layui.$('#username').attr('disabled', true);
                 load(function () {
                     xmSelect.get('#sys-role', true).setValue(data.data.roles ? data.data.roles : []);
                     save('修改用户', 'PUT');

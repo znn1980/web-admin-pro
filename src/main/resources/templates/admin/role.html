@@ -75,7 +75,12 @@
     </div>
 </script>
 <form class="layui-form" id="sys-role-form" lay-filter="sys-role-form" style="display: none;">
-    <input type="hidden" id="id" name="id">
+    <div class="layui-form-item" style="display: none;">
+        <label class="layui-form-label" for="id">角色编码</label>
+        <div class="layui-input-block">
+            <input type="text" id="id" name="id" disabled class="layui-input">
+        </div>
+    </div>
     <div class="layui-form-item">
         <label class="layui-form-label" for="name">角色名称</label>
         <div class="layui-input-block">
@@ -162,7 +167,6 @@
 
         layui.table.on('toolbar(sys-role-table)', function (data) {
             if (data.event === 'sys-add-toolbar') {
-                layui.$('#id').val('');
                 layui.$('#sys-role-form').trigger('reset');
                 load(function () {
                     xmSelect.get('#sys-menu', true).setValue([]);

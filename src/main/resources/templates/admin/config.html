@@ -33,7 +33,7 @@
             </div>
         </form>
         <table class="layui-hide" id="sys-config-table" lay-filter="sys-config-table"></table>
-</div>
+    </div>
 </div>
 <script type="text/html" id="sys-config-name">
     <span lay-tips="{{ d.remark?d.remark:d.name }}">{{ d.name }}</span>
@@ -75,7 +75,12 @@
     </div>
 </script>
 <form class="layui-form" id="sys-config-form" lay-filter="sys-config-form" style="display: none;">
-    <input type="hidden" id="id" name="id">
+    <div class="layui-form-item" style="display: none;">
+        <label class="layui-form-label" for="id">参数编码</label>
+        <div class="layui-input-block">
+            <input type="text" id="id" name="id" disabled class="layui-input">
+        </div>
+    </div>
     <div class="layui-form-item">
         <label class="layui-form-label" for="name">参数名称</label>
         <div class="layui-input-block">
@@ -168,7 +173,6 @@
 
         layui.table.on('toolbar(sys-config-table)', function (data) {
             if (data.event === 'sys-add-toolbar') {
-                layui.$('#id').val('');
                 layui.$('#sys-config-form').trigger('reset');
                 save('创建参数', 'POST');
             }

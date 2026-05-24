@@ -83,7 +83,12 @@
     </div>
 </script>
 <form class="layui-form" id="sys-dict-form" lay-filter="sys-dict-form" style="display: none;">
-    <input type="hidden" id="id" name="id">
+    <div class="layui-form-item" style="display: none;">
+        <label class="layui-form-label" for="id">字典编码</label>
+        <div class="layui-input-block">
+            <input type="text" id="id" name="id" disabled class="layui-input">
+        </div>
+    </div>
     <div class="layui-form-item">
         <label class="layui-form-label" for="name">字典名称</label>
         <div class="layui-input-block">
@@ -156,8 +161,12 @@
     </div>
 </script>
 <form class="layui-form" id="sys-dict-detail-form" lay-filter="sys-dict-detail-form" style="display: none;">
-    <input type="hidden" id="detail-id" name="id">
-    <input type="hidden" id="dict" name="dict">
+    <div class="layui-form-item" style="display: none;">
+        <label class="layui-form-label" for="detail-id">字典编码</label>
+        <div class="layui-input-block">
+            <input type="text" id="detail-id" name="id" disabled class="layui-input">
+        </div>
+    </div>
     <div class="layui-form-item">
         <label class="layui-form-label" for="detail-label">字典标签</label>
         <div class="layui-input-block">
@@ -249,20 +258,19 @@
 
         layui.table.on('toolbar(sys-dict-table)', function (data) {
             if (data.event === 'sys-add-toolbar') {
-                layui.$('#id').val('');
                 layui.$('#sys-dict-form').trigger('reset');
                 save('创建字典', 'POST');
             }
             if (data.event === 'sys-edit-toolbar' || data.event === 'sys-delete-toolbar') {
-                const dictionaries = layui.table.checkStatus('sys-dict-table').data;
-                if (dictionaries.length <= 0) return layui.layer.msg("请选择一条纪录！");
+                const dicts = layui.table.checkStatus('sys-dict-table').data;
+                if (dicts.length <= 0) return layui.layer.msg("请选择一条纪录！");
                 if (data.event === 'sys-edit-toolbar') {
-                    dictionaries[0].disable = !dictionaries[0].disable;
-                    layui.form.val('sys-dict-form', dictionaries[0]);
+                    dicts[0].disable = !dicts[0].disable;
+                    layui.form.val('sys-dict-form', dicts[0]);
                     save('修改字典', 'PUT');
                 }
                 if (data.event === 'sys-delete-toolbar') {
-                    del(dictionaries);
+                    del(dicts);
                 }
             }
             if (data.event === 'sys-refresh-toolbar') {
@@ -334,21 +342,20 @@
 
         layui.table.on('toolbar(sys-dict-detail-table)', function (data) {
             if (data.event === 'sys-add-toolbar') {
-                layui.$('#detail-id').val('');
                 layui.$('#sys-dict-detail-form').trigger('reset');
-                if (!layui.$('#dict').data('json')) return layui.layer.msg('点击字典查看详情');
+                if (!layui.$('#detail-id').data('json')) return layui.layer.msg('点击字典查看详情');
                 save('创建字典', 'POST', true);
             }
             if (data.event === 'sys-edit-toolbar' || data.event === 'sys-delete-toolbar') {
-                const dictionaries = layui.table.checkStatus('sys-dict-detail-table').data;
-                if (dictionaries.length <= 0) return layui.layer.msg("请选择一条纪录！");
+                const dicts = layui.table.checkStatus('sys-dict-detail-table').data;
+                if (dicts.length <= 0) return layui.layer.msg("请选择一条纪录！");
                 if (data.event === 'sys-edit-toolbar') {
-                    dictionaries[0].disable = !dictionaries[0].disable;
-                    layui.form.val('sys-dict-detail-form', dictionaries[0]);
+                    dicts[0].disable = !dicts[0].disable;
+                    layui.form.val('sys-dict-detail-form', dicts[0]);
                     save('修改字典', 'PUT', true);
                 }
                 if (data.event === 'sys-delete-toolbar') {
-                    del(dictionaries, true);
+                    del(dicts, true);
                 }
             }
             if (data.event === 'sys-refresh-toolbar') {
@@ -387,7 +394,7 @@
         });
 
         function load(data) {
-            layui.$('#dict').data('json', data ? encodeURIComponent(JSON.stringify({id: data.id})) : null);
+            layui.$('#detail-id').data('json', data ? encodeURIComponent(JSON.stringify({id: data.id})) : null);
             layui.table.reload('sys-dict-detail-table', data
                 ? {url: `${config.base}sys/dict/detail/all.json?id=${data.id}`} : {url: null, data: []});
         }
@@ -400,7 +407,7 @@
                 , yes: function (index) {
                     layui.form.on(`submit(sys-dict-${detail ? 'detail-submit' : 'submit'})`, function (data) {
                         data.field.disable = data.field.disable !== 'on';
-                        if (detail) data.field.dict = JSON.parse(decodeURIComponent(layui.$('#dict').data('json')));
+                        if (detail) data.field.dict = JSON.parse(decodeURIComponent(layui.$('#detail-id').data('json')));
                         layui.common.req(`${config.base}sys/dict/${detail ? 'detail/' : ''}${type === 'POST' ? 'create.json' : 'update.json'}`, type, data.field, {
                             done: function (data) {
                                 layui.layer.close(index);
@@ -414,12 +421,12 @@
             });
         }
 
-        function del(dictionaries, detail) {
-            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否删除【${dictionaries.length}】条字典？`, {
+        function del(dicts, detail) {
+            layui.layer.confirm(`&ensp;&ensp;&ensp;&ensp;是否删除【${dicts.length}】条字典？`, {
                 title: "删除字典", closeBtn: 0, icon: 3, skin: 'layui-layer-admin'
             }, function (index) {
                 layui.layer.close(index);
-                layui.common.req(`${config.base}sys/dict/${detail ? 'detail/' : ''}delete.json`, 'DELETE', dictionaries.map(dict => dict.id), {
+                layui.common.req(`${config.base}sys/dict/${detail ? 'detail/' : ''}delete.json`, 'DELETE', dicts.map(dict => dict.id), {
                     done: function (data) {
                         layui.layer.msg(data.msg);
                         layui.table.reload(`sys-dict-${detail ? 'detail-table' : 'table'}`);

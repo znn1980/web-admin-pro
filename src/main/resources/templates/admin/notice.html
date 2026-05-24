@@ -101,8 +101,14 @@
     {{# } }}
 </script>
 <form class="layui-form" id="sys-notice-form" lay-filter="sys-notice-form" style="display: none;">
-    <input type="hidden" id="id" name="id">
-    <input type="hidden" id="disable" name="disable">
+    <div class="layui-form-item" style="display: none;">
+        <label for="id"></label>
+        <input type="text" id="id" name="id" disabled class="layui-input">
+    </div>
+    <div class="layui-form-item" style="display: none;">
+        <label for="disable"></label>
+        <input type="text" id="disable" name="disable" disabled class="layui-input">
+    </div>
     <div class="layui-form-item">
         <label for="title"></label>
         <input type="text" id="title" name="title" lay-verify="required" placeholder="标题" lay-reqtext="请输入标题" autocomplete="off" class="layui-input" lay-affix="clear">
@@ -173,7 +179,6 @@
 
         layui.table.on('toolbar(sys-notice-table)', function (data) {
             if (data.event === 'sys-add-toolbar') {
-                layui.$('#id').val('');
                 layui.$('#sys-notice-form').trigger('reset');
                 save('创建通知公告', 'POST');
             }
