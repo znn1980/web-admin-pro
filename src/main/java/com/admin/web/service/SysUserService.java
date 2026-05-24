@@ -1,5 +1,6 @@
 package com.admin.web.service;
 
+import com.admin.web.model.request.WhereRequest;
 import com.admin.web.annotation.SysLogin;
 import com.admin.web.annotation.SysPermissions;
 import com.admin.web.model.request.*;
@@ -12,7 +13,6 @@ import com.admin.web.model.enums.ResponseCode;
 import com.admin.web.utils.BeanUtils;
 import com.admin.web.utils.SecurityUtils;
 import com.admin.web.utils.WebUtils;
-import jakarta.persistence.criteria.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -64,20 +64,17 @@ public class SysUserService {
     }
 
     public Page<SysUser> all(SearchRequest request) {
-        return this.sysUserRepository.findAll((root, query, builder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            if (StringUtils.hasText(request.search())) {
-                String search = String.format("%%%s%%", request.search().toLowerCase());
-                predicates.add(builder.or(
-                        builder.like(builder.lower(root.get("username")), search)
-                        , builder.like(builder.lower(root.get("phone")), search)
-                        , builder.like(builder.lower(root.get("email")), search)
-                ));
-            }
-            return Objects.requireNonNull(query)
-                    .where(predicates.toArray(new Predicate[0]))
-                    .getRestriction();
-        }, PageRequest.of(request.page(), request.limit(), request.sort()));
+        return this.sysUserRepository.findAll((root, query, builder) ->
+                Objects.requireNonNull(query).where(WhereRequest.builder()
+                        .add(StringUtils.hasText(request.search()), () -> {
+                            String search = String.format("%%%s%%", request.search().toLowerCase());
+                            return builder.or(
+                                    builder.like(builder.lower(root.get("username")), search)
+                                    , builder.like(builder.lower(root.get("phone")), search)
+                                    , builder.like(builder.lower(root.get("email")), search)
+                            );
+                        }).build()
+                ).getRestriction(), PageRequest.of(request.page(), request.limit(), request.sort()));
     }
 
     public void create(SysUser sysUser) {

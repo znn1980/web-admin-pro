@@ -1,5 +1,6 @@
 package com.admin.web.service;
 
+import com.admin.web.model.request.WhereRequest;
 import com.admin.web.model.SysMove;
 import com.admin.web.repository.SysMenuRepository;
 import com.admin.web.exception.ServerResponseException;
@@ -9,7 +10,6 @@ import com.admin.web.model.enums.ResponseCode;
 import com.admin.web.model.request.MoveRequest;
 import com.admin.web.utils.BeanUtils;
 import com.admin.web.utils.SecurityUtils;
-import jakarta.persistence.criteria.Predicate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -28,16 +28,12 @@ public class SysMenuService {
     }
 
     public List<SysMenu> all(String search) {
-        return this.sysMenuRepository.findAll((root, query, builder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            if (StringUtils.hasText(search)) {
-                predicates.add(builder.like(builder.lower(root.get("title")), String.format("%%%s%%", search.toLowerCase())));
-            }
-            return Objects.requireNonNull(query)
-                    .where(predicates.toArray(new Predicate[0]))
-                    .orderBy(builder.asc(root.get("sort")))
-                    .getRestriction();
-        });
+        return this.sysMenuRepository.findAll((root, query, builder) ->
+                Objects.requireNonNull(query).where(WhereRequest.builder()
+                        .add(StringUtils.hasText(search), () ->
+                                builder.like(builder.lower(root.get("title")), String.format("%%%s%%", search.toLowerCase())))
+                        .build()
+                ).orderBy(builder.asc(root.get("sort"))).getRestriction());
     }
 
     public List<SysMenu> all(SysUser sysUser) {

@@ -1,5 +1,6 @@
 package com.admin.web.service;
 
+import com.admin.web.model.request.WhereRequest;
 import com.admin.web.exception.ServerResponseException;
 import com.admin.web.model.entity.SysConfig;
 import com.admin.web.model.enums.ResponseCode;
@@ -7,12 +8,10 @@ import com.admin.web.model.request.PageRequest;
 import com.admin.web.model.request.SearchRequest;
 import com.admin.web.repository.SysConfigRepository;
 import com.admin.web.utils.BeanUtils;
-import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,19 +27,16 @@ public class SysConfigService {
     }
 
     public Page<SysConfig> all(SearchRequest request) {
-        return this.sysConfigRepository.findAll((root, query, builder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            if (StringUtils.hasText(request.search())) {
-                String search = String.format("%%%s%%", request.search().toLowerCase());
-                predicates.add(builder.or(
-                        builder.like(builder.lower(root.get("key")), search)
-                        , builder.like(builder.lower(root.get("name")), search)
-                ));
-            }
-            return Objects.requireNonNull(query)
-                    .where(predicates.toArray(new Predicate[0]))
-                    .getRestriction();
-        }, PageRequest.of(request.page(), request.limit(), request.sort()));
+        return this.sysConfigRepository.findAll((root, query, builder) ->
+                Objects.requireNonNull(query).where(WhereRequest.builder()
+                        .add(StringUtils.hasText(request.search()), () -> {
+                            String search = String.format("%%%s%%", request.search().toLowerCase());
+                            return builder.or(
+                                    builder.like(builder.lower(root.get("key")), search)
+                                    , builder.like(builder.lower(root.get("name")), search)
+                            );
+                        }).build()
+                ).getRestriction(), PageRequest.of(request.page(), request.limit(), request.sort()));
     }
 
     public void create(SysConfig sysConfig) {

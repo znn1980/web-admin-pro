@@ -1,5 +1,6 @@
 package com.admin.web.service;
 
+import com.admin.web.model.request.WhereRequest;
 import com.admin.web.repository.SysNoticeRepository;
 import com.admin.web.exception.ServerResponseException;
 import com.admin.web.model.entity.SysNotice;
@@ -9,7 +10,6 @@ import com.admin.web.model.request.NoticeRequest;
 import com.admin.web.model.request.PageRequest;
 import com.admin.web.utils.BeanUtils;
 import com.admin.web.utils.SecurityUtils;
-import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.domain.Page;
@@ -30,31 +30,27 @@ public class SysNoticeService {
     }
 
     public Page<SysNotice> all(NoticeRequest request, SysUser sysUser) {
-        return this.sysNoticeRepository.findAll((root, query, builder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            if (Objects.equals(NoticeRequest.Status.UNREAD, request.status())) {
-                //未读
-                Subquery<Long> subQuery = Objects.requireNonNull(query).subquery(Long.class);
-                Root<SysNotice> subRoot = subQuery.from(SysNotice.class);
-                subQuery.select(subRoot.get("id"))
-                        .where(builder.equal(subRoot.join("users").get("id"), sysUser.getId()));
-                predicates.add(builder.not(root.get("id").in(subQuery)));
-            } else if (Objects.equals(NoticeRequest.Status.READ, request.status())) {
-                //已读
-                predicates.add(builder.equal(root.join("users").get("id"), sysUser.getId()));
-            } else if (Objects.equals(NoticeRequest.Status.ME, request.status())) {
-                //我的
-                predicates.add(builder.equal(root.get("createUsername"), sysUser.getUsername()));
-            }
-            if (StringUtils.hasText(request.search())) {
-                String search = String.format("%%%s%%", request.search().toLowerCase());
-                predicates.add(builder.like(builder.lower(root.get("title")), search));
-            }
-            return Objects.requireNonNull(query)
-                    .where(predicates.toArray(new Predicate[0]))
-                    .orderBy(builder.desc(root.get("createTimestamp")))
-                    .getRestriction();
-        }, PageRequest.of(request.page(), request.limit(), request.sort()));
+        return this.sysNoticeRepository.findAll((root, query, builder) ->
+                Objects.requireNonNull(query).where(WhereRequest.builder()
+                        //未读
+                        .add(Objects.equals(NoticeRequest.Status.UNREAD, request.status()), () -> {
+                            Subquery<Long> subQuery = query.subquery(Long.class);
+                            Root<SysNotice> subRoot = subQuery.from(SysNotice.class);
+                            subQuery.select(subRoot.get("id"))
+                                    .where(builder.equal(subRoot.join("users").get("id"), sysUser.getId()));
+                            return builder.not(root.get("id").in(subQuery));
+                        })
+                        //已读
+                        .add(Objects.equals(NoticeRequest.Status.READ, request.status()), () ->
+                                builder.equal(root.join("users").get("id"), sysUser.getId()))
+                        //我的
+                        .add(Objects.equals(NoticeRequest.Status.ME, request.status()), () ->
+                                builder.equal(root.get("createUsername"), sysUser.getUsername()))
+                        .add(StringUtils.hasText(request.search()), () -> {
+                            String search = String.format("%%%s%%", request.search().toLowerCase());
+                            return builder.like(builder.lower(root.get("title")), search);
+                        }).build()
+                ).orderBy(builder.desc(root.get("createTimestamp"))).getRestriction(), PageRequest.of(request.page(), request.limit(), request.sort()));
     }
 
     public SysNotice show(Long id, SysUser sysUser) {
