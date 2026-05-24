@@ -59,11 +59,10 @@ public class SysMenuService {
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         List<SysMenu> sysMenus = this.sysMenuRepository.findByPidOrderBySort(sysMenu.getPid());
         SysMove.of(request.move(), sysMenu.getId(), sysMenus).move((index) -> {
-            SysMenu oldSysMenu = sysMenus.get(index);
-            Long oldSysMenuSort = oldSysMenu.getSort();
-            oldSysMenu.setSort(sysMenu.getSort());
-            sysMenu.setSort(oldSysMenuSort);
-            this.sysMenuRepository.saveAll(Arrays.asList(sysMenu, oldSysMenu));
+            long sort = sysMenu.getSort();
+            sysMenu.setSort(sysMenus.get(index).getSort());
+            sysMenus.get(index).setSort(sort);
+            this.sysMenuRepository.saveAll(Arrays.asList(sysMenu, sysMenus.get(index)));
         });
     }
 

@@ -47,11 +47,10 @@ public class SysRoleService {
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         List<SysRole> sysRoles = this.sysRoleRepository.findByOrderBySort();
         SysMove.of(request.move(), sysRole.getId(), sysRoles).move((index) -> {
-            SysRole oldSysRole = sysRoles.get(index);
-            Long oldSysRoleSort = oldSysRole.getSort();
-            oldSysRole.setSort(sysRole.getSort());
-            sysRole.setSort(oldSysRoleSort);
-            this.sysRoleRepository.saveAll(Arrays.asList(sysRole, oldSysRole));
+            long sort = sysRole.getSort();
+            sysRole.setSort(sysRoles.get(index).getSort());
+            sysRoles.get(index).setSort(sort);
+            this.sysRoleRepository.saveAll(Arrays.asList(sysRole, sysRoles.get(index)));
         });
     }
 

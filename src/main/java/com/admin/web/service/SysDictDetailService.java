@@ -41,11 +41,10 @@ public class SysDictDetailService {
                 .orElseThrow(() -> new ServerResponseException(ResponseCode.NOT_FOUND));
         List<SysDictDetail> sysDictDetails = this.sysDictDetailRepository.findByDictOrderBySort(sysDictDetail.getDict());
         SysMove.of(request.move(), sysDictDetail.getId(), sysDictDetails).move((index) -> {
-            SysDictDetail oldSysDictDetail = sysDictDetails.get(index);
-            Long oldSysDictDetailSort = oldSysDictDetail.getSort();
-            oldSysDictDetail.setSort(sysDictDetail.getSort());
-            sysDictDetail.setSort(oldSysDictDetailSort);
-            this.sysDictDetailRepository.saveAll(Arrays.asList(sysDictDetail, oldSysDictDetail));
+            long sort = sysDictDetail.getSort();
+            sysDictDetail.setSort(sysDictDetails.get(index).getSort());
+            sysDictDetails.get(index).setSort(sort);
+            this.sysDictDetailRepository.saveAll(Arrays.asList(sysDictDetail, sysDictDetails.get(index)));
         });
     }
 
