@@ -174,20 +174,22 @@
                     , {fixed: 'right', title: '操作', align: 'center', toolbar: '#sys-user-tool', minWidth: 90, maxWidth: 90, width: 90}
                 ]
             ]
+            , where: {sort: {field: 'createTimestamp', order: 'desc'}}
+            , initSort: {field: 'createTimestamp', type: 'desc'}
             , done: function () {
                 layui.common.asCols(this);
             }
         });
 
+        layui.table.on('sort(sys-user-table)', function (data) {
+            layui.table.reload('sys-user-table', {
+                where: {...data.config.where, ...{sort: {field: data.field, order: data.type}}}
+            });
+        });
+
         layui.table.on('checkbox(sys-user-table)', function (data) {
             layui.table.setRowChecked('sys-user-table', {index: 'all', checked: false});
             data.setRowChecked();
-        });
-
-        layui.table.on('sort(sys-user-table)', function (data) {
-            layui.table.reload('sys-user-table', {
-                initSort: data, where: {sort: {field: data.field, order: data.type}}
-            });
         });
 
         layui.table.on('toolbar(sys-user-table)', function (data) {
@@ -289,7 +291,7 @@
 
         layui.form.on('submit(sys-search-submit)', function (data) {
             layui.table.reload('sys-user-table', {
-                page: {curr: 1}, where: data.field
+                page: {curr: 1}, where: {...layui.table.getOptions('sys-user-table').where, ...data.field}
             });
             return false;
         });

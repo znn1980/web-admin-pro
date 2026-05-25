@@ -175,24 +175,21 @@
             , done: function (data) {
                 layui.common.asCols(this);
                 load(data);
-                if ('UNREAD' === layui.table.getOptions('sys-notice-table').where.status) {
-                    if (data.count === 0) {
-                        layui.tabs.change('sys-notice-tabs', 'all');
-                    }
+                if ('UNREAD' === this.where.status && data.count === 0) {
+                    layui.tabs.change('sys-notice-tabs', 'all');
                 }
             }
+        });
+
+        layui.table.on('sort(sys-notice-table)', function (data) {
+            layui.table.reload('sys-notice-table', {
+                where: {...data.config.where, ...{sort: {field: data.field, order: data.type}}}
+            });
         });
 
         layui.table.on('checkbox(sys-notice-table)', function (data) {
             layui.table.setRowChecked('sys-notice-table', {index: 'all', checked: false});
             data.setRowChecked();
-        });
-
-        layui.table.on('sort(sys-notice-table)', function (data) {
-            layui.table.reload('sys-notice-table', {
-                where: {status: data.config.where.status, sort: {field: data.field, order: data.type}}
-                , initSort: data
-            });
         });
 
         layui.table.on('toolbar(sys-notice-table)', function (data) {
@@ -267,16 +264,13 @@
         });
 
         layui.tabs.on('afterChange(sys-notice-tabs)', function (data) {
+            const status = {
+                status: data.index === 0 ? 'UNREAD' : data.index === 1 ? 'READ' :
+                    data.index === 2 ? 'ME' : data.index === 3 ? 'ALL' : 'ALL'
+            };
             layui.table.reload('sys-notice-table', {
                 page: {curr: 1}
-                , where: {
-                    status: data.index === 0 ? 'UNREAD' :
-                        data.index === 1 ? 'READ' :
-                            data.index === 2 ? 'ME' :
-                                data.index === 3 ? 'ALL' : 'ALL'
-                    , sort: {field: 'createTimestamp', order: 'desc'}
-                }
-                , initSort: layui.table.getOptions('sys-notice-table').initSort
+                , where: {...layui.table.getOptions('sys-notice-table').where, ...status}
                 , done: function (data) {
                     load(data);
                 }
@@ -285,7 +279,11 @@
 
         layui.form.on('submit(sys-search-submit)', function (data) {
             layui.table.reload('sys-notice-table', {
-                page: {curr: 1}, where: data.field
+                page: {curr: 1}
+                , where: {...layui.table.getOptions('sys-notice-table').where, ...data.field}
+                , done: function (data) {
+                    load(data);
+                }
             });
             return false;
         });

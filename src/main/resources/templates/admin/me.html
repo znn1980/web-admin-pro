@@ -329,7 +329,7 @@
             data.field.startTimestamp = layui.common.asDays(data.field.timestamp, 0);
             data.field.endTimestamp = layui.common.asDays(data.field.timestamp, 1);
             layui.table.reload('sys-log-table', {
-                page: {curr: 1}, where: data.field
+                page: {curr: 1}, where: {...layui.table.getOptions('sys-log-table').where, ...data.field}
             });
             return false;
         });
