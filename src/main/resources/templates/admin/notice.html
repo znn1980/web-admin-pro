@@ -182,9 +182,7 @@
         });
 
         layui.table.on('sort(sys-notice-table)', function (data) {
-            layui.table.reload('sys-notice-table', {
-                where: {...data.config.where, ...{sort: {field: data.field, order: data.type}}}
-            });
+            layui.table.reload('sys-notice-table', {where: {sort: {field: data.field, order: data.type}}}, true);
         });
 
         layui.table.on('checkbox(sys-notice-table)', function (data) {
@@ -269,22 +267,18 @@
                     data.index === 2 ? 'ME' : data.index === 3 ? 'ALL' : 'ALL'
             };
             layui.table.reload('sys-notice-table', {
-                page: {curr: 1}
-                , where: {...layui.table.getOptions('sys-notice-table').where, ...status}
-                , done: function (data) {
+                where: status, page: {curr: 1}, done: function (data) {
                     load(data);
                 }
-            });
+            }, true);
         });
 
         layui.form.on('submit(sys-search-submit)', function (data) {
             layui.table.reload('sys-notice-table', {
-                page: {curr: 1}
-                , where: {...layui.table.getOptions('sys-notice-table').where, ...data.field}
-                , done: function (data) {
+                where: data.field, page: {curr: 1}, done: function (data) {
                     load(data);
                 }
-            });
+            }, true);
             return false;
         });
 

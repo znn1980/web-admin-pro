@@ -40,14 +40,14 @@
             </ul>
             <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
                 <li class="layui-nav-item" lay-unselect>
-                    <a th:lay-href="@{/admin/notice.html}" lay-href="notice.html" layadmin-event="message" lay-text="通知公告">
-                        <i class="layui-icon layui-icon-notice"></i>
-                        <span id="sys-notice-unread"></span>
+                    <a th:lay-href="@{/admin/chat.html}" lay-href="chat.html" layadmin-event="chat" lay-text="AI对话">
+                        <i class="layui-icon layui-icon-dialogue"></i>
                     </a>
                 </li>
                 <li class="layui-nav-item" lay-unselect>
-                    <a th:lay-href="@{/admin/chat.html}" lay-href="chat.html" layadmin-event="chat" lay-text="AI对话">
-                        <i class="layui-icon layui-icon-dialogue"></i>
+                    <a th:lay-href="@{/admin/notice.html}" lay-href="notice.html" layadmin-event="message" lay-text="通知公告">
+                        <i class="layui-icon layui-icon-notice"></i>
+                        <span id="sys-notice-unread"></span>
                     </a>
                 </li>
                 <li class="layui-nav-item layui-hide-xs" lay-unselect>
@@ -279,11 +279,10 @@
                 , scrollbar: false, anim: -1, isOutAnim: false, resize: false
                 , content: layui.$('#sys-lock-form')
                 , success: function (elem, index) {
-                    //layui.form.render();
                     layui.common.data({'lock-screen': true});
                     elem.find('.lock-screen-clock').html(layui.util.toDateString(Date.now(), 'HH:mm:ss'));
                     elem.find('input').on('keyup', function (e) {
-                        if (e.keyCode === 13) elem.find('.layui-icon-right').trigger('click');
+                        if (e.key === 'Enter') elem.find('.layui-icon-right').trigger('click');
                     }).trigger('focus');
                     elem.find('.layui-icon-right').on('click', function () {
                         if (elem.find('input').val().trim() === '') return elem.find('input').trigger('focus');

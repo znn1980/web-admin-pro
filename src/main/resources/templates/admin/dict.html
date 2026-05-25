@@ -233,9 +233,7 @@
         });
 
         layui.table.on('sort(sys-dict-table)', function (data) {
-            layui.table.reload('sys-dict-table', {
-                where: {...data.config.where, ...{sort: {field: data.field, order: data.type}}}
-            });
+            layui.table.reload('sys-dict-table', {where: {sort: {field: data.field, order: data.type}}}, true);
         });
 
         layui.table.on('row(sys-dict-table)', function (data) {
@@ -296,9 +294,7 @@
         });
 
         layui.form.on('submit(sys-search-submit)', function (data) {
-            layui.table.reload('sys-dict-table', {
-                page: {curr: 1}, where: {...layui.table.getOptions('sys-dict-table').where, ...data.field}
-            });
+            layui.table.reload('sys-dict-table', {where: data.field, page: {curr: 1}}, true);
             return false;
         });
 

@@ -24,18 +24,16 @@
             <div class="layui-form-item">
                 <div class="layui-input-wrap">
                     <div class="layui-input-prefix">
-                        <i class="layui-icon layui-icon-username"></i>
+                        <label class="layui-icon layui-icon-username" for="username"></label>
                     </div>
-                    <label for="username"></label>
                     <input type="text" id="username" name="username" value="" lay-verify="required" placeholder="用户名/手机号/邮箱" lay-reqtext="请填写用户名" autocomplete="off" class="layui-input" lay-affix="clear">
                 </div>
             </div>
             <div class="layui-form-item">
                 <div class="layui-input-wrap">
                     <div class="layui-input-prefix">
-                        <i class="layui-icon layui-icon-password"></i>
+                        <label class="layui-icon layui-icon-password" for="password"></label>
                     </div>
-                    <label for="password"></label>
                     <input type="password" id="password" name="password" value="" lay-verify="required" placeholder="密码" lay-reqtext="请填写密码" autocomplete="off" class="layui-input" lay-affix="eye">
                 </div>
             </div>
@@ -44,9 +42,8 @@
                     <div class="layui-col-xs7">
                         <div class="layui-input-wrap">
                             <div class="layui-input-prefix">
-                                <i class="layui-icon layui-icon-vercode"></i>
+                                <label class="layui-icon layui-icon-vercode" for="captcha"></label>
                             </div>
-                            <label for="captcha"></label>
                             <input type="text" id="captcha" name="captcha" value="" lay-verify="required" placeholder="验证码" lay-reqtext="请填写验证码" autocomplete="off" class="layui-input" lay-affix="clear">
                         </div>
                     </div>
@@ -79,8 +76,9 @@
     }).use(['index', 'common'], function () {
 
         layui.$('input').on('keyup', function (e) {
-            if (e.keyCode === 13) layui.$('#sys-login-submit').trigger('click');
+            if (e.key === 'Enter') layui.$('#sys-login-submit').trigger('click');
         }).first().trigger('focus');
+
         layui.form.on('submit(sys-login-submit)', function (data) {
             layui.common.req(`${config.base}sys/user/login.json`, 'POST', data.field, {
                 done: function (data) {
