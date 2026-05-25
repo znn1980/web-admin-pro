@@ -182,7 +182,7 @@
         });
 
         layui.table.on('sort(sys-notice-table)', function (data) {
-            layui.table.reload('sys-notice-table', {where: {sort: {field: data.field, order: data.type}}}, true);
+            layui.table.reloadData('sys-notice-table', {where: {sort: {field: data.field, order: data.type}}}, true);
         });
 
         layui.table.on('checkbox(sys-notice-table)', function (data) {
@@ -207,7 +207,7 @@
                 }
             }
             if (data.event === 'sys-refresh-toolbar') {
-                layui.table.reload('sys-notice-table', {
+                layui.table.reloadData('sys-notice-table', {
                     done: function (data) {
                         load(data);
                     }
@@ -227,7 +227,7 @@
                                 layui.$('#sys-notice-show').hide();
                             });
                         });
-                        layui.table.reload('sys-notice-table', {
+                        layui.table.reloadData('sys-notice-table', {
                             done: function (data) {
                                 load(data);
                             }
@@ -249,7 +249,7 @@
                         layui.layer.msg(data.msg);
                     }
                     , always: function () {
-                        layui.table.reload('sys-notice-table', {
+                        layui.table.reloadData('sys-notice-table', {
                             done: function (data) {
                                 load(data);
                             }
@@ -266,7 +266,7 @@
                 status: data.index === 0 ? 'UNREAD' : data.index === 1 ? 'READ' :
                     data.index === 2 ? 'ME' : data.index === 3 ? 'ALL' : 'ALL'
             };
-            layui.table.reload('sys-notice-table', {
+            layui.table.reloadData('sys-notice-table', {
                 where: status, page: {curr: 1}, done: function (data) {
                     load(data);
                 }
@@ -274,7 +274,7 @@
         });
 
         layui.form.on('submit(sys-search-submit)', function (data) {
-            layui.table.reload('sys-notice-table', {
+            layui.table.reloadData('sys-notice-table', {
                 where: data.field, page: {curr: 1}, done: function (data) {
                     load(data);
                 }
@@ -315,7 +315,7 @@
                             done: function (data) {
                                 layui.layer.close(index);
                                 layui.layer.msg(data.msg);
-                                layui.table.reload('sys-notice-table', {
+                                layui.table.reloadData('sys-notice-table', {
                                     done: function (data) {
                                         load(data);
                                     }
@@ -339,7 +339,7 @@
                 layui.common.req(`${config.base}sys/notice/delete.json`, 'DELETE', notice.id, {
                     done: function (data) {
                         layui.layer.msg(data.msg);
-                        layui.table.reload('sys-notice-table', {
+                        layui.table.reloadData('sys-notice-table', {
                             done: function (data) {
                                 load(data);
                             }

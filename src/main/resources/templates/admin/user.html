@@ -182,7 +182,7 @@
         });
 
         layui.table.on('sort(sys-user-table)', function (data) {
-            layui.table.reload('sys-user-table', {where: {sort: {field: data.field, order: data.type}}}, true);
+            layui.table.reloadData('sys-user-table', {where: {sort: {field: data.field, order: data.type}}}, true);
         });
 
         layui.table.on('checkbox(sys-user-table)', function (data) {
@@ -228,7 +228,7 @@
                 }
             }
             if (data.event === 'sys-refresh-toolbar') {
-                layui.table.reload('sys-user-table');
+                layui.table.reloadData('sys-user-table');
             }
         });
 
@@ -259,7 +259,7 @@
                         layui.layer.msg(data.msg);
                     }
                     , always: function () {
-                        layui.table.reload('sys-user-table');
+                        layui.table.reloadData('sys-user-table');
                     }
                 });
             }, function () {
@@ -279,7 +279,7 @@
                         layui.layer.msg(data.msg);
                     }
                     , always: function () {
-                        layui.table.reload('sys-user-table');
+                        layui.table.reloadData('sys-user-table');
                     }
                 });
             }, function () {
@@ -288,7 +288,7 @@
         });
 
         layui.form.on('submit(sys-search-submit)', function (data) {
-            layui.table.reload('sys-user-table', {where: data.field, page: {curr: 1}}, true);
+            layui.table.reloadData('sys-user-table', {where: data.field, page: {curr: 1}}, true);
             return false;
         });
 
@@ -321,7 +321,7 @@
                             done: function (data) {
                                 layui.layer.close(index);
                                 layui.layer.msg(data.msg);
-                                layui.table.reload('sys-user-table');
+                                layui.table.reloadData('sys-user-table');
                             }
                         });
                     });
@@ -338,7 +338,7 @@
                 layui.common.req(`${config.base}sys/user/delete.json`, 'DELETE', user.id, {
                     done: function (data) {
                         layui.layer.msg(data.msg);
-                        layui.table.reload('sys-user-table');
+                        layui.table.reloadData('sys-user-table');
                     }
                 });
             });

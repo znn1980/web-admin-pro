@@ -157,7 +157,7 @@
                         layui.layer.msg(data.msg);
                     }
                     , always: function () {
-                        layui.table.reload('sys-role-table');
+                        layui.table.reloadData('sys-role-table');
                     }
                 });
             }, function () {
@@ -189,7 +189,7 @@
                 }
             }
             if (data.event === 'sys-refresh-toolbar') {
-                layui.table.reload('sys-role-table');
+                layui.table.reloadData('sys-role-table');
             }
         });
 
@@ -217,7 +217,7 @@
                             }, {
                                 done: function (data) {
                                     layui.layer.msg(data.msg);
-                                    layui.table.reload('sys-role-table');
+                                    layui.table.reloadData('sys-role-table');
                                 }
                             });
                         }
@@ -227,7 +227,7 @@
         });
 
         layui.form.on('submit(sys-search-submit)', function (data) {
-            layui.table.reload('sys-role-table', {where: data.field}, true);
+            layui.table.reloadData('sys-role-table', {where: data.field}, true);
             return false;
         });
 
@@ -260,7 +260,7 @@
                             done: function (data) {
                                 layui.layer.close(index);
                                 layui.layer.msg(data.msg);
-                                layui.table.reload('sys-role-table');
+                                layui.table.reloadData('sys-role-table');
                             }
                         });
                     });
@@ -277,7 +277,7 @@
                 layui.common.req(`${config.base}sys/role/delete.json`, 'DELETE', role.id, {
                     done: function (data) {
                         layui.layer.msg(data.msg);
-                        layui.table.reload('sys-role-table');
+                        layui.table.reloadData('sys-role-table');
                     }
                 });
             });
