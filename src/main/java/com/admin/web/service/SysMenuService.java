@@ -1,6 +1,6 @@
 package com.admin.web.service;
 
-import com.admin.web.model.request.WhereRequest;
+import com.admin.web.model.WhereRestrictions;
 import com.admin.web.model.SysMove;
 import com.admin.web.repository.SysMenuRepository;
 import com.admin.web.exception.ServerResponseException;
@@ -29,7 +29,7 @@ public class SysMenuService {
 
     public List<SysMenu> all(String search) {
         return this.sysMenuRepository.findAll((root, query, builder) ->
-                Objects.requireNonNull(query).where(WhereRequest.builder()
+                Objects.requireNonNull(query).where(WhereRestrictions.builder()
                         .add(StringUtils.hasText(search), () ->
                                 builder.like(builder.lower(root.get("title")), String.format("%%%s%%", search.toLowerCase())))
                         .build()

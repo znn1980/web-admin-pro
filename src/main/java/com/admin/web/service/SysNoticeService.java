@@ -1,6 +1,6 @@
 package com.admin.web.service;
 
-import com.admin.web.model.request.WhereRequest;
+import com.admin.web.model.WhereRestrictions;
 import com.admin.web.repository.SysNoticeRepository;
 import com.admin.web.exception.ServerResponseException;
 import com.admin.web.model.entity.SysNotice;
@@ -31,7 +31,7 @@ public class SysNoticeService {
 
     public Page<SysNotice> all(NoticeRequest request, SysUser sysUser) {
         return this.sysNoticeRepository.findAll((root, query, builder) ->
-                Objects.requireNonNull(query).where(WhereRequest.builder()
+                Objects.requireNonNull(query).where(WhereRestrictions.builder()
                         //未读
                         .add(Objects.equals(NoticeRequest.Status.UNREAD, request.status()), () -> {
                             Subquery<Long> subQuery = query.subquery(Long.class);

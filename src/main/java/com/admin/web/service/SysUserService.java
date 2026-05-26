@@ -1,6 +1,6 @@
 package com.admin.web.service;
 
-import com.admin.web.model.request.WhereRequest;
+import com.admin.web.model.WhereRestrictions;
 import com.admin.web.annotation.SysLogin;
 import com.admin.web.annotation.SysPermissions;
 import com.admin.web.model.request.*;
@@ -65,7 +65,7 @@ public class SysUserService {
 
     public Page<SysUser> all(SearchRequest request) {
         return this.sysUserRepository.findAll((root, query, builder) ->
-                Objects.requireNonNull(query).where(WhereRequest.builder()
+                Objects.requireNonNull(query).where(WhereRestrictions.builder()
                         .add(StringUtils.hasText(request.search()), () -> {
                             String search = String.format("%%%s%%", request.search().toLowerCase());
                             return builder.or(

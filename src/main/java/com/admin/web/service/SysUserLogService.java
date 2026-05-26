@@ -1,6 +1,6 @@
 package com.admin.web.service;
 
-import com.admin.web.model.request.WhereRequest;
+import com.admin.web.model.WhereRestrictions;
 import com.admin.web.annotation.SysLog;
 import com.admin.web.model.request.PageRequest;
 import com.admin.web.repository.SysUserLogRepository;
@@ -35,7 +35,7 @@ public class SysUserLogService {
 
     public Page<SysUserLog> all(UserLogRequest request) {
         return this.sysUserLogRepository.findAll((root, query, builder) ->
-                Objects.requireNonNull(query).where(WhereRequest.builder()
+                Objects.requireNonNull(query).where(WhereRestrictions.builder()
                         .add(StringUtils.hasText(request.username()), () ->
                                 builder.equal(root.get("username"), request.username()))
                         .add(() -> {

@@ -1,6 +1,6 @@
 package com.admin.web.service;
 
-import com.admin.web.model.request.WhereRequest;
+import com.admin.web.model.WhereRestrictions;
 import com.admin.web.exception.ServerResponseException;
 import com.admin.web.model.entity.SysConfig;
 import com.admin.web.model.enums.ResponseCode;
@@ -28,7 +28,7 @@ public class SysConfigService {
 
     public Page<SysConfig> all(SearchRequest request) {
         return this.sysConfigRepository.findAll((root, query, builder) ->
-                Objects.requireNonNull(query).where(WhereRequest.builder()
+                Objects.requireNonNull(query).where(WhereRestrictions.builder()
                         .add(StringUtils.hasText(request.search()), () -> {
                             String search = String.format("%%%s%%", request.search().toLowerCase());
                             return builder.or(
