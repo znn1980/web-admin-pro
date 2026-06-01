@@ -19,12 +19,9 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 /**
  * @author znn
@@ -32,12 +29,10 @@ import java.util.List;
 @Service
 public class SysUploadService {
     private final static String SYS_DOWNLOAD_URL = "/sys/download/";
-    private final Path location;
-    private final List<MimeType> extensions;
+    private final ConfigProperties.Upload upload;
 
     public SysUploadService(ConfigProperties configProperties) {
-        this.location = Paths.get(configProperties.getUpload().getLocation());
-        this.extensions = configProperties.getUpload().getExtensions();
+        this.upload = configProperties.getUpload();
     }
 
     public SysUpload upload(HttpServletRequest request, MultipartFile file) throws IOException {
@@ -48,8 +43,8 @@ public class SysUploadService {
             throw new ServerResponseException("上传的文件中包含不支持的格式！");
         }
         String fileName = this.uploadFilename(file);
-        Files.createDirectories(this.location.resolve(fileName).getParent());
-        file.transferTo(this.location.resolve(fileName));
+        Files.createDirectories(this.upload.getLocation().resolve(fileName).getParent());
+        file.transferTo(this.upload.getLocation().resolve(fileName));
         return new SysUpload(
                 String.format("%s%s%s", request.getContextPath(), SYS_DOWNLOAD_URL, fileName),
                 file.getOriginalFilename()
@@ -58,7 +53,7 @@ public class SysUploadService {
 
     public Resource download(HttpServletRequest request) throws NoResourceFoundException {
         String fileName = this.downloadFilename(request);
-        Resource resource = new FileSystemResource(this.location.resolve(fileName));
+        Resource resource = new FileSystemResource(this.upload.getLocation().resolve(fileName));
         if (!this.hasFilename(fileName) || !resource.exists()) {
             throw new NoResourceFoundException(HttpMethod.GET, fileName);
         }
@@ -66,12 +61,13 @@ public class SysUploadService {
     }
 
     public boolean hasFilename(String fileName) {
-        return this.location.resolve(fileName).normalize().startsWith(this.location);
+        return this.upload.getLocation().resolve(fileName)
+                .normalize().startsWith(this.upload.getLocation());
     }
 
     public boolean hasContentType(String contentType) {
         if (StringUtils.hasLength(contentType)) {
-            for (MimeType mimeType : this.extensions) {
+            for (MimeType mimeType : this.upload.getExtensions()) {
                 if (mimeType.includes(MimeType.valueOf(contentType))) {
                     return true;
                 }

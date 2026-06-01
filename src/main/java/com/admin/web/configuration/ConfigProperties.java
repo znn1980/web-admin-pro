@@ -3,6 +3,7 @@ package com.admin.web.configuration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.MimeType;
 
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -49,15 +50,15 @@ public class ConfigProperties {
 
     public static class Upload {
         public static final String DEFAULT_LOCATION = "uploads";
-        public static final MimeType DEFAULT_EXTENSION = MimeType.valueOf("*/*");
-        private String location = DEFAULT_LOCATION;
-        private List<MimeType> extensions = List.of(DEFAULT_EXTENSION);
+        public static final String DEFAULT_EXTENSION = "image/*";
+        private Path location = Path.of(DEFAULT_LOCATION);
+        private List<MimeType> extensions = List.of(MimeType.valueOf(DEFAULT_EXTENSION));
 
-        public String getLocation() {
+        public Path getLocation() {
             return location;
         }
 
-        public void setLocation(String location) {
+        public void setLocation(Path location) {
             this.location = location;
         }
 
