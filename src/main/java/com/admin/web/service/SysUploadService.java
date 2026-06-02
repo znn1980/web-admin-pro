@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 /**
  * @author znn
@@ -36,18 +37,23 @@ public class SysUploadService {
     }
 
     public SysUpload upload(HttpServletRequest request, MultipartFile file) throws IOException {
-        if (file.isEmpty() || !this.hasFilename(file.getOriginalFilename())) {
-            throw new ServerResponseException("上传的文件中包含无效的文件路径！");
+        if (file.isEmpty()) {
+            throw new ServerResponseException("上传的文件不存在！");
         }
-        if (file.isEmpty() || !this.hasContentType(file.getContentType())) {
+        if (!this.hasFilename(file.getOriginalFilename())) {
+            throw new ServerResponseException("上传的文件中包含无效的字符！");
+        }
+        if (!this.hasContentType(file.getContentType())) {
             throw new ServerResponseException("上传的文件中包含不支持的格式！");
         }
         String fileName = this.uploadFilename(file);
-        Files.createDirectories(this.upload.getLocation().resolve(fileName).getParent());
+        if (!Files.exists(this.upload.getLocation().resolve(fileName).getParent())) {
+            Files.createDirectories(this.upload.getLocation().resolve(fileName).getParent());
+        }
         file.transferTo(this.upload.getLocation().resolve(fileName));
         return new SysUpload(
                 String.format("%s%s%s", request.getContextPath(), SYS_DOWNLOAD_URL, fileName),
-                file.getOriginalFilename()
+                StringUtils.getFilename(file.getOriginalFilename())
         );
     }
 
@@ -61,7 +67,8 @@ public class SysUploadService {
     }
 
     public boolean hasFilename(String fileName) {
-        return this.upload.getLocation().resolve(fileName)
+        return StringUtils.hasText(fileName) && fileName.length() < 255
+                && this.upload.getLocation().resolve(fileName)
                 .normalize().startsWith(this.upload.getLocation());
     }
 
@@ -77,10 +84,11 @@ public class SysUploadService {
     }
 
     public String uploadFilename(MultipartFile file) {
-        return String.format("%s/%s_%s",
+        return String.format("%s/%s_%s.%s",
                 LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")),
                 LocalTime.now().format(DateTimeFormatter.ofPattern("HHmmssSSS")),
-                file.getOriginalFilename()
+                StringUtils.delete(UUID.randomUUID().toString(), "-"),
+                StringUtils.getFilenameExtension(file.getOriginalFilename())
         );
     }
 
