@@ -80,6 +80,14 @@
             <i class="layui-icon layui-icon-refresh" lay-tips="刷新"></i>
         </button-->
     </div>
+    <div class="layui-btn-group">
+        <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="sys-expand-toolbar">
+            <i class="layui-icon layui-icon-shrink-right" lay-tips="展开"></i>
+        </button>
+        <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="sys-fold-toolbar">
+            <i class="layui-icon layui-icon-spread-left" lay-tips="折叠"></i>
+        </button>
+    </div>
 </script>
 <script type="text/html" id="sys-menu-tool">
     <div class="layui-btn-group">
@@ -268,6 +276,12 @@
             }
             if (data.event === 'sys-refresh-toolbar') {
                 layui.table.reloadData('sys-menu-table');
+            }
+            if (data.event === 'sys-expand-toolbar') {
+                layui.treeTable.expandAll('sys-menu-table', true);
+            }
+            if (data.event === 'sys-fold-toolbar') {
+                layui.treeTable.expandAll('sys-menu-table', false);
             }
         });
 
