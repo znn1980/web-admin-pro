@@ -155,7 +155,7 @@ public class SysUserService {
             throw new ServerResponseException("原密码输入不正确！");
         }
         sysUser.setPassTimestamp(LocalDateTime.now());
-        sysUser.setPassword(SecurityUtils.hexPassword(request.newPassword()));
+        sysUser.setPassword(SecurityUtils.hexPassword(sysUser, request.newPassword()));
         this.sysUserRepository.save(sysUser);
     }
 

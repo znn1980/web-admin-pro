@@ -23,14 +23,14 @@ public class SysDictionariesService {
      *
      * <pre>
      * <select>
-     *    <option th:each="dict : ${#dicts.asKey('sys_sex')}" th:text="${dict.label()}" th:value="${dict.value()}"></option>
+     *    <option th:each="dict : ${#dicts.ofKey('sys_sex')}" th:text="${dict.label()}" th:value="${dict.value()}"></option>
      * </select>
      * </pre>
      *
      * @param key 键名
      * @return 字典列表
      */
-    public List<Dict> asKey(String key) {
+    public List<Dict> ofKey(String key) {
         SysDict sysDict = this.sysDictRepository.findByKey(key);
         return Objects.isNull(sysDict) || sysDict.isDisable() ? List.of() : sysDict.getDetails().stream()
                 .filter(detail -> !detail.isDisable())

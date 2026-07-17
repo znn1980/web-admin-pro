@@ -93,7 +93,7 @@
     <div class="layui-form-item" style="display: none;">
         <label class="layui-form-label" for="id">用户编码</label>
         <div class="layui-input-block">
-            <input type="text" id="id" name="id" disabled class="layui-input">
+            <input type="text" id="id" name="id" readonly class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
@@ -193,7 +193,7 @@
         layui.table.on('toolbar(sys-user-table)', function (data) {
             if (data.event === 'sys-add-toolbar') {
                 layui.$('#sys-user-form').trigger('reset');
-                layui.$('#username').attr('disabled', false);
+                layui.$('#username').attr('readonly', false);
                 load(function () {
                     xmSelect.get('#sys-role', true).setValue([]);
                     save('创建用户', 'POST');
@@ -205,7 +205,7 @@
                 if (data.event === 'sys-edit-toolbar') {
                     users[0].disable = !users[0].disable;
                     layui.form.val('sys-user-form', users[0]);
-                    layui.$('#username').attr('disabled', true);
+                    layui.$('#username').attr('readonly', true);
                     load(function () {
                         xmSelect.get('#sys-role', true).setValue(users[0].roles ? users[0].roles : []);
                         save('修改用户', 'PUT');
@@ -236,7 +236,7 @@
             if (data.event === 'sys-edit-tool') {
                 data.data.disable = !data.data.disable;
                 layui.form.val('sys-user-form', data.data);
-                layui.$('#username').attr('disabled', true);
+                layui.$('#username').attr('readonly', true);
                 load(function () {
                     xmSelect.get('#sys-role', true).setValue(data.data.roles ? data.data.roles : []);
                     save('修改用户', 'PUT');

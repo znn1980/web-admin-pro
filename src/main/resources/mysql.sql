@@ -1,6 +1,6 @@
 INSERT INTO `SYS_USER`
     (`ID`, `USERNAME`, `PHONE`, `EMAIL`, `PASSWORD`, `SYS_ADMIN`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)
-VALUES (1, 'admin', '18888888888', 'admin@admin.com', '37b062c8ebfe6c3480f5c8b5753fcae8', b'1', b'0', 'admin', now());
+VALUES (1, 'admin', '18888888888', 'admin@admin.com', 'de3dd6bb1debf5eb41f43d6cc0335ebb', b'1', b'0', 'admin', now());
 
 INSERT INTO `SYS_MENU`
     (`ID`, `PID`, `TITLE`, `METHOD`, `URL`, `ICON`, `SORT`, `SYS_MENU`, `DISABLE`, `CREATE_USERNAME`, `CREATE_TIMESTAMP`)

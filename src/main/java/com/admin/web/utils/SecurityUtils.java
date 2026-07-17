@@ -3,6 +3,7 @@ package com.admin.web.utils;
 import com.admin.web.model.entity.SysUser;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.util.DigestUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 
@@ -14,7 +15,6 @@ public class SecurityUtils {
     static final String SYS_USER_NAME = "admin";
     static final String SYS_USER_SESSION = "SYS_USER_SESSION";
     static final String SYS_CAPTCHA_SESSION = "SYS_CAPTCHA_SESSION";
-    static final String SYS_PASSWORD_SALT = "$%s$";
 
     private SecurityUtils() {
     }
@@ -51,17 +51,20 @@ public class SecurityUtils {
     }
 
     public static boolean hasPassword(SysUser sysUser, String password) {
-        return Objects.nonNull(sysUser) && Objects.equals(sysUser.getPassword(), hexPassword(password));
+        return Objects.nonNull(sysUser) && Objects.equals(sysUser.getPassword(), hexPassword(sysUser, password));
     }
 
-    public static String hexPassword(String password) {
-        return DigestUtils.md5DigestAsHex(String.format(SYS_PASSWORD_SALT, password).getBytes());
+    public static String hexPassword(SysUser sysUser, String password) {
+        return DigestUtils
+                .md5DigestAsHex(StringUtils
+                        .arrayToCommaDelimitedString(new Object[]{sysUser.getId(), sysUser.getUsername(), password})
+                        .getBytes());
     }
 
     public static String hexPassword(SysUser sysUser) {
         if (hasPassword(sysUser, sysUser.getPassword())) {
             return sysUser.getPassword();
         }
-        return hexPassword(sysUser.getPhone().substring(sysUser.getPhone().length() - 6));
+        return hexPassword(sysUser, sysUser.getPhone().substring(sysUser.getPhone().length() - 6));
     }
 }

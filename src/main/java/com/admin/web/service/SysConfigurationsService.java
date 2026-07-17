@@ -21,19 +21,19 @@ public class SysConfigurationsService {
      * Thymeleaf模板获取指定参数配置
      *
      * <pre>
-     *     <span th:text="${#configs.asKey('sys_skin','blue')}"></span>
+     *     <span th:text="${#configs.ofKey('sys_skin','blue')}"></span>
      * </pre>
      *
      * @param key          键名
      * @param defaultValue 默认值
      * @return 参数配置
      */
-    public String asKey(String key, String defaultValue) {
+    public String ofKey(String key, String defaultValue) {
         SysConfig sysConfig = this.sysConfigRepository.findByKey(key);
         return Objects.isNull(sysConfig) || sysConfig.isDisable() ? defaultValue : sysConfig.getValue();
     }
 
-    public String asKey(String key) {
-        return this.asKey(key, "");
+    public String ofKey(String key) {
+        return this.ofKey(key, "");
     }
 }
