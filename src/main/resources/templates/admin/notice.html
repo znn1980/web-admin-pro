@@ -220,11 +220,12 @@
                 layui.common.req(`${config.base}sys/notice/show.json`, 'POST', data.data.id, {
                     done: function (data) {
                         layui.laytpl(layui.$('#sys-notice-content').html()).render(data.data, function (html) {
-                            layui.$('#sys-notice-show').html(html).show();
                             layui.$('#sys-notice-list').hide();
+                            layui.$('#sys-notice-show').html(html).show();
                             layui.$('#sys-notice-back').on('click', function () {
-                                layui.$('#sys-notice-list').show();
                                 layui.$('#sys-notice-show').hide();
+                                layui.$('#sys-notice-list').show();
+                                layui.table.resize('sys-notice-table');
                             });
                         });
                         layui.table.reloadData('sys-notice-table', {
